@@ -7,10 +7,10 @@ int main() {
 
     logger->setPrivilege(LogPrivilege::Info);
 
-    logger->log("debug message!");
-    logger->log(LogPrivilege::Info, "info message!");
-    logger->log(LogPrivilege::Warning, "warning message!");
-    logger->log(LogPrivilege::Error, "error message!");
+    logger->debug("debug message!");
+    logger->info("info message!");
+    logger->warn("warning message!");
+    logger->error("error message!");
 
     return 0;
 }
