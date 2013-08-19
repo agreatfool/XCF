@@ -5,9 +5,7 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Log
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    Log::Log() {
-        this->privilege = LogPrivilege::Debug;
-    }
+    Log::Log(): privilege(LogPrivilege::Debug) {}
 
     Log::~Log() {}
 
