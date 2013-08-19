@@ -20,13 +20,13 @@ namespace XCF {
 
     SysLog::~SysLog() {}
 
-    void SysLog::log(int privilege, std::string msg) {
-        if (this->privilege >= privilege) {
+    void SysLog::log(int privilege, std::string msg) const {
+        if (privilege >= this->privilege) {
             std::cout << "SysLog: " << msg << std::endl;
         }
     }
 
-    void SysLog::log(std::string msg) {
+    void SysLog::log(std::string msg) const {
         this->log(LogPrivilege::Debug, msg);
     }
 
@@ -37,13 +37,13 @@ namespace XCF {
 
     FileLog::~FileLog() {}
 
-    void FileLog::log(int privilege, std::string msg) {
-        if (this->privilege >= privilege) {
+    void FileLog::log(int privilege, std::string msg) const {
+        if (privilege >= this->privilege) {
             std::cout << "FileLog: " << msg << std::endl;
         }
     }
 
-    void FileLog::log(std::string msg) {
+    void FileLog::log(std::string msg) const {
         this->log(LogPrivilege::Debug, msg);
     }
 

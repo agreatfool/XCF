@@ -22,8 +22,8 @@ namespace XCF {
         public:
             Log();
             virtual ~Log();
-            virtual void log(int privilege, std::string msg) = 0;
-            virtual void log(std::string msg) = 0;
+            virtual void log(int privilege, std::string msg) const = 0;
+            virtual void log(std::string msg) const = 0;
             void setPrivilege(int privilege);
         protected:
             int privilege; // FIXME
@@ -33,16 +33,16 @@ namespace XCF {
         public:
             SysLog();
             virtual ~SysLog();
-            void log(int privilege, std::string msg);
-            void log(std::string msg);
+            void log(int privilege, std::string msg) const;
+            void log(std::string msg) const;
     };
 
     class FileLog: public Log {
         public:
             FileLog();
             virtual ~FileLog();
-            void log(int privilege, std::string msg);
-            void log(std::string msg);
+            void log(int privilege, std::string msg) const;
+            void log(std::string msg) const;
     };
 
     class LogFactory {

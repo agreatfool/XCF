@@ -3,12 +3,14 @@
 using namespace XCF;
 
 int main() {
-
     Log *logger = LogFactory::get(LogType::SysLog);
 
-    logger->setPrivilege(LogPrivilege::Error);
+    logger->setPrivilege(LogPrivilege::Info);
 
-    logger->log("log data"); // FIXME: log still works, loop through the C++ book OOP part
+    logger->log("debug message!");
+    logger->log(LogPrivilege::Info, "info message!");
+    logger->log(LogPrivilege::Warning, "warning message!");
+    logger->log(LogPrivilege::Error, "error message!");
 
     return 0;
 }
