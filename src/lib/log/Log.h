@@ -7,6 +7,8 @@
 
 namespace XCF {
 
+    #define XCF_LOG_MSG_MAX_LIMIT 50
+
     namespace LogType {
         enum LogType {
             SysLog, FileLog
@@ -35,7 +37,7 @@ namespace XCF {
             void setPriority(uint32_t privilege);
             virtual void output() const = 0;
         protected:
-            uint32_t maxMsgCount;
+            uint32_t maxMsgCount; // see XCF_LOG_MSG_MAX_LIMIT
             uint32_t priority;
             std::deque<std::string> *messages;
             void cacheMessage(uint32_t priority, std::string msg) const;

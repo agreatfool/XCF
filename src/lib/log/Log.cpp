@@ -6,7 +6,7 @@ namespace XCF {
     //-* Log
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Log::Log():
-        maxMsgCount(50),
+        maxMsgCount(XCF_LOG_MSG_MAX_LIMIT),
         priority(LogPriority::Debug),
         messages(new std::deque<std::string>()) {}
 
@@ -70,6 +70,7 @@ namespace XCF {
 
                 this->logToConsole(msg);
             }
+
             closelog();
         }
     }
