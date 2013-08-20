@@ -5,32 +5,48 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Log
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    Log::Log(): privilege(LogPrivilege::Debug) {}
+    Log::Log():
+        maxMsgCount(50),
+        priority(LogPriority::Debug),
+        messages(new std::deque<std::string>()) {}
 
     Log::~Log() {}
 
+    void Log::cacheMessage(uint32_t priority, std::string msg) const {
+        if (priority <= this->priority) {
+            this->messages->push_back(msg);
+            if (this->messages->size() >= this->maxMsgCount) {
+                this->output();
+            }
+        }
+    }
+
+    void Log::logToConsole(std::string msg) const {
+        std::cout << msg << std::endl;
+    }
+
     void Log::debug(std::string msg) const {
-        this->log(LogPrivilege::Debug, msg);
+        this->cacheMessage(LogPriority::Debug, msg);
     }
 
     void Log::info(std::string msg) const {
-        this->log(LogPrivilege::Info, msg);
+        this->cacheMessage(LogPriority::Info, msg);
     }
 
     void Log::notice(std::string msg) const {
-        this->log(LogPrivilege::Notice, msg);
+        this->cacheMessage(LogPriority::Notice, msg);
     }
 
     void Log::warn(std::string msg) const {
-        this->log(LogPrivilege::Warning, msg);
+        this->cacheMessage(LogPriority::Warning, msg);
     }
 
     void Log::error(std::string msg) const {
-        this->log(LogPrivilege::Error, msg);
+        this->cacheMessage(LogPriority::Error, msg);
     }
 
-    void Log::setPrivilege(int privilege) {
-        this->privilege = privilege;
+    void Log::setPriority(uint32_t priority) {
+        this->priority = priority;
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -40,9 +56,21 @@ namespace XCF {
 
     SysLog::~SysLog() {}
 
-    void SysLog::log(int privilege, std::string msg) const {
-        if (privilege >= this->privilege) {
-            std::cout << "SysLog: " << msg << std::endl;
+    void SysLog::output() const {
+        if (this->messages->size() > 0) {
+            openlog("XCF", LOG_PID, LOG_USER);
+
+            while (!this->messages->empty()) {
+                std::string msg = this->messages->front();
+                const char *buff = msg.c_str();
+
+                syslog(LOG_USER | this->priority, "%s", buff);
+
+                this->messages->pop_front();
+
+                this->logToConsole(msg);
+            }
+            closelog();
         }
     }
 
@@ -53,10 +81,8 @@ namespace XCF {
 
     FileLog::~FileLog() {}
 
-    void FileLog::log(int privilege, std::string msg) const {
-        if (privilege >= this->privilege) {
-            std::cout << "FileLog: " << msg << std::endl;
-        }
+    void FileLog::output() const {
+        // TODO tobe implemented
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -67,13 +93,10 @@ namespace XCF {
     LogFactory::~LogFactory() {}
 
     Log* LogFactory::get() {
-        if (LogFactory::instance == NULL) {
-            LogFactory::instance = new SysLog();
-        }
-        return LogFactory::instance;
+        return LogFactory::get(LogType::SysLog);
     }
 
-    Log* LogFactory::get(int logType) {
+    Log* LogFactory::get(uint32_t logType) {
         if (LogFactory::instance == NULL) {
             switch (logType) {
                 case LogType::SysLog:

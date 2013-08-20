@@ -2,6 +2,7 @@
 #define XCF_LOG_H_
 
 #include <iostream>
+#include <deque>
 #include <syslog.h>
 
 namespace XCF {
@@ -12,9 +13,13 @@ namespace XCF {
         };
     }
 
-    namespace LogPrivilege {
-        enum LogPrivilege {
-            Debug, Info, Notice, Warning, Error
+    namespace LogPriority {
+        enum LogPriority {
+            Debug   = LOG_DEBUG,
+            Info    = LOG_INFO,
+            Notice  = LOG_NOTICE,
+            Warning = LOG_WARNING,
+            Error   = LOG_ERR
         };
     }
 
@@ -22,35 +27,39 @@ namespace XCF {
         public:
             Log();
             virtual ~Log();
-            virtual void log(int privilege, std::string msg) const = 0;
             void debug(std::string msg) const;
             void info(std::string msg) const;
             void notice(std::string msg) const;
             void warn(std::string msg) const;
             void error(std::string msg) const;
-            void setPrivilege(int privilege);
+            void setPriority(uint32_t privilege);
+            virtual void output() const = 0;
         protected:
-            int privilege; // FIXME
+            uint32_t maxMsgCount;
+            uint32_t priority;
+            std::deque<std::string> *messages;
+            void cacheMessage(uint32_t priority, std::string msg) const;
+            void logToConsole(std::string msg) const;
     };
 
     class SysLog: public Log {
         public:
             SysLog();
             virtual ~SysLog();
-            void log(int privilege, std::string msg) const;
+            void output() const;
     };
 
     class FileLog: public Log {
         public:
             FileLog();
             virtual ~FileLog();
-            void log(int privilege, std::string msg) const;
+            void output() const;
     };
 
     class LogFactory {
         public:
             virtual ~LogFactory();
-            static Log* get(int logType);
+            static Log* get(uint32_t logType);
             static Log* get();
         private:
             LogFactory();
