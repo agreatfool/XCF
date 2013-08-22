@@ -1,5 +1,5 @@
-#ifndef UTILITY_H_
-#define UTILITY_H_
+#ifndef XCF_UTILITY_H_
+#define XCF_UTILITY_H_
 
 #include <iostream>
 
