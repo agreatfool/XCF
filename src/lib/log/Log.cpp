@@ -12,7 +12,7 @@ namespace XCF {
 
     Log::~Log() {}
 
-    void Log::cacheMessage(uint32_t priority, std::string msg) const {
+    void inline Log::cacheMessage(uint32_t priority, std::string msg) const {
         if (priority <= this->priority) {
             this->messages->push_back(msg);
             if (this->messages->size() >= this->maxMsgCount) {
@@ -21,7 +21,7 @@ namespace XCF {
         }
     }
 
-    void Log::logToConsole(std::string msg) const {
+    void inline Log::logToConsole(std::string msg) const {
         std::cout << msg << std::endl;
     }
 

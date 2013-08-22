@@ -40,8 +40,8 @@ namespace XCF {
             uint32_t maxMsgCount; // see XCF_LOG_MSG_MAX_LIMIT
             uint32_t priority;
             std::deque<std::string> *messages;
-            void cacheMessage(uint32_t priority, std::string msg) const;
-            void logToConsole(std::string msg) const;
+            void inline cacheMessage(uint32_t priority, std::string msg) const;
+            void inline logToConsole(std::string msg) const;
     };
 
     class SysLog: public Log {
