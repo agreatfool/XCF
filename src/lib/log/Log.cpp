@@ -12,7 +12,7 @@ namespace XCF {
 
     Log::~Log() {}
 
-    void inline Log::cacheMessage(uint32_t priority, std::string msg) const {
+    void inline Log::cacheMessage(uint16_t priority, std::string msg) const {
         if (priority <= this->priority) {
             this->messages->push_back(msg);
             if (this->messages->size() >= this->maxMsgCount) {
@@ -45,7 +45,7 @@ namespace XCF {
         this->cacheMessage(LogPriority::Error, msg);
     }
 
-    void Log::setPriority(uint32_t priority) {
+    void Log::setPriority(uint16_t priority) {
         this->priority = priority;
     }
 
@@ -97,7 +97,7 @@ namespace XCF {
         return LogFactory::get(LogType::SysLog);
     }
 
-    Log* LogFactory::get(uint32_t logType) {
+    Log* LogFactory::get(uint16_t logType) {
         if (LogFactory::instance == NULL) {
             switch (logType) {
                 case LogType::SysLog:

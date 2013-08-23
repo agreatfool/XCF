@@ -40,7 +40,7 @@ namespace XCF {
             uint16_t                maxMsgCount; // see XCF_LOG_MSG_MAX_LIMIT
             uint16_t                priority;
             std::deque<std::string> *messages;
-            void inline cacheMessage(uint32_t priority, std::string msg) const;
+            void inline cacheMessage(uint16_t priority, std::string msg) const;
             void inline logToConsole(std::string msg) const;
     };
 
@@ -61,7 +61,7 @@ namespace XCF {
     class LogFactory {
         public:
             virtual ~LogFactory();
-            static Log* get(uint32_t logType);
+            static Log* get(uint16_t logType);
             static Log* get();
         private:
             LogFactory();
