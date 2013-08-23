@@ -29,16 +29,16 @@ namespace XCF {
         public:
             Log();
             virtual ~Log();
-            void debug(std::string msg) const;
-            void info(std::string msg) const;
+            void debug(std::string msg)  const;
+            void info(std::string msg)   const;
             void notice(std::string msg) const;
-            void warn(std::string msg) const;
-            void error(std::string msg) const;
-            void setPriority(uint32_t privilege);
+            void warn(std::string msg)   const;
+            void error(std::string msg)  const;
+            void setPriority(uint16_t privilege);
             virtual void output() const = 0;
         protected:
-            uint32_t maxMsgCount; // see XCF_LOG_MSG_MAX_LIMIT
-            uint32_t priority;
+            uint16_t                maxMsgCount; // see XCF_LOG_MSG_MAX_LIMIT
+            uint16_t                priority;
             std::deque<std::string> *messages;
             void inline cacheMessage(uint32_t priority, std::string msg) const;
             void inline logToConsole(std::string msg) const;
