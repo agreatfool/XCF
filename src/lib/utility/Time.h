@@ -37,7 +37,7 @@ namespace XCF {
                 return Time::getTimeString(&currentTime);
             };
             static inline std::string getTimeString(time_t* time) {
-                char tmstr[128] = {0};
+                char tmstr[32] = {0};
                 strftime(tmstr, sizeof(tmstr), "%Y-%m-%d %H:%M:%S", Time::getTimeStruct(time));
                 return Utility::charToString(tmstr);
             };
