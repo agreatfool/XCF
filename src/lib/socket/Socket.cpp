@@ -4,7 +4,7 @@ namespace XCF {
 
     Socket::Socket(std::string host, uint16_t port):
         socketHost(host), socketPort(port),
-        socketType(SocketType::TCP),
+        socketType(SocketProtocol::TCP),
         socketStatus(SocketStatus::Closed), logger(LogFactory::get()),
         socketFd(INIT_SOCKET_FD) {}
 
@@ -14,7 +14,10 @@ namespace XCF {
         socketStatus(SocketStatus::Closed), logger(LogFactory::get()),
         socketFd(INIT_SOCKET_FD) {}
 
-    Socket::~Socket() {}
+    Socket::~Socket() {
+        this->release();
+        delete this->logger;
+    }
 
     int32_t Socket::init() {
         this->socketFd = socket(PF_INET, SOCK_STREAM, 0);

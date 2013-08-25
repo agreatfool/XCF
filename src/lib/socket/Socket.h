@@ -14,8 +14,8 @@ namespace XCF {
     #define INIT_SOCKET_FD     0
     #define INVALID_SOCKET_FD -1
 
-    namespace SocketType {
-        enum SocketType {
+    namespace SocketProtocol {
+        enum SocketProtocol {
             TCP = IPPROTO_TCP,
             UDP = IPPROTO_UDP
         };
