@@ -13,6 +13,7 @@ namespace XCF {
 
     #define INIT_SOCKET_FD     0
     #define INVALID_SOCKET_FD -1
+    #define INVALID_RESULT    -1
 
     namespace SocketProtocol {
         enum SocketProtocol {
@@ -21,26 +22,38 @@ namespace XCF {
         };
     }
 
+    namespace SocketEndType {
+        enum SocketEndType {
+            CLIENT,
+            SERVER
+        };
+    }
+
     namespace SocketStatus {
         enum SocketStatus {
-            Closed,
-            Opened,
-            Connected,
-            Error
+            NONE,       // class constructed
+            INITED,     // class socket initialized
+            CLOSED,     // socket closed
+            Opened,     // socket opened (server: bind listen)
+            Connected,  // socket connected (client: connect)
+            Error       // socket error
         };
     }
 
     class Socket {
         public:
-            Socket(std::string host, uint16_t port);
-            Socket(std::string host, uint16_t port, uint16_t type);
+            Socket(std::string host, uint16_t port, uint16_t protocol, uint16_t endType);
             virtual ~Socket();
+            // Server
+            int32_t listen();
+            // Client
+            int32_t connect();
         protected:
             // Inputed
             std::string        socketHost;
             uint16_t           socketPort;
-            // Type
-            uint16_t           socketType;
+            uint16_t           socketProtocolType;
+            uint16_t           socketEndType;
             // Status
             int16_t            socketStatus;
             // Generated
@@ -48,8 +61,7 @@ namespace XCF {
             int32_t            socketFd;
             struct sockaddr_in socketAddr;
             // Functions
-            int32_t init();
-            void release();
+            void init();
     };
 
 } /* namespace XCF */
