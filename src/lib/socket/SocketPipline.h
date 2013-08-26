@@ -13,7 +13,7 @@ namespace XCF {
         public:
             SocketPiplineFactory();
             virtual ~SocketPiplineFactory();
-            SocketPipline* getPipline();
+            SocketPipline *getPipline();
     };
 
 } /* namespace XCF */
