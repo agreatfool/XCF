@@ -10,7 +10,7 @@ namespace XCF {
         public:
             Bootstrap(uint16_t protocolType);
             virtual ~Bootstrap();
-            virtual int32_t start();
+            virtual int32_t start() = 0;
         protected:
             uint16_t socketProtocolType;
             Log*     logger;
@@ -21,8 +21,13 @@ namespace XCF {
             ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
             virtual ~ServerBootstrap();
             int32_t start();
+            static void acceptCallback(struct ev_loop *acceptLoop, struct ev_io *acceptWatcher, int revents);
+            static void readCallback(struct ev_loop *readLoop, struct ev_io *readWatcher, int revents);
         protected:
-            Socket* serverSocket;
+            uint32_t       clientCount;
+            Socket         *serverSocket;
+            struct ev_loop *acceptLoop;
+            struct ev_io   acceptWatcher;
     };
 
     class ClientBootstrap: public Bootstrap {

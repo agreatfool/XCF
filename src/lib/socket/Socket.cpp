@@ -8,11 +8,16 @@ namespace XCF {
         ):
         socketHost(host), socketPort(port),
         socketProtocolType(protocol), socketEndType(endType),
-        socketStatus(SocketStatus::NONE),
-        logger(LogFactory::get()), socketFd(INIT_SOCKET_FD)
-    {
-        this->init();
-    }
+        socketStatus(SocketStatus::CLOSED),
+        logger(LogFactory::get()), socketFd(INIT_SOCKET_FD) {}
+
+    Socket::Socket(
+            int32_t socketFd, struct sockaddr_in socketAddr, uint16_t protocol
+        ):
+        socketHost(""), socketPort(0),
+        socketProtocolType(protocol), socketEndType(SocketEndType::CLIENT),
+        socketStatus(SocketStatus::OPENED),
+        logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr) {}
 
     Socket::~Socket() {
         if (this->socketFd > 0) {
@@ -21,53 +26,50 @@ namespace XCF {
         delete this->logger;
     }
 
-    void Socket::init() {
-        if (this->socketStatus < SocketStatus::INITED) {
-            // not initialized yet
+    int32_t Socket::socketInit() {
+        if (this->socketStatus <= SocketStatus::CLOSED) {
+            // init socket fd
             this->socketFd = socket(PF_INET, SOCK_STREAM, 0);
 
-            if (this->socketFd > 0) {
-                bzero(&this->socketAddr, sizeof(this->socketAddr));
-
-                this->socketAddr.sin_family = AF_INET;
-                this->socketAddr.sin_port = htons(this->socketPort);
-                this->socketAddr.sin_addr.s_addr = inet_addr(this->socketHost.c_str());
-
-                if (bind(this->socketFd, (struct sockaddr*) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
-                    this->socketFd = INVALID_SOCKET_FD;
-                    this->logger->error("[Socket] socket binding failed!");
-                } else {
-                    this->socketStatus = SocketStatus::INITED;
-                }
-            } else {
+            if (this->socketFd < 0) {
                 this->socketFd = INVALID_SOCKET_FD;
                 this->logger->error("[Socket] socketFd initialization failed!");
+                return INVALID_RESULT;
             }
-        }
-    }
 
-    int32_t Socket::listen() {
-        if (this->socketEndType != SocketEndType::SERVER) {
-            // invalid function call
-            this->logger->error("[Socket] cannot call \"listen\" via client socket!");
-            return INVALID_RESULT;
-        } else if (this->socketStatus < SocketStatus::INITED) {
-            // socket not correctly initialized
-            return INVALID_RESULT;
-        }
-        return 1;
-    }
+            // build address
+            bzero(&this->socketAddr, sizeof(this->socketAddr));
+            this->socketAddr.sin_family = AF_INET;
+            this->socketAddr.sin_port = htons(this->socketPort);
+            this->socketAddr.sin_addr.s_addr = inet_addr(this->socketHost.c_str());
 
-    int32_t Socket::connect() {
-        if (this->socketEndType != SocketEndType::CLIENT) {
-            // invalid function call
-            this->logger->error("[Socket] cannot call \"connect\" via server socket!");
-            return INVALID_RESULT;
-        } else if (this->socketStatus < SocketStatus::INITED) {
-            // socket not correctly initialized
-            return INVALID_RESULT;
+            this->socketStatus = SocketStatus::OPENED;
+
+            if (this->socketEndType == SocketEndType::SERVER) {
+                // server: bind & listen
+                if (bind(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
+                    this->socketFd = INVALID_SOCKET_FD;
+                    this->logger->error("[Socket] socket binding failed!");
+                    return INVALID_RESULT;
+                }
+                if (listen(this->socketFd, LISTEN_BACKLOG) < 0) {
+                    this->socketFd = INVALID_SOCKET_FD;
+                    this->logger->error("[Socket] listen failed!");
+                    return INVALID_RESULT;
+                }
+            } else if (this->socketEndType == SocketEndType::CLIENT) {
+                // client: connect
+                if (connect(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
+                    this->socketFd = INVALID_SOCKET_FD;
+                    this->logger->error("[Socket] listen failed!");
+                    return INVALID_RESULT;
+                }
+            }
+
+            this->socketStatus = SocketStatus::CONNECTED;
         }
-        return 1;
+
+        return VALID_RESULT;
     }
 
 } /* namespace XCF */

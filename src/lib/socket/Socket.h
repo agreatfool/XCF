@@ -13,7 +13,11 @@ namespace XCF {
 
     #define INIT_SOCKET_FD     0
     #define INVALID_SOCKET_FD -1
+    #define VALID_RESULT       0
     #define INVALID_RESULT    -1
+
+    #define LISTEN_BACKLOG     1024
+    #define MSG_BUFFER_LENGTH  1024 * 16
 
     namespace SocketProtocol {
         enum SocketProtocol {
@@ -31,23 +35,33 @@ namespace XCF {
 
     namespace SocketStatus {
         enum SocketStatus {
-            NONE,       // class constructed
-            INITED,     // class socket initialized
-            CLOSED,     // socket closed
-            Opened,     // socket opened (server: bind listen)
-            Connected,  // socket connected (client: connect)
-            Error       // socket error
+            CLOSED,     // socket closed, init status
+            OPENED,     // socket opened, address built
+            CONNECTED,  // socket connected, listen finished | connect finished
+            ERROR       // socket error
         };
     }
 
     class Socket {
         public:
+            /**
+             * Socket built to bind & listen to a server address.
+             * OR
+             * Socket built to connect to a server.
+             */
             Socket(std::string host, uint16_t port, uint16_t protocol, uint16_t endType);
+            /**
+             * Socket accepted at server end, already connected.
+             */
+            Socket(int32_t socketFd, struct sockaddr_in socketAddr, uint16_t protocol);
             virtual ~Socket();
-            // Server
-            int32_t listen();
-            // Client
-            int32_t connect();
+            inline int32_t  getSocketFd() {
+                return this->socketFd;
+            };
+            inline uint16_t getSocketStatus() {
+                return this->socketStatus;
+            };
+            int32_t socketInit();
         protected:
             // Inputed
             std::string        socketHost;
@@ -57,11 +71,9 @@ namespace XCF {
             // Status
             int16_t            socketStatus;
             // Generated
-            Log*               logger;
+            Log                *logger;
             int32_t            socketFd;
             struct sockaddr_in socketAddr;
-            // Functions
-            void init();
     };
 
 } /* namespace XCF */
