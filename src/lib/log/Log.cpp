@@ -66,6 +66,8 @@ namespace XCF {
 
                 syslog(LOG_USER | this->priority, "%s", buff);
 
+                delete []buff;
+
                 this->messages->pop_front();
 
                 this->logToConsole(msg);
@@ -112,6 +114,11 @@ namespace XCF {
             }
         }
         return LogFactory::instance;
+    }
+
+    void LogFactory::reset() {
+        delete LogFactory::instance;
+        LogFactory::instance = NULL;
     }
 
 } /* namespace XCF */

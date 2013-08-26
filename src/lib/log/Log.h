@@ -7,7 +7,7 @@
 
 namespace XCF {
 
-    #define XCF_LOG_MSG_MAX_LIMIT 50
+    #define XCF_LOG_MSG_MAX_LIMIT 25
 
     namespace LogType {
         enum LogType {
@@ -63,6 +63,7 @@ namespace XCF {
             virtual ~LogFactory();
             static Log* get(uint16_t logType);
             static Log* get();
+            static void reset();
         private:
             LogFactory();
             static Log* instance;
