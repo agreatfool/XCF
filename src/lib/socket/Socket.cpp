@@ -48,16 +48,26 @@ namespace XCF {
 
     int32_t Socket::listen() {
         if (this->socketEndType != SocketEndType::SERVER) {
+            // invalid function call
             this->logger->error("[Socket] cannot call \"listen\" via client socket!");
             return INVALID_RESULT;
+        } else if (this->socketStatus < SocketStatus::INITED) {
+            // socket not correctly initialized
+            return INVALID_RESULT;
         }
+        return 1;
     }
 
     int32_t Socket::connect() {
         if (this->socketEndType != SocketEndType::CLIENT) {
+            // invalid function call
             this->logger->error("[Socket] cannot call \"connect\" via server socket!");
             return INVALID_RESULT;
+        } else if (this->socketStatus < SocketStatus::INITED) {
+            // socket not correctly initialized
+            return INVALID_RESULT;
         }
+        return 1;
     }
 
 } /* namespace XCF */
