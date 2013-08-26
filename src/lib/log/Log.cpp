@@ -5,14 +5,36 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Log
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    Log::Log() {
-        this->privilege = LogPrivilege::Debug;
-    }
+    Log::Log(): priority(LogPriority::Debug) {}
 
     Log::~Log() {}
 
-    void Log::setPrivilege(int privilege) {
-        this->privilege = privilege;
+    void inline Log::logToConsole(std::string msg) const {
+        std::cout << msg << std::endl;
+    }
+
+    void Log::debug(std::string msg) const {
+        this->output(LogPriority::Debug, msg);
+    }
+
+    void Log::info(std::string msg) const {
+        this->output(LogPriority::Info, msg);
+    }
+
+    void Log::notice(std::string msg) const {
+        this->output(LogPriority::Notice, msg);
+    }
+
+    void Log::warn(std::string msg) const {
+        this->output(LogPriority::Warning, msg);
+    }
+
+    void Log::error(std::string msg) const {
+        this->output(LogPriority::Error, msg);
+    }
+
+    void Log::setPriority(uint16_t priority) {
+        this->priority = priority;
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -22,14 +44,16 @@ namespace XCF {
 
     SysLog::~SysLog() {}
 
-    void SysLog::log(int privilege, std::string msg) {
-        if (this->privilege >= privilege) {
-            std::cout << "SysLog: " << msg << std::endl;
-        }
-    }
+    void SysLog::output(uint16_t priority, std::string msg) const {
+        if (priority <= this->priority) {
+            openlog("XCF", LOG_PID, LOG_USER);
 
-    void SysLog::log(std::string msg) {
-        this->log(LogPrivilege::Debug, msg);
+            const char* buff = msg.c_str();
+            syslog(LOG_USER | this->priority, "%s", buff);
+            this->logToConsole(msg);
+
+            closelog();
+        }
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -39,45 +63,35 @@ namespace XCF {
 
     FileLog::~FileLog() {}
 
-    void FileLog::log(int privilege, std::string msg) {
-        if (this->privilege >= privilege) {
-            std::cout << "FileLog: " << msg << std::endl;
-        }
-    }
-
-    void FileLog::log(std::string msg) {
-        this->log(LogPrivilege::Debug, msg);
+    void FileLog::output(uint16_t priority, std::string msg) const {
+        // TODO tobe implemented
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* LogFactory
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    Log* LogFactory::instance = NULL;
-
     LogFactory::~LogFactory() {}
 
     Log* LogFactory::get() {
-        if (LogFactory::instance == NULL) {
-            LogFactory::instance = new SysLog();
-        }
-        return LogFactory::instance;
+        return LogFactory::get(LogType::SysLog);
     }
 
-    Log* LogFactory::get(int logType) {
-        if (LogFactory::instance == NULL) {
-            switch (logType) {
-                case LogType::SysLog:
-                    LogFactory::instance = new SysLog();
-                    break;
-                case LogType::FileLog:
-                    LogFactory::instance = new FileLog();
-                    break;
-                default:
-                    LogFactory::instance = new SysLog();
-                    break;
-            }
+    Log* LogFactory::get(uint16_t logType) {
+        Log* instance = NULL;
+
+        switch (logType) {
+            case LogType::SysLog:
+                instance = new SysLog();
+                break;
+            case LogType::FileLog:
+                instance = new FileLog();
+                break;
+            default:
+                instance = new SysLog();
+                break;
         }
-        return LogFactory::instance;
+
+        return instance;
     }
 
 } /* namespace XCF */
