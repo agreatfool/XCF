@@ -21,11 +21,11 @@ namespace XCF {
             /**
              * Get struct tm from time_t.
              */
-            static inline struct tm* getTimeStruct() {
+            static inline struct tm *getTimeStruct() {
                 time_t currentTime = time(NULL);
                 return Time::getTimeStruct(&currentTime);
             };
-            static inline struct tm* getTimeStruct(time_t* time) {
+            static inline struct tm *getTimeStruct(time_t* time) {
                 return localtime(time);
             };
             /**
