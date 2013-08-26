@@ -23,7 +23,7 @@ namespace XCF {
              * DO NOT forget to using "delete []buff;" to free the memory.
              */
             static inline char* stringToChar(std::string str) {
-                char *buff = new char[str.length() + 1];
+                char* buff = new char[str.length() + 1];
                 strcpy(buff, str.c_str());
                 return buff;
             };

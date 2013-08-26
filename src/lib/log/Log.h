@@ -7,8 +7,6 @@
 
 namespace XCF {
 
-    #define XCF_LOG_MSG_MAX_LIMIT 25
-
     namespace LogType {
         enum LogType {
             SysLog, FileLog
@@ -34,13 +32,10 @@ namespace XCF {
             void notice(std::string msg) const;
             void warn(std::string msg)   const;
             void error(std::string msg)  const;
-            void setPriority(uint16_t privilege);
-            virtual void output() const = 0;
+            void setPriority(uint16_t priority);
         protected:
-            uint16_t                maxMsgCount; // see XCF_LOG_MSG_MAX_LIMIT
-            uint16_t                priority;
-            std::deque<std::string> *messages;
-            void inline cacheMessage(uint16_t priority, std::string msg) const;
+            uint16_t priority;
+            virtual void output(uint16_t priority, std::string msg) const = 0;
             void inline logToConsole(std::string msg) const;
     };
 
@@ -48,25 +43,23 @@ namespace XCF {
         public:
             SysLog();
             virtual ~SysLog();
-            void output() const;
+            void output(uint16_t priority, std::string msg) const;
     };
 
     class FileLog: public Log {
         public:
             FileLog();
             virtual ~FileLog();
-            void output() const;
+            void output(uint16_t priority, std::string msg) const;
     };
 
     class LogFactory {
         public:
             virtual ~LogFactory();
-            static Log* get(uint16_t logType);
             static Log* get();
-            static void reset();
+            static Log* get(uint16_t logType);
         private:
             LogFactory();
-            static Log* instance;
             // Stop the compiler generating methods of copy the object
             LogFactory(LogFactory const& copy);            // Not Implemented
             LogFactory& operator=(LogFactory const& copy); // Not Implemented
