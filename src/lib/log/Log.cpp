@@ -50,7 +50,6 @@ namespace XCF {
 
             const char* buff = msg.c_str();
             syslog(LOG_USER | this->priority, "%s", buff);
-            delete []buff;
             this->logToConsole(msg);
 
             closelog();
