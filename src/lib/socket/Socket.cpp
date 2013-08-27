@@ -52,7 +52,7 @@ namespace XCF {
                     this->logger->error("[Socket] socket binding failed!");
                     return INVALID_RESULT;
                 }
-                if (listen(this->socketFd, LISTEN_BACKLOG) < 0) {
+                if (listen(this->socketFd, SOCK_LISTEN_BACKLOG) < 0) {
                     this->socketFd = INVALID_SOCKET_FD;
                     this->logger->error("[Socket] listen failed!");
                     return INVALID_RESULT;
@@ -61,7 +61,7 @@ namespace XCF {
                 // client: connect
                 if (connect(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
                     this->socketFd = INVALID_SOCKET_FD;
-                    this->logger->error("[Socket] listen failed!");
+                    this->logger->error("[Socket] connect failed!");
                     return INVALID_RESULT;
                 }
             }
