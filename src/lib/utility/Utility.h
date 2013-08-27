@@ -27,6 +27,10 @@ namespace XCF {
                 strcpy(buff, str.c_str());
                 return buff;
             };
+            /**
+             * Format a string according to the "format".
+             */
+            static std::string stringFormat(const std::string format, ...);
     };
 
 } /* namespace XCF */
