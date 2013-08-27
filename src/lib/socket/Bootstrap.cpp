@@ -75,7 +75,7 @@ namespace XCF {
     }
 
     void ServerBootstrap::readCallback(struct ev_loop *readLoop, struct ev_io *readWatcher, int revents) {
-        char buffer[MSG_BUFFER_LENGTH];
+        char buffer[SOCK_BUFFER_LENGTH];
         ssize_t read;
 
         if (EV_ERROR & revents) {
@@ -85,7 +85,7 @@ namespace XCF {
         }
 
         // receive message from client socket
-        read = recv(readWatcher->fd, buffer, MSG_BUFFER_LENGTH, 0);
+        read = recv(readWatcher->fd, buffer, SOCK_BUFFER_LENGTH, 0);
 
         if (read < 0) {
 //            this->logger->error("[ServerBootstrap] readCallback: read error!");
