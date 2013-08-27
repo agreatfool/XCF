@@ -20,9 +20,7 @@ namespace XCF {
         logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr) {}
 
     Socket::~Socket() {
-        if (this->socketFd > 0) {
-            close(this->socketFd);
-        }
+        this->socketRelease();
         delete this->logger;
     }
 
@@ -68,6 +66,17 @@ namespace XCF {
 
             this->socketStatus = SocketStatus::CONNECTED;
         }
+
+        return VALID_RESULT;
+    }
+
+    int32_t Socket::socketRelease() {
+        if (this->socketFd > 0) {
+            close(this->socketFd);
+        }
+        this->socketStatus = SocketStatus::CLOSED;
+        this->socketFd = INVALID_SOCKET_FD;
+        bzero(&this->socketAddr, sizeof(this->socketAddr));
 
         return VALID_RESULT;
     }

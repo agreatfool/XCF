@@ -7,17 +7,11 @@
 
 #include <ev.h>
 
+#include "../../Declare.h"
+#include "SocketBuffer.h"
 #include "../log/Log.h"
 
 namespace XCF {
-
-    #define INIT_SOCKET_FD     0
-    #define INVALID_SOCKET_FD -1
-    #define VALID_RESULT       0
-    #define INVALID_RESULT    -1
-
-    #define LISTEN_BACKLOG     1024
-    #define MSG_BUFFER_LENGTH  1024 * 16
 
     namespace SocketProtocol {
         enum SocketProtocol {
@@ -55,13 +49,41 @@ namespace XCF {
              */
             Socket(int32_t socketFd, struct sockaddr_in socketAddr, uint16_t protocol);
             virtual ~Socket();
-            inline int32_t  getSocketFd() {
+            /**
+             * Get this->socketFd.
+             */
+            inline int32_t  getSocketFd() const {
                 return this->socketFd;
             };
-            inline uint16_t getSocketStatus() {
+            /**
+             * Get this->socketStatus.
+             */
+            inline uint16_t getSocketStatus() const {
                 return this->socketStatus;
             };
+            /**
+             * Initialize the socket.
+             * Server: socket() -> bind() -> listen()
+             * Client: socket() -> connect()
+             */
             int32_t socketInit();
+            /**
+             * Release all the socket resources,
+             * make it the same status as before "socketInit()" was called.
+             */
+            int32_t socketRelease();
+            /**
+             * Read bytes from socket.
+             */
+            inline int32_t socketRead(SocketBuffer *buffer, int32_t length) {
+                return recv(this->socketFd, buffer->getBuffer(), length, 0);
+            };
+            /**
+             * Write bytes into socket.
+             */
+            inline int32_t socketWrite(SocketBuffer *buffer) {
+                return send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
+            };
         protected:
             // Inputed
             std::string        socketHost;
