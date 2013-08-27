@@ -1,6 +1,7 @@
 #ifndef XCF_UTILITY_H_
 #define XCF_UTILITY_H_
 
+#include <cstring>
 #include <iostream>
 
 namespace XCF {
@@ -31,6 +32,12 @@ namespace XCF {
              * Format a string according to the "format".
              */
             static std::string stringFormat(const std::string format, ...);
+            /**
+             * Append "appendPart" to the end of "appendBase".
+             */
+            static inline void appendCharArray(char *appendBase, char *appendPart, int32_t length) {
+                strncat(appendBase, appendPart, length);
+            };
     };
 
 } /* namespace XCF */
