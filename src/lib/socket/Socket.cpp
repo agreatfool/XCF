@@ -16,7 +16,7 @@ namespace XCF {
         ):
         socketHost(""), socketPort(0),
         socketProtocolType(protocol), socketEndType(SocketEndType::CLIENT),
-        socketStatus(SocketStatus::OPENED),
+        socketStatus(SocketStatus::CONNECTED),
         logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr) {}
 
     Socket::~Socket() {
