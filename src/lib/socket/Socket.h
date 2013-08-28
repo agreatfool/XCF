@@ -74,15 +74,47 @@ namespace XCF {
             int32_t socketRelease();
             /**
              * Read bytes from socket.
+             * With "SocketBuffer *buffer".
              */
-            inline int32_t socketRead(SocketBuffer *buffer, int32_t length) {
-                return recv(this->socketFd, buffer->getBuffer(), length, 0);
+            inline int32_t read(char *buffer, int32_t length) {
+                int32_t received = recv(this->socketFd, buffer, length, 0);
+                if (received < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+                }
+                return received;
+            };
+            /**
+             * Read bytes from socket.
+             * With "SocketBuffer *buffer".
+             */
+            inline int32_t read(SocketBuffer *buffer, int32_t length) {
+                int32_t received = recv(this->socketFd, buffer->getBuffer(), length, 0);
+                if (received < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+                }
+                return received;
             };
             /**
              * Write bytes into socket.
+             * With raw "char* buffer".
              */
-            inline int32_t socketWrite(SocketBuffer *buffer) {
-                return send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
+            inline int32_t write(char *buffer) {
+                int32_t transmitted = send(this->socketFd, buffer, strlen(buffer), 0);
+                if (transmitted < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+                }
+                return transmitted;
+            };
+            /**
+             * Write bytes into socket.
+             * With "SocketBuffer *buffer".
+             */
+            inline int32_t write(SocketBuffer *buffer) {
+                int32_t transmitted = send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
+                if (transmitted < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+                }
+                return transmitted;
             };
         protected:
             // Inputed
