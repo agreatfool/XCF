@@ -5,6 +5,8 @@
 #include <deque>
 #include <syslog.h>
 
+#include "../utility/Time.h"
+
 namespace XCF {
 
     namespace LogType {
