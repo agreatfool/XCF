@@ -2,6 +2,9 @@
 
 namespace XCF {
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* Socket
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Socket::Socket(
             std::string host, uint16_t port,
             uint16_t protocol, uint16_t endType
@@ -85,6 +88,22 @@ namespace XCF {
         bzero(&this->socketAddr, sizeof(this->socketAddr));
 
         return VALID_RESULT;
+    }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* SocketBuffer
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    SocketBuffer::SocketBuffer():
+        buffer(new char[SOCK_BUFFER_LENGTH]()) {}
+
+    SocketBuffer::SocketBuffer(char buff[]):
+        buffer(new char[SOCK_BUFFER_LENGTH]())
+    {
+        this->copyBuffer(buff);
+    }
+
+    SocketBuffer::~SocketBuffer() {
+        delete []this->buffer;
     }
 
 } /* namespace XCF */
