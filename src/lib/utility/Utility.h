@@ -38,6 +38,16 @@ namespace XCF {
             static inline void appendCharArray(char *appendBase, char *appendPart, int32_t length) {
                 strncat(appendBase, appendPart, length);
             };
+            /**
+             * Check whether the "*ptr" is NULL pointer or not.
+             */
+            static inline bool isNullPtr(void *ptr) {
+                if (NULL == ptr) {
+                    return true;
+                } else {
+                    return false;
+                }
+            };
     };
 
 } /* namespace XCF */
