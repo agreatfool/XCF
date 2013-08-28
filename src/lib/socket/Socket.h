@@ -29,10 +29,10 @@ namespace XCF {
 
     namespace SocketStatus {
         enum SocketStatus {
+            ERROR,      // socket error
             CLOSED,     // socket closed, init status
             OPENED,     // socket opened, address built
-            CONNECTED,  // socket connected, listen finished | connect finished
-            ERROR       // socket error
+            CONNECTED   // socket connected, listen finished | connect finished
         };
     }
 
