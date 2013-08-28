@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #include <ev.h>
 
@@ -128,6 +130,39 @@ namespace XCF {
             Log                *logger;
             int32_t            socketFd;
             struct sockaddr_in socketAddr;
+            /**
+             * Set socket to non-block.
+             */
+            inline int32_t setNonBlock() {
+                int32_t flags = fcntl(this->socketFd, F_GETFL);
+                int32_t setResult = fcntl(this->socketFd, F_SETFL, flags | O_NONBLOCK);
+                if (setResult < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] setNonBlock failed: [%d] %s", errno, strerror(errno)));
+                }
+                return setResult;
+            };
+            /**
+             * Set socket to keep-alive.
+             */
+            inline int32_t setKeepAlive() {
+                int32_t flags = 1;
+                int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_KEEPALIVE, &flags, sizeof(int32_t));
+                if (setResult < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] setKeepAlive failed: [%d] %s", errno, strerror(errno)));
+                }
+                return setResult;
+            };
+            /**
+             * Set socket to reuse address.
+             */
+            inline int32_t setReuseAddr() {
+                int32_t flags = 1;
+                int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(int32_t));
+                if (setResult < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] setReuseAddr failed: [%d] %s", errno, strerror(errno)));
+                }
+                return setResult;
+            };
     };
 
 } /* namespace XCF */

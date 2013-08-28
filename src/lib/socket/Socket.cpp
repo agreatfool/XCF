@@ -30,8 +30,14 @@ namespace XCF {
             this->socketFd = socket(PF_INET, SOCK_STREAM, 0);
 
             if (this->socketFd < 0) {
-                this->socketFd = INVALID_SOCKET_FD;
-                this->logger->error("[Socket] socketFd initialization failed!");
+                this->socketRelease();
+                this->logger->error(Utility::stringFormat("[Socket] socketFd initialization failed: [%d] %s", errno, strerror(errno)));
+                return INVALID_RESULT;
+            }
+
+            // set socket options
+            if (this->setNonBlock() < 0 || this->setKeepAlive() < 0 || this->setReuseAddr() < 0) {
+                this->socketRelease();
                 return INVALID_RESULT;
             }
 
@@ -46,20 +52,20 @@ namespace XCF {
             if (this->socketEndType == SocketEndType::SERVER) {
                 // server: bind & listen
                 if (bind(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
-                    this->socketFd = INVALID_SOCKET_FD;
-                    this->logger->error("[Socket] socket binding failed!");
+                    this->socketRelease();
+                    this->logger->error(Utility::stringFormat("[Socket] socket binding failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
                 if (listen(this->socketFd, SOCK_LISTEN_BACKLOG) < 0) {
-                    this->socketFd = INVALID_SOCKET_FD;
-                    this->logger->error("[Socket] listen failed!");
+                    this->socketRelease();
+                    this->logger->error(Utility::stringFormat("[Socket] socket listen failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
             } else if (this->socketEndType == SocketEndType::CLIENT) {
                 // client: connect
                 if (connect(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
-                    this->socketFd = INVALID_SOCKET_FD;
-                    this->logger->error("[Socket] connect failed!");
+                    this->socketRelease();
+                    this->logger->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
             }
