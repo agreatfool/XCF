@@ -10,7 +10,6 @@
 #include <ev.h>
 
 #include "../../Declare.h"
-#include "SocketBuffer.h"
 #include "../log/Log.h"
 
 namespace XCF {
@@ -37,6 +36,28 @@ namespace XCF {
             CONNECTED   // socket connected, listen finished | connect finished
         };
     }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* SocketBuffer
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    class SocketBuffer {
+        public:
+            SocketBuffer();
+            SocketBuffer(char buff[]);
+            virtual ~SocketBuffer();
+            inline char *getBuffer() {
+                return this->buffer;
+            };
+            inline void copyBuffer(char buff[]) {
+                Utility::appendCharArray(this->buffer, buff, SOCK_BUFFER_LENGTH - strlen(this->buffer) - 1);
+            };
+            inline void clearBuffer() {
+                delete []this->buffer;
+                this->buffer = new char[SOCK_BUFFER_LENGTH]();
+            };
+        protected:
+            char *buffer;
+    };
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Socket
@@ -176,28 +197,6 @@ namespace XCF {
                 }
                 return setResult;
             };
-    };
-
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    //-* SocketBuffer
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    class SocketBuffer {
-        public:
-            SocketBuffer();
-            SocketBuffer(char buff[]);
-            virtual ~SocketBuffer();
-            inline char *getBuffer() {
-                return this->buffer;
-            };
-            inline void copyBuffer(char buff[]) {
-                Utility::appendCharArray(this->buffer, buff, SOCK_BUFFER_LENGTH - strlen(this->buffer) - 1);
-            };
-            inline void clearBuffer() {
-                delete []this->buffer;
-                this->buffer = new char[SOCK_BUFFER_LENGTH]();
-            };
-        protected:
-            char *buffer;
     };
 
 } /* namespace XCF */
