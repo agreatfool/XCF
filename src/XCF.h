@@ -6,7 +6,6 @@
 #include "lib/socket/Bootstrap.h"
 #include "lib/socket/Socket.h"
 #include "lib/socket/SocketBuffer.h"
-#include "lib/socket/SocketEvent.h"
 #include "lib/socket/SocketPipline.h"
 
 #include "lib/utility/Time.h"
