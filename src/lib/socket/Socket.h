@@ -118,6 +118,16 @@ namespace XCF {
                 }
                 return transmitted;
             };
+            /**
+             * Set socket write buffer size to "bufferSize".
+             */
+            inline int32_t setWriteBuffSize(int32_t bufferSize) {
+                int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_SNDBUF, (const void *) &bufferSize, sizeof(socklen_t));
+                if (setResult < 0) {
+                    this->logger->error(Utility::stringFormat("[Socket] setWriteBuffSize failed: [%d] %s", errno, strerror(errno)));
+                }
+                return setResult;
+            }
         protected:
             // Inputed
             std::string        socketHost;
