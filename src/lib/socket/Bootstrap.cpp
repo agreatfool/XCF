@@ -86,7 +86,7 @@ namespace XCF {
         }
 
         if (read == 0) {
-            // stop and free watchet if client socket is closing
+            // stop and free watcher if client socket is closing
             ev_io_stop(readLoop, readWatcher);
             delete readWatcher;
 //            this->logger->info("[ServerBootstrap] readCallback: peer might closing!");
