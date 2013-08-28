@@ -32,12 +32,9 @@ namespace XCF {
     }
 
     int32_t ServerBootstrap::start() {
-//        ev_io_init(&this->acceptWatcher, this->acceptCallback, this->serverSocket->getSocketFd(), EV_READ);
         ev_io_init(&this->acceptWatcher, ServerBootstrap::acceptCallback, this->serverSocket->getSocketFd(), EV_READ);
         ev_io_start(this->acceptLoop, &this->acceptWatcher);
-        while (1) {
-            ev_loop(this->acceptLoop, 0);
-        }
+        ev_run(this->acceptLoop, 0);
 
         return VALID_RESULT;
     }
@@ -49,7 +46,6 @@ namespace XCF {
         struct ev_io *clientWatcher = (struct ev_io *) malloc (sizeof(struct ev_io));
 
         if (EV_ERROR & revents) {
-//            this->logger->error("[ServerBootstrap] acceptCallback: got invalid event!");
             std::cout << "[ServerBootstrap] acceptCallback: got invalid event!" << std::endl;
             return;
         }
@@ -58,7 +54,6 @@ namespace XCF {
         clientFd = accept(acceptWatcher->fd, (struct sockaddr *) &clientAddr, &clientLen);
 
         if (clientFd < 0) {
-//            this->logger->error("[ServerBootstrap] acceptCallback: accept error!");
             std::cout << "[ServerBootstrap] acceptCallback: accept error!" << std::endl;
             return;
         }
@@ -69,7 +64,6 @@ namespace XCF {
         std::cout << "[ServerBootstrap] Successfully connected with client." << std::endl;
 
         // Initialize and start watcher to read client requests
-//        ev_io_init(clientWatcher, this->readCallback, clientFd, EV_READ);
         ev_io_init(clientWatcher, ServerBootstrap::readCallback, clientFd, EV_READ);
         ev_io_start(acceptLoop, clientWatcher);
     }
@@ -79,7 +73,6 @@ namespace XCF {
         ssize_t read;
 
         if (EV_ERROR & revents) {
-//            this->logger->error("[ServerBootstrap] readCallback: got invalid event!");
             std::cout << "[ServerBootstrap] readCallback: got invalid event!" << std::endl;
             return;
         }
@@ -88,7 +81,6 @@ namespace XCF {
         read = recv(readWatcher->fd, buffer, SOCK_BUFFER_LENGTH, 0);
 
         if (read < 0) {
-//            this->logger->error("[ServerBootstrap] readCallback: read error!");
             std::cout << "[ServerBootstrap] readCallback: read error!" << std::endl;
             return;
         }
@@ -103,7 +95,6 @@ namespace XCF {
             std::cout << "[ServerBootstrap] readCallback: peer might closing!" << std::endl;
             return;
         } else {
-//            this->logger->info("[ServerBootstrap] readCallback: message: " + buffer);
             std::cout << "[ServerBootstrap] readCallback: message: " << buffer << std::endl;
         }
 
