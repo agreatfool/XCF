@@ -116,12 +116,6 @@ namespace XCF {
                 return new Socket(socketFd, socketAddr, protocol);
             };
             /**
-             * Initialize the socket.
-             * Server: socket() -> bind() -> listen()
-             * Client: socket() -> connect()
-             */
-            int32_t socketInit();
-            /**
              * Release all the socket resources,
              * make it the same status as before "socketInit()" was called.
              */
@@ -192,6 +186,12 @@ namespace XCF {
             Log                *logger;
             int32_t            socketFd;
             struct sockaddr_in socketAddr;
+            /**
+             * Initialize the socket.
+             * Server: socket() -> bind() -> listen()
+             * Client: socket() -> connect()
+             */
+            int32_t socketInit();
             /**
              * Set socket to non-block.
              */
