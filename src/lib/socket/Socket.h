@@ -62,8 +62,7 @@ namespace XCF {
              * Clear "this->buffer".
              */
             inline void clearBuffer() {
-                delete []this->buffer;
-                this->buffer = new char[SOCK_BUFFER_LENGTH]();
+                bzero(this->buffer, SOCK_BUFFER_LENGTH);
             };
         protected:
             char *buffer;
