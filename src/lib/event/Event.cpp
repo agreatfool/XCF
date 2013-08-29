@@ -5,9 +5,9 @@ namespace XCF {
     EventIo::EventIo():
         ioLoop(
 #if defined (__APPLE__)
-            ev_loop_new(EVBACKEND_KQUEUE)
+            ev_loop_new(EVBACKEND_KQUEUE | EVFLAG_NOENV)
 #elif defined (__linux)
-            ev_loop_new(EVBACKEND_EPOLL)
+            ev_loop_new(EVBACKEND_EPOLL | EVFLAG_NOENV)
 #endif
         ), ioWatcherPool(new EventWatcherMap()) {}
 
@@ -15,7 +15,8 @@ namespace XCF {
         this->stopLoop();
         ev_loop_destroy(this->ioLoop);
         delete this->ioWatcherPool;
-//        delete this->ioLoop; // FIXME should we delete the "this->ioLoop" ?
+//        delete this->ioLoop;
+// FIXME should we delete the "this->ioLoop" ?
 /*
 In compiling:
 ../src/lib/event/Event.cpp:27: warning: possible problem detected in invocation of delete operator:
