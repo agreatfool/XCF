@@ -46,12 +46,21 @@ namespace XCF {
             SocketBuffer();
             SocketBuffer(char buff[]);
             virtual ~SocketBuffer();
+            /**
+             * Get "this->buffer".
+             */
             inline char *getBuffer() {
                 return this->buffer;
             };
+            /**
+             * Copy & append char array to the end of "this->buffer".
+             */
             inline void copyBuffer(char buff[]) {
                 Utility::appendCharArray(this->buffer, buff, SOCK_BUFFER_LENGTH - strlen(this->buffer) - 1);
             };
+            /**
+             * Clear "this->buffer".
+             */
             inline void clearBuffer() {
                 delete []this->buffer;
                 this->buffer = new char[SOCK_BUFFER_LENGTH]();
