@@ -9,10 +9,6 @@ namespace XCF {
 
     Log::~Log() {}
 
-    void inline Log::logToConsole(std::string msg) const {
-        std::cout << msg << std::endl;
-    }
-
     void Log::debug(std::string msg) const {
         this->output(LogPriority::Debug, msg);
     }
