@@ -12,16 +12,8 @@ namespace XCF {
         ), ioWatcherPool(new EventWatcherMap()) {}
 
     EventIo::~EventIo() {
-        ev_suspend(this->ioLoop);
-        if (this->ioWatcherPool->size() > 0) {
-            EventWatcherIterator it;
-            for (it = this->ioWatcherPool->begin(); it != this->ioWatcherPool->end(); /* no auto increment*/) {
-                EventWatcher *watcher = it->second;
-                ev_io_stop(this->ioLoop, watcher);
-                this->ioWatcherPool->erase(it++);
-            }
-        }
-        ev_break(this->ioLoop, EVBREAK_ALL);
+        this->suspendLoop();
+        this->stopLoop();
         ev_loop_destroy(this->ioLoop);
         delete this->ioWatcherPool;
 //        delete this->ioLoop; // FIXME should we delete the "this->ioLoop" ?
