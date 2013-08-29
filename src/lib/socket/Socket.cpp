@@ -90,9 +90,11 @@ namespace XCF {
             } else if (this->socketEndType == SocketEndType::CLIENT) {
                 // client: connect
                 if (connect(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
-                    this->socketRelease();
-                    this->logger->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
-                    return INVALID_RESULT;
+                    if (errno != EINPROGRESS) { // non-blocking socket connect, EINPROGRESS would be returned
+                        this->socketRelease();
+                        this->logger->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
+                        return INVALID_RESULT;
+                    }
                 }
             }
 
