@@ -48,6 +48,10 @@ namespace XCF {
         }
 
         Socket *client = Socket::socketAccept(acceptWatcher->fd, SocketProtocol::TCP);
+        if (Utility::isNullPtr(client)) {
+            ServerBootstrap::logger->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
+            return;
+        }
 
         ServerBootstrap::socketPool->addSocket(client);
         ServerBootstrap::eventIo->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
