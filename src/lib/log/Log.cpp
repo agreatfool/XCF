@@ -9,10 +9,6 @@ namespace XCF {
 
     Log::~Log() {}
 
-    void inline Log::logToConsole(std::string msg) const {
-        std::cout << msg << std::endl;
-    }
-
     void Log::debug(std::string msg) const {
         this->output(LogPriority::Debug, msg);
     }
@@ -48,9 +44,10 @@ namespace XCF {
         if (priority <= this->priority) {
             openlog("XCF", LOG_PID, LOG_USER);
 
-            const char* buff = msg.c_str();
+            std::string formatted = Utility::stringFormat("[%s] %s", Time::getTimeString().c_str(), msg.c_str());
+            const char* buff = formatted.c_str();
             syslog(LOG_USER | this->priority, "%s", buff);
-            this->logToConsole(msg);
+            this->logToConsole(formatted);
 
             closelog();
         }

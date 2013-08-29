@@ -5,6 +5,8 @@
 #include <deque>
 #include <syslog.h>
 
+#include "../utility/Time.h"
+
 namespace XCF {
 
     namespace LogType {
@@ -36,7 +38,9 @@ namespace XCF {
         protected:
             uint16_t priority;
             virtual void output(uint16_t priority, std::string msg) const = 0;
-            void inline logToConsole(std::string msg) const;
+            void inline logToConsole(std::string msg) const {
+                std::cout << msg << std::endl;
+            };
     };
 
     class SysLog: public Log {

@@ -1,6 +1,7 @@
 #ifndef XCF_UTILITY_H_
 #define XCF_UTILITY_H_
 
+#include <cstring>
 #include <iostream>
 
 namespace XCF {
@@ -26,6 +27,26 @@ namespace XCF {
                 char *buff = new char[str.length() + 1];
                 strcpy(buff, str.c_str());
                 return buff;
+            };
+            /**
+             * Format a string according to the "format".
+             */
+            static std::string stringFormat(const std::string format, ...);
+            /**
+             * Append "appendPart" to the end of "appendBase".
+             */
+            static inline void appendCharArray(char *appendBase, char *appendPart, int32_t length) {
+                strncat(appendBase, appendPart, length);
+            };
+            /**
+             * Check whether the "*ptr" is NULL pointer or not.
+             */
+            static inline bool isNullPtr(void *ptr) {
+                if (NULL == ptr) {
+                    return true;
+                } else {
+                    return false;
+                }
             };
     };
 
