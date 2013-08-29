@@ -12,7 +12,6 @@ namespace XCF {
         ), ioWatcherPool(new EventWatcherMap()) {}
 
     EventIo::~EventIo() {
-        this->suspendLoop();
         this->stopLoop();
         ev_loop_destroy(this->ioLoop);
         delete this->ioWatcherPool;
@@ -26,6 +25,7 @@ In compiling:
     }
 
     void EventIo::stopLoop() {
+        this->suspendLoop();
         this->clearWatchers();
         ev_break(this->ioLoop, EVBREAK_ALL);
     }

@@ -60,6 +60,12 @@ namespace XCF {
              */
             void clearWatchers();
             /**
+             * Get EventWatcherMap size.
+             */
+            inline int32_t getWatchersCount() {
+                return this->ioWatcherPool->size();
+            };
+            /**
              * Find the EventWatcher in the EventWatcherMap.
              * EventWatcherIterator returned.
              */
