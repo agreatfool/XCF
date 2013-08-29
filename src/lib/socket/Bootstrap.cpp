@@ -82,8 +82,9 @@ namespace XCF {
         }
 
         if (received == 0) {
-            // stop and free watcher if client socket is closing
+            // stop and free socket | watcher if client socket closed
             ServerBootstrap::eventIo->removeWatcher(socketFd);
+            ServerBootstrap::socketPool->removeSocket(socketFd);
             ServerBootstrap::logger->info("[ServerBootstrap] readCallback: client closed!");
             return;
         } else {
