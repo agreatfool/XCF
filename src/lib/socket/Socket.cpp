@@ -28,7 +28,10 @@ namespace XCF {
         socketHost(host), socketPort(port),
         socketProtocolType(protocol), socketEndType(endType),
         socketStatus(SocketStatus::CLOSED),
-        logger(LogFactory::get()), socketFd(INIT_SOCKET_FD) {}
+        logger(LogFactory::get()), socketFd(INIT_SOCKET_FD)
+    {
+        this->socketInit();
+    }
 
     Socket::Socket(
             int32_t socketFd, struct sockaddr_in socketAddr, uint16_t protocol
