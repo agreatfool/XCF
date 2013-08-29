@@ -36,7 +36,11 @@ namespace XCF {
         socketHost(""), socketPort(0),
         socketProtocolType(protocol), socketEndType(SocketEndType::CLIENT),
         socketStatus(SocketStatus::CONNECTED),
-        logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr) {}
+        logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr)
+    {
+        this->socketHost = inet_ntoa(socketAddr.sin_addr);
+        this->socketPort = ntohs(socketAddr.sin_port);
+    }
 
     Socket::~Socket() {
         this->socketRelease();
