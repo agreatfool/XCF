@@ -15,9 +15,10 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* ServerBootstrap
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    EventIo *ServerBootstrap::eventIo = new EventIo();
+
     ServerBootstrap::ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port):
-        Bootstrap(protocolType),
-        clientCount(0), serverSocket(NULL), acceptLoop(ev_default_loop(0))
+        Bootstrap(protocolType), serverSocket(NULL)
     {
         this->serverSocket = new Socket(host, port, this->socketProtocolType, SocketEndType::SERVER);
         if (this->serverSocket->socketInit() < 0) {
@@ -28,44 +29,29 @@ namespace XCF {
     }
 
     ServerBootstrap::~ServerBootstrap() {
+        ServerBootstrap::eventIo->suspendLoop();
+        ServerBootstrap::eventIo->stopLoop();
         delete serverSocket;
     }
 
     int32_t ServerBootstrap::start() {
-        ev_io_init(&this->acceptWatcher, ServerBootstrap::acceptCallback, this->serverSocket->getSocketFd(), EV_READ);
-        ev_io_start(this->acceptLoop, &this->acceptWatcher);
-        ev_run(this->acceptLoop, 0);
+        ServerBootstrap::eventIo->addWatcher(this->serverSocket->getSocketFd(), ServerBootstrap::acceptCallback);
+        ServerBootstrap::eventIo->startLoop();
 
         return VALID_RESULT;
     }
 
     void ServerBootstrap::acceptCallback(struct ev_loop *acceptLoop, struct ev_io *acceptWatcher, int revents) {
-        struct sockaddr_in clientAddr;
-        socklen_t clientLen = sizeof(clientAddr);
-        int32_t clientFd;
-        struct ev_io *clientWatcher = (struct ev_io *) malloc (sizeof(struct ev_io));
-
         if (EV_ERROR & revents) {
             std::cout << "[ServerBootstrap] acceptCallback: got invalid event!" << std::endl;
             return;
         }
 
-        // accept client request
-        clientFd = accept(acceptWatcher->fd, (struct sockaddr *) &clientAddr, &clientLen);
+        Socket *client = Socket::socketAccept(acceptWatcher->fd, SocketProtocol::TCP);
 
-        if (clientFd < 0) {
-            std::cout << "[ServerBootstrap] acceptCallback: accept error!" << std::endl;
-            return;
-        }
-
-//        this->clientCount++; // Increment total clients count
-//        this->logger->info("[ServerBootstrap] Successfully connected with client.");
-//        this->logger->info("[ServerBootstrap] " + this->clientCount + " client(s) connected.");
         std::cout << "[ServerBootstrap] Successfully connected with client." << std::endl;
 
-        // Initialize and start watcher to read client requests
-        ev_io_init(clientWatcher, ServerBootstrap::readCallback, clientFd, EV_READ);
-        ev_io_start(acceptLoop, clientWatcher);
+        ServerBootstrap::eventIo->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
     }
 
     void ServerBootstrap::readCallback(struct ev_loop *readLoop, struct ev_io *readWatcher, int revents) {

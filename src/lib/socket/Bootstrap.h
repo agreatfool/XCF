@@ -4,6 +4,7 @@
 #include "../../Declare.h"
 #include "Socket.h"
 #include "../log/Log.h"
+#include "../event/Event.h"
 
 namespace XCF {
 
@@ -21,14 +22,12 @@ namespace XCF {
         public:
             ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
             virtual ~ServerBootstrap();
+            static EventIo *eventIo;
             int32_t start();
             static void acceptCallback(struct ev_loop *acceptLoop, struct ev_io *acceptWatcher, int revents);
             static void readCallback(struct ev_loop *readLoop, struct ev_io *readWatcher, int revents);
         protected:
-            uint32_t       clientCount;
             Socket         *serverSocket;
-            struct ev_loop *acceptLoop;
-            struct ev_io   acceptWatcher;
     };
 
     class ClientBootstrap: public Bootstrap {
