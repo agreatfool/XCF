@@ -51,7 +51,6 @@ In compiling:
         if (it != this->ioWatcherPool->end()) {
             // found the watcher in the pool
             ev_io_stop(this->ioLoop, it->second);
-            delete it->second;
             this->ioWatcherPool->erase(it);
         }
     }
@@ -62,7 +61,6 @@ In compiling:
             for (it = this->ioWatcherPool->begin(); it != this->ioWatcherPool->end(); /* no auto increment*/) {
                 EventWatcher *watcher = it->second;
                 ev_io_stop(this->ioLoop, watcher);
-                delete it->second;
                 this->ioWatcherPool->erase(it++);
             }
             this->ioWatcherPool->clear();
