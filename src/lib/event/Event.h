@@ -18,6 +18,30 @@ namespace XCF {
             EventIo();
             virtual ~EventIo();
             /**
+             * Start the event loop.
+             */
+            inline int32_t startLoop() {
+                return ev_run(this->ioLoop, 0);
+            };
+            /**
+             * Stop all the event loop.
+             * If any active watchers in the event loop,
+             * they would all be terminated.
+             */
+            void stopLoop();
+            /**
+             * Suspend the event loop.
+             */
+            inline void suspendLoop() {
+                ev_suspend(this->ioLoop);
+            };
+            /**
+             * Resume the event loop.
+             */
+            inline void resumeLoop() {
+                ev_resume(this->ioLoop);
+            };
+            /**
              * malloc & ev_io_init & ev_io_start a EventWatcher.
              * And add it into the EventWatcherMap.
              */

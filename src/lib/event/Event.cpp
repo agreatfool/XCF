@@ -33,6 +33,11 @@ In compiling:
 */
     }
 
+    void EventIo::stopLoop() {
+        this->clearWatchers();
+        ev_break(this->ioLoop, EVBREAK_ALL);
+    }
+
     void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int revents)) {
         EventWatcher *watcher = (EventWatcher *) malloc(sizeof(EventWatcher));
         ev_io_init(watcher, callback, socketFd, EV_READ);
@@ -55,6 +60,19 @@ In compiling:
             // found the watcher in the pool
             ev_io_stop(this->ioLoop, it->second);
             this->ioWatcherPool->erase(it);
+        }
+    }
+
+    void EventIo::clearWatchers() {
+        if (this->ioWatcherPool->size() > 0) {
+            EventWatcherIterator it;
+            for (it = this->ioWatcherPool->begin(); it != this->ioWatcherPool->end(); /* no auto increment*/) {
+                EventWatcher *watcher = it->second;
+                ev_io_stop(this->ioLoop, watcher);
+                delete it->second;
+                this->ioWatcherPool->erase(it++);
+            }
+            this->ioWatcherPool->clear();
         }
     }
 
