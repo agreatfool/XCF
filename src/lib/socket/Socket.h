@@ -11,6 +11,7 @@
 
 #include "../../Declare.h"
 #include "../log/Log.h"
+#include "../event/Event.h"
 
 namespace XCF {
 
@@ -86,6 +87,24 @@ namespace XCF {
              */
             inline uint16_t getSocketStatus() const {
                 return this->socketStatus;
+            };
+            /**
+             * Accept socket from "acceptFromFd".
+             * If failed, NULL pointer returned.
+             */
+            static inline Socket *socketAccept(int32_t acceptFromFd, uint16_t protocol) {
+                struct sockaddr_in socketAddr;
+                socklen_t socketLen = sizeof(socketAddr);
+                int32_t socketFd = accept(acceptFromFd, (struct sockaddr *) &socketAddr, &socketLen);
+
+                if (socketFd < 0) {
+                    Log* logger = LogFactory::get();
+                    logger->error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
+                    delete logger;
+                    return NULL;
+                }
+
+                return new Socket(socketFd, socketAddr, protocol);
             };
             /**
              * Initialize the socket.
