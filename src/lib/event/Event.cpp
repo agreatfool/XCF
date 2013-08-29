@@ -31,9 +31,13 @@ In compiling:
         ev_break(this->ioLoop, EVBREAK_ALL);
     }
 
-    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int revents)) {
+    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents)) {
+        this->addWatcher(socketFd, callback, EV_READ);
+    }
+
+    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents), int32_t flags) {
         EventWatcher *watcher = (EventWatcher *) malloc(sizeof(EventWatcher));
-        ev_io_init(watcher, callback, socketFd, EV_READ);
+        ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->ioLoop, watcher);
         this->ioWatcherPool->insert(EventWatcherMap::value_type(socketFd, watcher));
     }

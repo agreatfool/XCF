@@ -45,7 +45,8 @@ namespace XCF {
              * malloc & ev_io_init & ev_io_start a EventWatcher.
              * And add it into the EventWatcherMap.
              */
-            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int revents));
+            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents));
+            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents), int32_t flags);
             /**
              * Get EventWatcher from the EventWatcherMap.
              * If specified EventWatcher not found, NULL pointer returned.
