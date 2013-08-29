@@ -51,6 +51,7 @@ In compiling:
         if (it != this->ioWatcherPool->end()) {
             // found the watcher in the pool
             ev_io_stop(this->ioLoop, it->second);
+            delete it->second;
             this->ioWatcherPool->erase(it);
         }
     }

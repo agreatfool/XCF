@@ -56,6 +56,10 @@ namespace XCF {
              */
             void removeWatcher(int32_t socketFd);
             /**
+             * Remove all the EventWatcher in the EventWatcherMap.
+             */
+            void clearWatchers();
+            /**
              * Find the EventWatcher in the EventWatcherMap.
              * EventWatcherIterator returned.
              */
