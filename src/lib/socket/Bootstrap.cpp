@@ -41,7 +41,7 @@ namespace XCF {
         return VALID_RESULT;
     }
 
-    void ServerBootstrap::acceptCallback(EventLoop *acceptLoop, EventWatcher *acceptWatcher, int revents) {
+    void ServerBootstrap::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents) {
         if (EV_ERROR & revents) {
             ServerBootstrap::logger->error("[ServerBootstrap] acceptCallback: got invalid event!");
             return;
@@ -64,7 +64,7 @@ namespace XCF {
         );
     }
 
-    void ServerBootstrap::readCallback(EventLoop *readLoop, EventWatcher *readWatcher, int revents) {
+    void ServerBootstrap::readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents) {
         if (EV_ERROR & revents) {
             ServerBootstrap::logger->error("[ServerBootstrap] readCallback: got invalid event!");
             return;

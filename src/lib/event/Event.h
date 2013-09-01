@@ -8,15 +8,15 @@
 namespace XCF {
 
     typedef struct ev_loop EventLoop;
-    typedef struct ev_io   EventWatcher;
+    typedef struct ev_io   EventIoWatcher;
 
-    typedef std::map<int32_t, EventWatcher *>           EventWatcherMap;
-    typedef std::map<int32_t, EventWatcher *>::iterator EventWatcherIterator;
+    typedef std::map<int32_t, EventIoWatcher *>           EventIoWatcherMap;
+    typedef std::map<int32_t, EventIoWatcher *>::iterator EventIoWatcherIterator;
 
-    class EventIo {
+    class Event {
         public:
-            EventIo();
-            virtual ~EventIo();
+            Event();
+            virtual ~Event();
             /**
              * Start the event loop.
              */
@@ -42,16 +42,28 @@ namespace XCF {
                 ev_resume(this->ioLoop);
             };
             /**
+             * Remove all the EventWatcher in the EventWatcherMap.
+             */
+            virtual void clearWatchers() = 0;
+        protected:
+            EventLoop *ioLoop;
+    };
+
+    class EventIo: public Event {
+        public:
+            EventIo();
+            virtual ~EventIo();
+            /**
              * malloc & ev_io_init & ev_io_start a EventWatcher.
              * And add it into the EventWatcherMap.
              */
-            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents));
-            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents), int32_t flags);
+            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents));
+            void addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents), int32_t flags);
             /**
              * Get EventWatcher from the EventWatcherMap.
              * If specified EventWatcher not found, NULL pointer returned.
              */
-            EventWatcher *getWatcher(int32_t socketFd);
+            EventIoWatcher *getWatcher(int32_t socketFd);
             /**
              * Remove the EventWatcher, if it exists in the EventWatcherMap.
              */
@@ -70,12 +82,11 @@ namespace XCF {
              * Find the EventWatcher in the EventWatcherMap.
              * EventWatcherIterator returned.
              */
-            inline EventWatcherIterator findWatcher(int32_t socketFd) {
+            inline EventIoWatcherIterator findWatcher(int32_t socketFd) {
                 return this->ioWatcherPool->find(socketFd);
             };
         protected:
-            EventLoop       *ioLoop;
-            EventWatcherMap *ioWatcherPool;
+            EventIoWatcherMap *ioWatcherPool;
     };
 
 } /* namespace XCF */

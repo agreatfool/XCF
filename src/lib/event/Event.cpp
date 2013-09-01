@@ -2,18 +2,35 @@
 
 namespace XCF {
 
-    EventIo::EventIo():
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Event
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    Event::Event():
         ioLoop(
 #if defined (__APPLE__)
             ev_loop_new(EVBACKEND_KQUEUE | EVFLAG_NOENV)
 #elif defined (__linux)
             ev_loop_new(EVBACKEND_EPOLL | EVFLAG_NOENV)
 #endif
-        ), ioWatcherPool(new EventWatcherMap()) {}
+        ) {};
 
-    EventIo::~EventIo() {
+    Event::~Event() {
         this->stopLoop();
         ev_loop_destroy(this->ioLoop);
+    };
+
+    void Event::stopLoop() {
+        this->suspendLoop();
+        this->clearWatchers();
+        ev_break(this->ioLoop, EVBREAK_ALL);
+    }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- EventIo
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    EventIo::EventIo(): Event(), ioWatcherPool(new EventIoWatcherMap()) {}
+
+    EventIo::~EventIo() {
         delete this->ioWatcherPool;
 //        delete this->ioLoop;
 // FIXME should we delete the "this->ioLoop" ?
@@ -25,25 +42,19 @@ In compiling:
 */
     }
 
-    void EventIo::stopLoop() {
-        this->suspendLoop();
-        this->clearWatchers();
-        ev_break(this->ioLoop, EVBREAK_ALL);
-    }
-
-    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents)) {
+    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents)) {
         this->addWatcher(socketFd, callback, EV_READ);
     }
 
-    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventWatcher *watcher, int32_t revents), int32_t flags) {
-        EventWatcher *watcher = (EventWatcher *) malloc(sizeof(EventWatcher));
+    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents), int32_t flags) {
+        EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->ioLoop, watcher);
-        this->ioWatcherPool->insert(EventWatcherMap::value_type(socketFd, watcher));
+        this->ioWatcherPool->insert(EventIoWatcherMap::value_type(socketFd, watcher));
     }
 
-    EventWatcher *EventIo::getWatcher(int32_t socketFd) {
-        EventWatcherIterator it = this->findWatcher(socketFd);
+    EventIoWatcher *EventIo::getWatcher(int32_t socketFd) {
+        EventIoWatcherIterator it = this->findWatcher(socketFd);
         if (it != this->ioWatcherPool->end()) {
             return it->second;
         } else {
@@ -52,7 +63,7 @@ In compiling:
     }
 
     void EventIo::removeWatcher(int32_t socketFd) {
-        EventWatcherIterator it = this->findWatcher(socketFd);
+        EventIoWatcherIterator it = this->findWatcher(socketFd);
         if (it != this->ioWatcherPool->end()) {
             // found the watcher in the pool
             ev_io_stop(this->ioLoop, it->second);
@@ -62,9 +73,9 @@ In compiling:
 
     void EventIo::clearWatchers() {
         if (this->ioWatcherPool->size() > 0) {
-            EventWatcherIterator it;
+            EventIoWatcherIterator it;
             for (it = this->ioWatcherPool->begin(); it != this->ioWatcherPool->end(); /* no auto increment*/) {
-                EventWatcher *watcher = it->second;
+                EventIoWatcher *watcher = it->second;
                 ev_io_stop(this->ioLoop, watcher);
                 this->ioWatcherPool->erase(it++);
             }

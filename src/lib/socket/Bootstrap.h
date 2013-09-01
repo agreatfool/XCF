@@ -27,8 +27,8 @@ namespace XCF {
             static EventIo    *eventIo;
             static SocketPool *socketPool;
             int32_t start();
-            static void acceptCallback(EventLoop *acceptLoop, EventWatcher *acceptWatcher, int revents);
-            static void readCallback(EventLoop *readLoop, EventWatcher *readWatcher, int revents);
+            static void acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents);
+            static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
         protected:
             Socket *serverSocket;
     };
