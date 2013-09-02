@@ -13,6 +13,7 @@ namespace XCF {
             Bootstrap(uint16_t protocolType);
             virtual ~Bootstrap();
             virtual int32_t start() = 0;
+            virtual int32_t stop() = 0;
             static inline EventIo *getEventIo() {
                 return Bootstrap::eventIo;
             };
@@ -34,6 +35,7 @@ namespace XCF {
             ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
             virtual ~ServerBootstrap();
             int32_t start();
+            int32_t stop();
             static void acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents);
             static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
         protected:
@@ -45,6 +47,7 @@ namespace XCF {
             ClientBootstrap(uint16_t protocolType);
             virtual ~ClientBootstrap();
             int32_t start();
+            int32_t stop();
         protected:
     };
 

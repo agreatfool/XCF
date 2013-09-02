@@ -29,14 +29,19 @@ namespace XCF {
     }
 
     ServerBootstrap::~ServerBootstrap() {
-        ServerBootstrap::getEventIo()->stopLoop();
-        ServerBootstrap::getSocketPool()->clearSockets();
+        this->stop();
         delete serverSocket;
     }
 
     int32_t ServerBootstrap::start() {
         ServerBootstrap::getEventIo()->addWatcher(this->serverSocket->getSocketFd(), ServerBootstrap::acceptCallback);
         ServerBootstrap::getEventIo()->startLoop();
+        return VALID_RESULT;
+    }
+
+    int32_t ServerBootstrap::stop() {
+        ServerBootstrap::getEventIo()->stopLoop();
+        ServerBootstrap::getSocketPool()->clearSockets();
         return VALID_RESULT;
     }
 
@@ -108,12 +113,17 @@ namespace XCF {
         Bootstrap(protocolType) {}
 
     ClientBootstrap::~ClientBootstrap() {
-        ClientBootstrap::getEventIo()->stopLoop();
-        ClientBootstrap::getSocketPool()->clearSockets();
+        this->stop();
     }
 
     int32_t ClientBootstrap::start() {
         ServerBootstrap::getEventIo()->startLoop();
+        return VALID_RESULT;
+    }
+
+    int32_t ClientBootstrap::stop() {
+        ClientBootstrap::getEventIo()->stopLoop();
+        ClientBootstrap::getSocketPool()->clearSockets();
         return VALID_RESULT;
     }
 
