@@ -60,8 +60,24 @@ namespace XCF {
     class LogFactory {
         public:
             virtual ~LogFactory();
-            static Log* get();
-            static Log* get(uint16_t logType);
+            static inline Log* get() {
+                return LogFactory::get(LogType::SysLog);
+            };
+            static inline Log* get(uint16_t logType) {
+                Log* instance = NULL;
+                switch (logType) {
+                    case LogType::SysLog:
+                        instance = new SysLog();
+                        break;
+                    case LogType::FileLog:
+                        instance = new FileLog();
+                        break;
+                    default:
+                        instance = new SysLog();
+                        break;
+                }
+                return instance;
+            };
         private:
             LogFactory();
             // Stop the compiler generating methods of copy the object

@@ -69,26 +69,4 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     LogFactory::~LogFactory() {}
 
-    Log* LogFactory::get() {
-        return LogFactory::get(LogType::SysLog);
-    }
-
-    Log* LogFactory::get(uint16_t logType) {
-        Log* instance = NULL;
-
-        switch (logType) {
-            case LogType::SysLog:
-                instance = new SysLog();
-                break;
-            case LogType::FileLog:
-                instance = new FileLog();
-                break;
-            default:
-                instance = new SysLog();
-                break;
-        }
-
-        return instance;
-    }
-
 } /* namespace XCF */
