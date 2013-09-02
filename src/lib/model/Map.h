@@ -8,12 +8,20 @@ namespace XCF {
     template <typename KEY_TYPE, typename VALUE_TYPE>
     class Map {
         protected:
-            typedef typename std::map<KEY_TYPE, VALUE_TYPE *>           SpecificMap;
-            typedef typename std::map<KEY_TYPE, VALUE_TYPE *>::iterator SpecificMapIterator;
+            typedef typename std::map<KEY_TYPE, VALUE_TYPE *>             SpecificMap;
+            typedef typename std::map<KEY_TYPE, VALUE_TYPE *>::iterator   SpecificMapIterator;
+            typedef typename std::map<KEY_TYPE, VALUE_TYPE *>::value_type SpecificValueType;
+            typedef typename std::pair<SpecificMapIterator, bool>         SpecificPair;
             SpecificMap *map;
         public:
             Map(): map(new SpecificMap()) {};
             virtual ~Map() {};
+            /**
+             * Get the std::map itself.
+             */
+            inline SpecificMap *getMap() {
+                return this->map;
+            };
             /**
              * Get element from map.
              */
@@ -29,7 +37,7 @@ namespace XCF {
              * Add element into map.
              */
             inline bool add(KEY_TYPE key, VALUE_TYPE *value) {
-                std::pair<SpecificMapIterator, bool> ret = this->map->insert(SpecificMap::value_type(key, value));
+                SpecificPair ret = this->map->insert(SpecificValueType(key, value));
                 return ret.second;
             };
             /**
