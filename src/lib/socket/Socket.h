@@ -12,6 +12,7 @@
 #include "../../Declare.h"
 #include "../log/Log.h"
 #include "../event/Event.h"
+#include "../model/Map.h"
 
 namespace XCF {
 
@@ -229,7 +230,6 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* SocketPool
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    typedef std::map<int32_t, Socket *>           SocketPoolMap;
     typedef std::map<int32_t, Socket *>::iterator SocketPoolIterator;
 
     class SocketPool {
@@ -239,25 +239,33 @@ namespace XCF {
             /**
              * Add socket into SocketPoolMap.
              */
-            void addSocket(Socket *socket);
+            inline bool addSocket(Socket *socket) {
+                return this->socketPool->add(socket->getSocketFd(), socket);
+            };
             /**
              * Remove socket from SocketPoolMap.
              */
-            void removeSocket(int32_t socketFd);
+            inline bool removeSocket(int32_t socketFd) {
+                return this->socketPool->remove(socketFd);
+            };
             /**
              * Find & get socket from SocketPoolMap.
              * If specified Socket not found, NULL pointer returned.
              */
-            Socket *getSocket(int32_t socketFd);
+            inline Socket *getSocket(int32_t socketFd) {
+                return this->socketPool->get(socketFd);
+            };
             /**
              * Remove all the Socket in the SocketPoolMap.
              */
-            void clearSockets();
+            inline void clearSockets() {
+                this->socketPool->clear();
+            };
             /**
              * Get socket pool size.
              */
-            inline int32_t getPoolSize() {
-                return this->socketPool->size();
+            inline uint32_t getPoolSize() {
+                return this->socketPool->count();
             };
             /**
              * Find the Socket in the SocketPoolMap.
@@ -267,7 +275,7 @@ namespace XCF {
                 return this->socketPool->find(socketFd);
             };
         protected:
-            SocketPoolMap *socketPool;
+            Map<int32_t, Socket> *socketPool;
     };
 
 } /* namespace XCF */

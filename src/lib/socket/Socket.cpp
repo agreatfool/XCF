@@ -125,37 +125,4 @@ namespace XCF {
         delete this->socketPool;
     }
 
-    void SocketPool::addSocket(Socket *socket) {
-        this->socketPool->insert(SocketPoolMap::value_type(socket->getSocketFd(), socket));
-    }
-
-    void SocketPool::removeSocket(int32_t socketFd) {
-        SocketPoolIterator it = this->findSocket(socketFd);
-        if (it != this->socketPool->end()) {
-            // found the socket in the pool
-            delete it->second;
-            this->socketPool->erase(it);
-        }
-    }
-
-    Socket *SocketPool::getSocket(int32_t socketFd) {
-        SocketPoolIterator it = this->findSocket(socketFd);
-        if (it != this->socketPool->end()) {
-            return it->second;
-        } else {
-            return NULL;
-        }
-    }
-
-    void SocketPool::clearSockets() {
-        if (this->socketPool->size() > 0) {
-            SocketPoolIterator it;
-            for (it = this->socketPool->begin(); it != this->socketPool->end(); /* no auto increment*/) {
-                delete it->second;
-                this->socketPool->erase(it++);
-            }
-            this->socketPool->clear();
-        }
-    }
-
 } /* namespace XCF */
