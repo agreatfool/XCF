@@ -13,19 +13,26 @@ namespace XCF {
             Bootstrap(uint16_t protocolType);
             virtual ~Bootstrap();
             virtual int32_t start() = 0;
+            static inline EventIo *getEventIo() {
+                return Bootstrap::eventIo;
+            };
+            static inline SocketPool *getSocketPool() {
+                return Bootstrap::socketPool;
+            };
+            static inline Log *getLogger() {
+                return Bootstrap::logger;
+            };
         protected:
-            uint16_t   socketProtocolType;
-            static Log *logger;
+            uint16_t          socketProtocolType;
+            static EventIo    *eventIo;
+            static SocketPool *socketPool;
+            static Log        *logger;
     };
 
     class ServerBootstrap: public Bootstrap {
         public:
             ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
             virtual ~ServerBootstrap();
-            // FIXME Is it a good idea to expose EventIo & SocketPool to public static ?
-            // Is there any better way to let callback function to visit the eventIo & socketPool ?
-            static EventIo    *eventIo;
-            static SocketPool *socketPool;
             int32_t start();
             static void acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents);
             static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
@@ -38,8 +45,6 @@ namespace XCF {
             ClientBootstrap(uint16_t protocolType);
             virtual ~ClientBootstrap();
             int32_t start();
-            static EventIo    *eventIo;
-            static SocketPool *socketPool;
         protected:
     };
 
