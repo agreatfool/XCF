@@ -17,6 +17,9 @@ namespace XCF {
         public:
             Event();
             virtual ~Event();
+            inline EventLoop getEventLoop() {
+                return this->ioLoop;
+            };
             /**
              * Start the event loop.
              */
