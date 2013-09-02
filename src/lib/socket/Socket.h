@@ -230,6 +230,7 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* SocketPool
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    typedef Map<int32_t, Socket>                  SocketPoolMap;
     typedef std::map<int32_t, Socket *>::iterator SocketPoolIterator;
 
     class SocketPool {
@@ -252,7 +253,7 @@ namespace XCF {
              * Find & get socket from SocketPoolMap.
              * If specified Socket not found, NULL pointer returned.
              */
-            inline Socket *getSocket(int32_t socketFd) {
+            inline Socket *getSocket(int32_t socketFd) const {
                 return this->socketPool->get(socketFd);
             };
             /**
@@ -264,18 +265,18 @@ namespace XCF {
             /**
              * Get socket pool size.
              */
-            inline uint32_t getPoolSize() {
+            inline uint32_t getPoolSize() const {
                 return this->socketPool->count();
             };
             /**
              * Find the Socket in the SocketPoolMap.
              * SocketPoolIterator returned.
              */
-            inline SocketPoolIterator findSocket(int32_t socketFd) {
+            inline SocketPoolIterator findSocket(int32_t socketFd) const {
                 return this->socketPool->find(socketFd);
             };
         protected:
-            Map<int32_t, Socket> *socketPool;
+            SocketPoolMap *socketPool;
     };
 
 } /* namespace XCF */

@@ -42,44 +42,31 @@ In compiling:
 */
     }
 
-    void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents)) {
-        this->addWatcher(socketFd, callback, EV_READ);
-    }
-
     void EventIo::addWatcher(int32_t socketFd, void (*callback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents), int32_t flags) {
         EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->ioLoop, watcher);
-        this->ioWatcherPool->insert(EventIoWatcherMap::value_type(socketFd, watcher));
-    }
-
-    EventIoWatcher *EventIo::getWatcher(int32_t socketFd) {
-        EventIoWatcherIterator it = this->findWatcher(socketFd);
-        if (it != this->ioWatcherPool->end()) {
-            return it->second;
-        } else {
-            return NULL;
-        }
+        this->ioWatcherPool->add(socketFd, watcher);
     }
 
     void EventIo::removeWatcher(int32_t socketFd) {
         EventIoWatcherIterator it = this->findWatcher(socketFd);
-        if (it != this->ioWatcherPool->end()) {
+        if (it != this->ioWatcherPool->getMap()->end()) {
             // found the watcher in the pool
             ev_io_stop(this->ioLoop, it->second);
-            this->ioWatcherPool->erase(it);
+            this->ioWatcherPool->getMap()->erase(it);
         }
     }
 
     void EventIo::clearWatchers() {
-        if (this->ioWatcherPool->size() > 0) {
+        if (this->ioWatcherPool->count() > 0) {
             EventIoWatcherIterator it;
-            for (it = this->ioWatcherPool->begin(); it != this->ioWatcherPool->end(); /* no auto increment*/) {
+            for (it = this->ioWatcherPool->getMap()->begin(); it != this->ioWatcherPool->getMap()->end(); /* no auto increment*/) {
                 EventIoWatcher *watcher = it->second;
                 ev_io_stop(this->ioLoop, watcher);
-                this->ioWatcherPool->erase(it++);
+                this->ioWatcherPool->getMap()->erase(it++);
             }
-            this->ioWatcherPool->clear();
+            this->ioWatcherPool->getMap()->clear();
         }
     }
 
