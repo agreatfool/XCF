@@ -5,24 +5,23 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Bootstrap
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    EventIo *Bootstrap::eventIo = new EventIo();
-    SocketPool *Bootstrap::socketPool = new SocketPool();
-    Log *Bootstrap::logger = LogFactory::get();
-
     Bootstrap::Bootstrap(uint16_t protocolType):
-        socketProtocolType(protocolType) {}
+        socketProtocolType(protocolType),
+        eventIo(new EventIo()), socketPool(new SocketPool()), logger(LogFactory::get()) {}
 
     Bootstrap::~Bootstrap() {}
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* ServerBootstrap
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    ServerBootstrap *ServerBootstrap::instance = NULL;
+
     ServerBootstrap::ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port):
         Bootstrap(protocolType), serverSocket(NULL)
     {
         this->serverSocket = new Socket(host, port, this->socketProtocolType, SocketEndType::SERVER);
         if (this->serverSocket->getSocketStatus() < SocketStatus::CONNECTED) {
-            ServerBootstrap::getLogger()->error("[ServerBootstrap] server socket init failed!");
+            this->logger->error("[ServerBootstrap] server socket init failed!");
             exit(1);
         }
         // TODO design the pipline mode like the netty!
@@ -34,50 +33,50 @@ namespace XCF {
     }
 
     int32_t ServerBootstrap::start() {
-        ServerBootstrap::getEventIo()->addWatcher(this->serverSocket->getSocketFd(), ServerBootstrap::acceptCallback);
-        ServerBootstrap::getEventIo()->startLoop();
+        this->eventIo->addWatcher(this->serverSocket->getSocketFd(), ServerBootstrap::acceptCallback);
+        this->eventIo->startLoop();
         return VALID_RESULT;
     }
 
     int32_t ServerBootstrap::stop() {
-        ServerBootstrap::getEventIo()->stopLoop();
-        ServerBootstrap::getSocketPool()->clearSockets();
+        this->eventIo->stopLoop();
+        this->socketPool->clearSockets();
         return VALID_RESULT;
     }
 
     void ServerBootstrap::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents) {
         if (EV_ERROR & revents) {
-            ServerBootstrap::getLogger()->error("[ServerBootstrap] acceptCallback: got invalid event!");
+            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] acceptCallback: got invalid event!");
             return;
         }
 
         Socket *client = Socket::socketAccept(acceptWatcher->fd, SocketProtocol::TCP);
         if (Utility::isNullPtr(client)) {
-            ServerBootstrap::getLogger()->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
+            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
             return;
         }
 
-        ServerBootstrap::getSocketPool()->addSocket(client);
-        ServerBootstrap::getEventIo()->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
+        ServerBootstrap::get()->getSocketPool()->addSocket(client);
+        ServerBootstrap::get()->getEventIo()->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
 
-        ServerBootstrap::getLogger()->info(
+        ServerBootstrap::get()->getLogger()->info(
             Utility::stringFormat(
                 "[ServerBootstrap] Successfully connected with client. %d connections established!",
-                ServerBootstrap::getSocketPool()->getPoolSize()
+                ServerBootstrap::get()->getSocketPool()->getPoolSize()
             )
         );
     }
 
     void ServerBootstrap::readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents) {
         if (EV_ERROR & revents) {
-            ServerBootstrap::getLogger()->error("[ServerBootstrap] readCallback: got invalid event!");
+            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] readCallback: got invalid event!");
             return;
         }
 
         int32_t socketFd = readWatcher->fd;
-        Socket *socket = ServerBootstrap::getSocketPool()->getSocket(socketFd);
+        Socket *socket = ServerBootstrap::get()->getSocketPool()->getSocket(socketFd);
         if (Utility::isNullPtr(socket)) {
-            ServerBootstrap::getLogger()->error("[ServerBootstrap] readCallback: socket not found!");
+            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] readCallback: socket not found!");
             return;
         }
 
@@ -91,12 +90,12 @@ namespace XCF {
 
         if (received == 0) {
             // stop and free socket | watcher if client socket closed
-            ServerBootstrap::getEventIo()->removeWatcher(socketFd);
-            ServerBootstrap::getSocketPool()->removeSocket(socketFd);
-            ServerBootstrap::getLogger()->info("[ServerBootstrap] readCallback: client closed!");
+            ServerBootstrap::get()->getEventIo()->removeWatcher(socketFd);
+            ServerBootstrap::get()->getSocketPool()->removeSocket(socketFd);
+            ServerBootstrap::get()->getLogger()->info("[ServerBootstrap] readCallback: client closed!");
             return;
         } else {
-            ServerBootstrap::getLogger()->info(
+            ServerBootstrap::get()->getLogger()->info(
                 Utility::stringFormat("[ServerBootstrap] readCallback: message: %s", buffer->getBuffer())
             );
         }
@@ -109,6 +108,8 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* ClientBootstrap
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    ClientBootstrap *ClientBootstrap::instance = NULL;
+
     ClientBootstrap::ClientBootstrap(uint16_t protocolType):
         Bootstrap(protocolType) {}
 
@@ -117,13 +118,13 @@ namespace XCF {
     }
 
     int32_t ClientBootstrap::start() {
-        ServerBootstrap::getEventIo()->startLoop();
+        this->eventIo->startLoop();
         return VALID_RESULT;
     }
 
     int32_t ClientBootstrap::stop() {
-        ClientBootstrap::getEventIo()->stopLoop();
-        ClientBootstrap::getSocketPool()->clearSockets();
+        this->eventIo->stopLoop();
+        this->socketPool->clearSockets();
         return VALID_RESULT;
     }
 

@@ -12,43 +12,69 @@ namespace XCF {
         public:
             Bootstrap(uint16_t protocolType);
             virtual ~Bootstrap();
+            inline EventIo *getEventIo() {
+                return this->eventIo;
+            };
+            inline SocketPool *getSocketPool() {
+                return this->socketPool;
+            };
+            inline Log *getLogger() {
+                return this->logger;
+            };
             virtual int32_t start() = 0;
             virtual int32_t stop() = 0;
-            static inline EventIo *getEventIo() {
-                return Bootstrap::eventIo;
-            };
-            static inline SocketPool *getSocketPool() {
-                return Bootstrap::socketPool;
-            };
-            static inline Log *getLogger() {
-                return Bootstrap::logger;
-            };
         protected:
-            uint16_t          socketProtocolType;
-            static EventIo    *eventIo;
-            static SocketPool *socketPool;
-            static Log        *logger;
+            uint16_t   socketProtocolType;
+            EventIo    *eventIo;
+            SocketPool *socketPool;
+            Log        *logger;
     };
 
     class ServerBootstrap: public Bootstrap {
         public:
-            ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
             virtual ~ServerBootstrap();
+            static inline ServerBootstrap *init(uint16_t protocolType, std::string host, uint16_t port) {
+                if (Utility::isNullPtr(ServerBootstrap::instance)) {
+                    ServerBootstrap::instance = new ServerBootstrap(protocolType, host, port);
+                }
+                return ServerBootstrap::instance;
+            };
+            static inline ServerBootstrap *get() {
+                return ServerBootstrap::instance;
+            };
             int32_t start();
             int32_t stop();
             static void acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents);
             static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
         protected:
+            static ServerBootstrap *instance;
+            ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
+            // Stop the compiler generating methods of copy the object
+            ServerBootstrap(ServerBootstrap const& copy);            // Not Implemented
+            ServerBootstrap& operator=(ServerBootstrap const& copy); // Not Implemented
             Socket *serverSocket;
     };
 
     class ClientBootstrap: public Bootstrap {
         public:
-            ClientBootstrap(uint16_t protocolType);
             virtual ~ClientBootstrap();
+            static inline ClientBootstrap *init(uint16_t protocolType) {
+                if (Utility::isNullPtr(ClientBootstrap::instance)) {
+                    ClientBootstrap::instance = new ClientBootstrap(protocolType);
+                }
+                return ClientBootstrap::instance;
+            };
+            static inline ClientBootstrap *get() {
+                return ClientBootstrap::instance;
+            };
             int32_t start();
             int32_t stop();
         protected:
+            static ClientBootstrap *instance;
+            ClientBootstrap(uint16_t protocolType);
+            // Stop the compiler generating methods of copy the object
+            ClientBootstrap(ClientBootstrap const& copy);            // Not Implemented
+            ClientBootstrap& operator=(ClientBootstrap const& copy); // Not Implemented
     };
 
 } /* namespace XCF */
