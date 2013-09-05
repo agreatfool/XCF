@@ -88,7 +88,7 @@ namespace XCF {
             /**
              * Static log error message.
              */
-            static inline void error(std::string msg) const {
+            static inline void error(std::string msg) {
                 Log *logger = LogFactory::get();
                 logger->error(msg);
                 delete logger;
