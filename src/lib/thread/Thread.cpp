@@ -2,7 +2,7 @@
 
 namespace XCF {
 
-    Thread::Thread(): threadId((pthread_t *) malloc(sizeof(pthread_t))) {
+    Thread::Thread(): threadId(NULL) {
     }
 
     Thread::~Thread() {
