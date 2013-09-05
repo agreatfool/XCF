@@ -85,6 +85,14 @@ namespace XCF {
                 }
                 return instance;
             };
+            /**
+             * Static log error message.
+             */
+            static inline void error(std::string msg) const {
+                Log *logger = LogFactory::get();
+                logger->error(msg);
+                delete logger;
+            };
         private:
             LogFactory();
             // Stop the compiler generating methods of copy the object
