@@ -107,9 +107,7 @@ namespace XCF {
                 int32_t socketFd = accept(acceptFromFd, (struct sockaddr *) &socketAddr, &socketLen);
 
                 if (socketFd < 0) {
-                    Log* logger = LogFactory::get();
-                    logger->error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
-                    delete logger;
+                    LogFactory::error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
                     return NULL;
                 }
 
