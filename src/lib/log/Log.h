@@ -60,9 +60,16 @@ namespace XCF {
     class LogFactory {
         public:
             virtual ~LogFactory();
+            /**
+             * Get syslog instance.
+             */
             static inline Log* get() {
                 return LogFactory::get(LogType::SysLog);
             };
+            /**
+             * Get log instance according to the "logType".
+             * Refer to "LogType".
+             */
             static inline Log* get(uint16_t logType) {
                 Log* instance = NULL;
                 switch (logType) {
