@@ -64,37 +64,37 @@ namespace XCF {
             EventIo();
             virtual ~EventIo();
             /**
-             * malloc & ev_io_init & ev_io_start a EventWatcher.
-             * And add it into the EventWatcherMap.
+             * malloc & ev_io_init & ev_io_start a EventIoWatcher.
+             * And add it into the EventIoWatcherMap.
              */
             inline void addWatcher(int32_t socketFd, EventIoCallback callback) {
                 this->addWatcher(socketFd, callback, EV_READ);
             };
             void addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags);
             /**
-             * Get EventWatcher from the EventWatcherMap.
-             * If specified EventWatcher not found, NULL pointer returned.
+             * Get EventWatcher from the EventIoWatcherMap.
+             * If specified EventIoWatcher not found, NULL pointer returned.
              */
             inline EventIoWatcher *getWatcher(int32_t socketFd) const {
                 return this->ioWatcherPool->get(socketFd);
             };
             /**
-             * Remove the EventWatcher, if it exists in the EventWatcherMap.
+             * Remove the EventIoWatcher, if it exists in the EventIoWatcherMap.
              */
             void removeWatcher(int32_t socketFd);
             /**
-             * Remove all the EventWatcher in the EventWatcherMap.
+             * Remove all the EventIoWatcher in the EventIoWatcherMap.
              */
             void clearWatchers();
             /**
-             * Get EventWatcherMap size.
+             * Get EventIoWatcherMap size.
              */
             inline int32_t getWatchersCount() const {
                 return this->ioWatcherPool->count();
             };
             /**
-             * Find the EventWatcher in the EventWatcherMap.
-             * EventWatcherIterator returned.
+             * Find the EventIoWatcher in the EventIoWatcherMap.
+             * EventIoWatcherIterator returned.
              */
             inline EventIoWatcherIterator findWatcher(int32_t socketFd) const {
                 return this->ioWatcherPool->find(socketFd);
