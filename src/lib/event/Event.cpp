@@ -42,7 +42,7 @@ In compiling:
 */
     }
 
-    void EventIo::addWatcher(int32_t socketFd, EventCallback callback, int32_t flags) {
+    void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags) {
         EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->loop, watcher);

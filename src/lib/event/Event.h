@@ -11,12 +11,6 @@ namespace XCF {
     //- Event
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     typedef struct ev_loop EventLoop;
-    typedef struct ev_io   EventIoWatcher;
-
-    typedef Map<int32_t, EventIoWatcher>                  EventIoWatcherMap;
-    typedef std::map<int32_t, EventIoWatcher *>::iterator EventIoWatcherIterator;
-
-    typedef void (*EventCallback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents);
 
     class Event {
         public:
@@ -60,6 +54,11 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- EventIo
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    typedef struct ev_io EventIoWatcher;
+    typedef Map<int32_t, EventIoWatcher>                  EventIoWatcherMap;
+    typedef std::map<int32_t, EventIoWatcher *>::iterator EventIoWatcherIterator;
+    typedef void (*EventIoCallback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents);
+
     class EventIo: public Event {
         public:
             EventIo();
@@ -68,10 +67,10 @@ namespace XCF {
              * malloc & ev_io_init & ev_io_start a EventWatcher.
              * And add it into the EventWatcherMap.
              */
-            inline void addWatcher(int32_t socketFd, EventCallback callback) {
+            inline void addWatcher(int32_t socketFd, EventIoCallback callback) {
                 this->addWatcher(socketFd, callback, EV_READ);
             };
-            void addWatcher(int32_t socketFd, EventCallback callback, int32_t flags);
+            void addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags);
             /**
              * Get EventWatcher from the EventWatcherMap.
              * If specified EventWatcher not found, NULL pointer returned.
