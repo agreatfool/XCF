@@ -9,6 +9,8 @@
 
 namespace XCF {
 
+    #define XCF_LOG_MSG_MAX_LIMIT 25
+
     namespace LogType {
         enum LogType {
             SysLog, FileLog
@@ -37,64 +39,45 @@ namespace XCF {
             void setPriority(uint16_t priority);
         protected:
             uint16_t priority;
-            virtual void output(uint16_t priority, std::string msg) const = 0;
+            uint16_t maxMsgCount;
+            std::deque<std::string> *messages;
+            void inline cacheMessage(uint16_t priority, std::string msg) const {
+                if (priority <= this->priority) {
+                    std::string formatted = Utility::stringFormat("[%s]%s", Time::getTimeString().c_str(), msg.c_str());
+                    this->messages->push_back(formatted.c_str());
+                    if (this->messages->size() >= this->maxMsgCount) {
+                        this->output();
+                    }
+                }
+            };
             void inline logToConsole(std::string msg) const {
                 std::cout << msg << std::endl;
             };
+            virtual void output() const = 0;
     };
 
     class SysLog: public Log {
         public:
             SysLog();
             virtual ~SysLog();
-            void output(uint16_t priority, std::string msg) const;
+            void output() const;
     };
 
     class FileLog: public Log {
         public:
             FileLog();
             virtual ~FileLog();
-            void output(uint16_t priority, std::string msg) const;
+            void output() const;
     };
 
     class LogFactory {
         public:
             virtual ~LogFactory();
-            /**
-             * Get syslog instance.
-             */
-            static inline Log* get() {
-                return LogFactory::get(LogType::SysLog);
-            };
-            /**
-             * Get log instance according to the "logType".
-             * Refer to "LogType".
-             */
-            static inline Log* get(uint16_t logType) {
-                Log* instance = NULL;
-                switch (logType) {
-                    case LogType::SysLog:
-                        instance = new SysLog();
-                        break;
-                    case LogType::FileLog:
-                        instance = new FileLog();
-                        break;
-                    default:
-                        instance = new SysLog();
-                        break;
-                }
-                return instance;
-            };
-            /**
-             * Static log error message.
-             */
-            static inline void error(std::string msg) {
-                Log *logger = LogFactory::get();
-                logger->error(msg);
-                delete logger;
-            };
+            static Log* get(uint16_t logType);
+            static Log* get();
         private:
             LogFactory();
+            static Log* instance;
             // Stop the compiler generating methods of copy the object
             LogFactory(LogFactory const& copy);            // Not Implemented
             LogFactory& operator=(LogFactory const& copy); // Not Implemented

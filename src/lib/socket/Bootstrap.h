@@ -18,16 +18,12 @@ namespace XCF {
             inline SocketPool *getSocketPool() {
                 return this->socketPool;
             };
-            inline Log *getLogger() {
-                return this->logger;
-            };
             virtual int32_t start() = 0;
             virtual int32_t stop() = 0;
         protected:
             uint16_t   socketProtocolType;
             EventIo    *eventIo;
             SocketPool *socketPool;
-            Log        *logger;
     };
 
     class ServerBootstrap: public Bootstrap {

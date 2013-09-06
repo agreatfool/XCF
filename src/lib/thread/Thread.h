@@ -62,7 +62,6 @@ namespace XCF {
             pthread_mutex_t *lock;
             pthread_cond_t  *cond;
             uint16_t        status;
-            Log             *logger;
     };
 
     class ThreadUtil {

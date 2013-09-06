@@ -7,7 +7,7 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Bootstrap::Bootstrap(uint16_t protocolType):
         socketProtocolType(protocolType),
-        eventIo(new EventIo()), socketPool(new SocketPool()), logger(LogFactory::get()) {}
+        eventIo(new EventIo()), socketPool(new SocketPool()) {}
 
     Bootstrap::~Bootstrap() {}
 
@@ -21,7 +21,7 @@ namespace XCF {
     {
         this->serverSocket = new Socket(host, port, this->socketProtocolType, SocketEndType::SERVER);
         if (this->serverSocket->getSocketStatus() < SocketStatus::CONNECTED) {
-            this->logger->error("[ServerBootstrap] server socket init failed!");
+            LogFactory::get()->error("[ServerBootstrap] server socket init failed!");
             exit(1);
         }
         // TODO design the pipline mode like the netty!
@@ -46,20 +46,20 @@ namespace XCF {
 
     void ServerBootstrap::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents) {
         if (EV_ERROR & revents) {
-            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] acceptCallback: got invalid event!");
+            LogFactory::get()->error("[ServerBootstrap] acceptCallback: got invalid event!");
             return;
         }
 
         Socket *client = Socket::socketAccept(acceptWatcher->fd, SocketProtocol::TCP);
         if (Utility::isNullPtr(client)) {
-            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
+            LogFactory::get()->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
             return;
         }
 
         ServerBootstrap::get()->getSocketPool()->addSocket(client);
         ServerBootstrap::get()->getEventIo()->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
 
-        ServerBootstrap::get()->getLogger()->info(
+        LogFactory::get()->info(
             Utility::stringFormat(
                 "[ServerBootstrap] Successfully connected with client. %d connections established!",
                 ServerBootstrap::get()->getSocketPool()->getPoolSize()
@@ -69,14 +69,14 @@ namespace XCF {
 
     void ServerBootstrap::readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents) {
         if (EV_ERROR & revents) {
-            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] readCallback: got invalid event!");
+            LogFactory::get()->error("[ServerBootstrap] readCallback: got invalid event!");
             return;
         }
 
         int32_t socketFd = readWatcher->fd;
         Socket *socket = ServerBootstrap::get()->getSocketPool()->getSocket(socketFd);
         if (Utility::isNullPtr(socket)) {
-            ServerBootstrap::get()->getLogger()->error("[ServerBootstrap] readCallback: socket not found!");
+            LogFactory::get()->error("[ServerBootstrap] readCallback: socket not found!");
             return;
         }
 
@@ -92,10 +92,10 @@ namespace XCF {
             // stop and free socket | watcher if client socket closed
             ServerBootstrap::get()->getEventIo()->removeWatcher(socketFd);
             ServerBootstrap::get()->getSocketPool()->removeSocket(socketFd);
-            ServerBootstrap::get()->getLogger()->info("[ServerBootstrap] readCallback: client closed!");
+            LogFactory::get()->info("[ServerBootstrap] readCallback: client closed!");
             return;
         } else {
-            ServerBootstrap::get()->getLogger()->info(
+            LogFactory::get()->info(
                 Utility::stringFormat("[ServerBootstrap] readCallback: message: %s", buffer->getBuffer())
             );
         }

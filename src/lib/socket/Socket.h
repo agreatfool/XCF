@@ -107,7 +107,7 @@ namespace XCF {
                 int32_t socketFd = accept(acceptFromFd, (struct sockaddr *) &socketAddr, &socketLen);
 
                 if (socketFd < 0) {
-                    LogFactory::error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
                     return NULL;
                 }
 
@@ -125,7 +125,7 @@ namespace XCF {
             inline int32_t read(char *buffer, int32_t length) {
                 int32_t received = recv(this->socketFd, buffer, length, 0);
                 if (received < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
                 }
                 return received;
             };
@@ -136,7 +136,7 @@ namespace XCF {
             inline int32_t read(SocketBuffer *buffer, int32_t length) {
                 int32_t received = recv(this->socketFd, buffer->getBuffer(), length, 0);
                 if (received < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
                 }
                 return received;
             };
@@ -147,7 +147,7 @@ namespace XCF {
             inline int32_t write(char *buffer) {
                 int32_t transmitted = send(this->socketFd, buffer, strlen(buffer), 0);
                 if (transmitted < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
                 }
                 return transmitted;
             };
@@ -158,7 +158,7 @@ namespace XCF {
             inline int32_t write(SocketBuffer *buffer) {
                 int32_t transmitted = send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
                 if (transmitted < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
                 }
                 return transmitted;
             };
@@ -168,7 +168,7 @@ namespace XCF {
             inline int32_t setWriteBuffSize(int32_t bufferSize) {
                 int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_SNDBUF, (const void *) &bufferSize, sizeof(socklen_t));
                 if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setWriteBuffSize failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] setWriteBuffSize failed: [%d] %s", errno, strerror(errno)));
                 }
                 return setResult;
             }
@@ -181,7 +181,6 @@ namespace XCF {
             // Status
             int16_t            socketStatus;
             // Generated
-            Log                *logger;
             int32_t            socketFd;
             struct sockaddr_in socketAddr;
             /**
@@ -197,7 +196,7 @@ namespace XCF {
                 int32_t flags = fcntl(this->socketFd, F_GETFL);
                 int32_t setResult = fcntl(this->socketFd, F_SETFL, flags | O_NONBLOCK);
                 if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setNonBlock failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] setNonBlock failed: [%d] %s", errno, strerror(errno)));
                 }
                 return setResult;
             };
@@ -208,7 +207,7 @@ namespace XCF {
                 int32_t flags = 1;
                 int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_KEEPALIVE, &flags, sizeof(int32_t));
                 if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setKeepAlive failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] setKeepAlive failed: [%d] %s", errno, strerror(errno)));
                 }
                 return setResult;
             };
@@ -219,7 +218,7 @@ namespace XCF {
                 int32_t flags = 1;
                 int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(int32_t));
                 if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setReuseAddr failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] setReuseAddr failed: [%d] %s", errno, strerror(errno)));
                 }
                 return setResult;
             };

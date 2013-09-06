@@ -27,8 +27,7 @@ namespace XCF {
         ):
         socketHost(host), socketPort(port),
         socketProtocolType(protocol), socketEndType(endType),
-        socketStatus(SocketStatus::CLOSED),
-        logger(LogFactory::get()), socketFd(INIT_SOCKET_FD)
+        socketStatus(SocketStatus::CLOSED), socketFd(INIT_SOCKET_FD)
     {
         this->socketInit();
     }
@@ -38,8 +37,7 @@ namespace XCF {
         ):
         socketHost(""), socketPort(0),
         socketProtocolType(protocol), socketEndType(SocketEndType::CLIENT),
-        socketStatus(SocketStatus::CONNECTED),
-        logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr)
+        socketStatus(SocketStatus::CONNECTED), socketFd(socketFd), socketAddr(socketAddr)
     {
         this->socketHost = inet_ntoa(socketAddr.sin_addr);
         this->socketPort = ntohs(socketAddr.sin_port);
@@ -47,7 +45,6 @@ namespace XCF {
 
     Socket::~Socket() {
         this->socketRelease();
-        delete this->logger;
     }
 
     int32_t Socket::socketInit() {
@@ -57,7 +54,7 @@ namespace XCF {
 
             if (this->socketFd < 0) {
                 this->socketRelease();
-                this->logger->error(Utility::stringFormat("[Socket] socketFd initialization failed: [%d] %s", errno, strerror(errno)));
+                LogFactory::get()->error(Utility::stringFormat("[Socket] socketFd initialization failed: [%d] %s", errno, strerror(errno)));
                 return INVALID_RESULT;
             }
 
@@ -79,12 +76,12 @@ namespace XCF {
                 // server: bind & listen
                 if (bind(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
                     this->socketRelease();
-                    this->logger->error(Utility::stringFormat("[Socket] socket binding failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] socket binding failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
                 if (listen(this->socketFd, SOCK_LISTEN_BACKLOG) < 0) {
                     this->socketRelease();
-                    this->logger->error(Utility::stringFormat("[Socket] socket listen failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] socket listen failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
             } else if (this->socketEndType == SocketEndType::CLIENT) {
@@ -92,7 +89,7 @@ namespace XCF {
                 if (connect(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
                     if (errno != EINPROGRESS) { // non-blocking socket connect, EINPROGRESS would be returned
                         this->socketRelease();
-                        this->logger->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
+                        LogFactory::get()->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
                         return INVALID_RESULT;
                     }
                 }
