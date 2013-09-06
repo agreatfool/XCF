@@ -103,6 +103,59 @@ namespace XCF {
             EventIoWatcherMap *ioWatcherPool;
     };
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- EventTimer
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    // FIXME 完成 timer event loop & 使用timer来定期输出日志
+    // 完成 Thread::wakeup 和 Thread::checkBlockedOrStopped, 弄清楚 Thread::canBeBlocked 到底应该怎么返回
+    typedef struct ev_timer EventTimerWatcher;
+    typedef Map<std::string, EventTimerWatcher>                  EventTimerWatcherMap;
+    typedef std::map<int32_t, EventTimerWatcher *>::iterator EventTimerWatcherIterator;
+    typedef void (*EventTimerCallback)(EventLoop *loop, EventTimerWatcher *watcher, int32_t revents);
+
+    class EventTimer: public Event {
+        EventTimer();
+        virtual ~EventTimer();
+        /**
+         * malloc & ev_timer_init & ev_timer_start a EventTimerWatcher.
+         * And add it into the EventTimerWatcherMap.
+         */
+        inline void addWatcher(std::string name, EventIoCallback callback) {
+            this->addWatcher(name, callback, EV_READ);
+        };
+        void addWatcher(std::string name, EventIoCallback callback, int32_t flags);
+        /**
+         * Get EventWatcher from the EventTimerWatcherMap.
+         * If specified EventTimerWatcher not found, NULL pointer returned.
+         */
+        inline EventIoWatcher *getWatcher(std::string name) const {
+            return this->timerWatcherPool->get(name);
+        };
+        /**
+         * Remove the EventTimerWatcher, if it exists in the EventTimerWatcherMap.
+         */
+        void removeWatcher(std::string name);
+        /**
+         * Remove all the EventTimerWatcher in the EventTimerWatcherMap.
+         */
+        void clearWatchers();
+        /**
+         * Get EventTimerWatcher size.
+         */
+        inline int32_t getWatchersCount() const {
+            return this->timerWatcherPool->count();
+        };
+        /**
+         * Find the EventTimerWatcher in the EventTimerWatcherMap.
+         * EventTimerWatcherIterator returned.
+         */
+        inline EventIoWatcherIterator findWatcher(std::string name) const {
+            return this->timerWatcherPool->find(name);
+        };
+    protected:
+        EventTimerWatcherMap *timerWatcherPool;
+    };
+
 } /* namespace XCF */
 
 #endif /* XCF_EVENT_H_ */
