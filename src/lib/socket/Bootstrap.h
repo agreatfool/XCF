@@ -29,15 +29,8 @@ namespace XCF {
     class ServerBootstrap: public Bootstrap {
         public:
             virtual ~ServerBootstrap();
-            static inline ServerBootstrap *init(uint16_t protocolType, std::string host, uint16_t port) {
-                if (Utility::isNullPtr(ServerBootstrap::instance)) {
-                    ServerBootstrap::instance = new ServerBootstrap(protocolType, host, port);
-                }
-                return ServerBootstrap::instance;
-            };
-            static inline ServerBootstrap *get() {
-                return ServerBootstrap::instance;
-            };
+            static ServerBootstrap *init(uint16_t protocolType, std::string host, uint16_t port);
+            static ServerBootstrap *get();
             int32_t start();
             int32_t stop();
             static void acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents);
@@ -54,15 +47,8 @@ namespace XCF {
     class ClientBootstrap: public Bootstrap {
         public:
             virtual ~ClientBootstrap();
-            static inline ClientBootstrap *init(uint16_t protocolType) {
-                if (Utility::isNullPtr(ClientBootstrap::instance)) {
-                    ClientBootstrap::instance = new ClientBootstrap(protocolType);
-                }
-                return ClientBootstrap::instance;
-            };
-            static inline ClientBootstrap *get() {
-                return ClientBootstrap::instance;
-            };
+            static ClientBootstrap *init(uint16_t protocolType);
+            static ClientBootstrap *get();
             int32_t start();
             int32_t stop();
         protected:

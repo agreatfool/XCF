@@ -13,21 +13,14 @@ namespace XCF {
             /**
              * Convert char* to std::string.
              */
-            static inline std::string charToString(char *str) {
-                std::string string = str;
-                return string;
-            };
+            static std::string charToString(char *str);
             /**
              * Convert std::string to char*.
              * Since we cannot determine the length of the std::string at compiling time,
              * we have to use "new" to initialize a char* in HEAP with the length of given std::string.
              * DO NOT forget to using "delete []buff;" to free the memory.
              */
-            static inline char *stringToChar(std::string str) {
-                char *buff = new char[str.length() + 1];
-                strcpy(buff, str.c_str());
-                return buff;
-            };
+            static char *stringToChar(std::string str);
             /**
              * Format a string according to the "format".
              */
@@ -35,19 +28,11 @@ namespace XCF {
             /**
              * Append "appendPart" to the end of "appendBase".
              */
-            static inline void appendCharArray(char *appendBase, char *appendPart, int32_t length) {
-                strncat(appendBase, appendPart, length);
-            };
+            static void appendCharArray(char *appendBase, char *appendPart, int32_t length);
             /**
              * Check whether the "*ptr" is NULL pointer or not.
              */
-            static inline bool isNullPtr(void *ptr) {
-                if (NULL == ptr) {
-                    return true;
-                } else {
-                    return false;
-                }
-            };
+            static bool isNullPtr(void *ptr);
     };
 
 } /* namespace XCF */

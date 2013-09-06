@@ -15,43 +15,24 @@ namespace XCF {
             /**
              * Get current timestamp.
              */
-            static inline time_t getTimestamp() {
-                return time(NULL);
-            };
+            static time_t getTimestamp();
             /**
              * Get struct tm from time_t.
              */
-            static inline struct tm *getTimeStruct() {
-                time_t currentTime = time(NULL);
-                return Time::getTimeStruct(&currentTime);
-            };
-            static inline struct tm *getTimeStruct(time_t* time) {
-                return localtime(time);
-            };
+            static struct tm *getTimeStruct();
+            static struct tm *getTimeStruct(time_t* time);
             /**
              * Get time string from time_t as a std::string.
              * The format is "YYYY-mm-dd HH:MM:SS/0".
              */
-            static inline std::string getTimeString() {
-                time_t currentTime = time(NULL);
-                return Time::getTimeString(&currentTime);
-            };
-            static inline std::string getTimeString(time_t* time) {
-                char tmstr[32] = {0};
-                strftime(tmstr, sizeof(tmstr), "%Y-%m-%d %H:%M:%S", Time::getTimeStruct(time));
-                return Utility::charToString(tmstr);
-            };
+            static std::string getTimeString();
+            static std::string getTimeString(time_t* time);
             /**
              * Get time string from time_t as a char*.
              * The format is "Wed Jan 02 02:03:55 1980/n/0".
              */
-            static inline std::string getDefaultTimeString() {
-                time_t currentTime = time(NULL);
-                return Time::getDefaultTimeString(&currentTime);
-            };
-            static inline std::string getDefaultTimeString(time_t* time) {
-                return Utility::charToString(ctime(time));
-            };
+            static std::string getDefaultTimeString();
+            static std::string getDefaultTimeString(time_t* time);
     };
 
 } /* namespace XCF */

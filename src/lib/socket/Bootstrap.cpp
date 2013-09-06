@@ -32,6 +32,17 @@ namespace XCF {
         delete serverSocket;
     }
 
+    ServerBootstrap *ServerBootstrap::init(uint16_t protocolType, std::string host, uint16_t port) {
+        if (Utility::isNullPtr(ServerBootstrap::instance)) {
+            ServerBootstrap::instance = new ServerBootstrap(protocolType, host, port);
+        }
+        return ServerBootstrap::instance;
+    }
+
+    ServerBootstrap *ServerBootstrap::get() {
+        return ServerBootstrap::instance;
+    }
+
     int32_t ServerBootstrap::start() {
         this->eventIo->addWatcher(this->serverSocket->getSocketFd(), ServerBootstrap::acceptCallback);
         this->eventIo->startLoop();
@@ -115,6 +126,17 @@ namespace XCF {
 
     ClientBootstrap::~ClientBootstrap() {
         this->stop();
+    }
+
+    ClientBootstrap *ClientBootstrap::init(uint16_t protocolType) {
+        if (Utility::isNullPtr(ClientBootstrap::instance)) {
+            ClientBootstrap::instance = new ClientBootstrap(protocolType);
+        }
+        return ClientBootstrap::instance;
+    }
+
+    ClientBootstrap *ClientBootstrap::get() {
+        return ClientBootstrap::instance;
     }
 
     int32_t ClientBootstrap::start() {

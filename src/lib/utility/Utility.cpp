@@ -7,6 +7,17 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Utility::~Utility() {}
 
+   std::string Utility::charToString(char *str) {
+       std::string string = str;
+       return string;
+   }
+
+    char *Utility::stringToChar(std::string str) {
+        char *buff = new char[str.length() + 1];
+        strcpy(buff, str.c_str());
+        return buff;
+    }
+
     std::string Utility::stringFormat(const std::string format, ...) {
         int size = 100;
         std::string str;
@@ -27,6 +38,18 @@ namespace XCF {
             }
         }
         return str;
+    }
+
+    void Utility::appendCharArray(char *appendBase, char *appendPart, int32_t length) {
+        strncat(appendBase, appendPart, length);
+    }
+
+    bool Utility::isNullPtr(void *ptr) {
+        if (NULL == ptr) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 } /* namespace XCF */
