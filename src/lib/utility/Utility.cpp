@@ -52,4 +52,9 @@ namespace XCF {
         }
     }
 
+    uint16_t getCpuCount() {
+        // FIXME
+        return 1;
+    }
+
 } /* namespace XCF */

@@ -33,6 +33,10 @@ namespace XCF {
              * Check whether the "*ptr" is NULL pointer or not.
              */
             static bool isNullPtr(void *ptr);
+            /**
+             * Get the CPU count of current machine.
+             */
+            static uint16_t getCpuCount();
     };
 
 } /* namespace XCF */
