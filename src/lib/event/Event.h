@@ -1,6 +1,7 @@
 #ifndef XCF_EVENT_H_
 #define XCF_EVENT_H_
 
+#include <iostream>
 #include <ev.h>
 
 #include "../model/Map.h"
@@ -110,7 +111,7 @@ namespace XCF {
     // 完成 Thread::wakeup 和 Thread::checkBlockedOrStopped, 弄清楚 Thread::canBeBlocked 到底应该怎么返回
     typedef struct ev_timer EventTimerWatcher;
     typedef Map<std::string, EventTimerWatcher>                  EventTimerWatcherMap;
-    typedef std::map<int32_t, EventTimerWatcher *>::iterator EventTimerWatcherIterator;
+    typedef std::map<std::string, EventTimerWatcher *>::iterator EventTimerWatcherIterator;
     typedef void (*EventTimerCallback)(EventLoop *loop, EventTimerWatcher *watcher, int32_t revents);
 
     class EventTimer: public Event {
@@ -128,7 +129,7 @@ namespace XCF {
          * Get EventWatcher from the EventTimerWatcherMap.
          * If specified EventTimerWatcher not found, NULL pointer returned.
          */
-        inline EventIoWatcher *getWatcher(std::string name) const {
+        inline EventTimerWatcher *getWatcher(std::string name) const {
             return this->timerWatcherPool->get(name);
         };
         /**
@@ -149,7 +150,7 @@ namespace XCF {
          * Find the EventTimerWatcher in the EventTimerWatcherMap.
          * EventTimerWatcherIterator returned.
          */
-        inline EventIoWatcherIterator findWatcher(std::string name) const {
+        inline EventTimerWatcherIterator findWatcher(std::string name) const {
             return this->timerWatcherPool->find(name);
         };
     protected:
