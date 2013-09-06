@@ -6,7 +6,7 @@ namespace XCF {
     //- Event
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Event::Event():
-        ioLoop(
+        loop(
 #if defined (__APPLE__)
             ev_loop_new(EVBACKEND_KQUEUE | EVFLAG_NOENV)
 #elif defined (__linux)
@@ -16,13 +16,13 @@ namespace XCF {
 
     Event::~Event() {
         this->stopLoop();
-        ev_loop_destroy(this->ioLoop);
+        ev_loop_destroy(this->loop);
     };
 
     void Event::stopLoop() {
         this->suspendLoop();
         this->clearWatchers();
-        ev_break(this->ioLoop, EVBREAK_ALL);
+        ev_break(this->loop, EVBREAK_ALL);
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -32,8 +32,8 @@ namespace XCF {
 
     EventIo::~EventIo() {
         delete this->ioWatcherPool;
-//        delete this->ioLoop;
-// FIXME should we delete the "this->ioLoop" ?
+//        delete this->loop;
+// FIXME should we delete the "this->loop" ?
 /*
 In compiling:
 ../src/lib/event/Event.cpp:27: warning: possible problem detected in invocation of delete operator:
@@ -45,7 +45,7 @@ In compiling:
     void EventIo::addWatcher(int32_t socketFd, EventCallback callback, int32_t flags) {
         EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
         ev_io_init(watcher, callback, socketFd, flags);
-        ev_io_start(this->ioLoop, watcher);
+        ev_io_start(this->loop, watcher);
         this->ioWatcherPool->add(socketFd, watcher);
     }
 
@@ -53,7 +53,7 @@ In compiling:
         EventIoWatcherIterator it = this->findWatcher(socketFd);
         if (it != this->ioWatcherPool->getMap()->end()) {
             // found the watcher in the pool
-            ev_io_stop(this->ioLoop, it->second);
+            ev_io_stop(this->loop, it->second);
             this->ioWatcherPool->getMap()->erase(it);
         }
     }
@@ -63,7 +63,7 @@ In compiling:
             EventIoWatcherIterator it;
             for (it = this->ioWatcherPool->getMap()->begin(); it != this->ioWatcherPool->getMap()->end(); /* no auto increment*/) {
                 EventIoWatcher *watcher = it->second;
-                ev_io_stop(this->ioLoop, watcher);
+                ev_io_stop(this->loop, watcher);
                 this->ioWatcherPool->getMap()->erase(it++);
             }
             this->ioWatcherPool->getMap()->clear();

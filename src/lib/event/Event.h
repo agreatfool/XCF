@@ -7,6 +7,9 @@
 
 namespace XCF {
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Event
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     typedef struct ev_loop EventLoop;
     typedef struct ev_io   EventIoWatcher;
 
@@ -20,13 +23,13 @@ namespace XCF {
             Event();
             virtual ~Event();
             inline EventLoop *getEventLoop() {
-                return this->ioLoop;
+                return this->loop;
             };
             /**
              * Start the event loop.
              */
             inline int32_t startLoop() {
-                return ev_run(this->ioLoop, 0);
+                return ev_run(this->loop, 0);
             };
             /**
              * Stop all the event loop.
@@ -38,22 +41,25 @@ namespace XCF {
              * Suspend the event loop.
              */
             inline void suspendLoop() {
-                ev_suspend(this->ioLoop);
+                ev_suspend(this->loop);
             };
             /**
              * Resume the event loop.
              */
             inline void resumeLoop() {
-                ev_resume(this->ioLoop);
+                ev_resume(this->loop);
             };
             /**
              * Remove all the EventWatcher in the EventWatcherMap.
              */
             virtual void clearWatchers() = 0;
         protected:
-            EventLoop *ioLoop;
+            EventLoop *loop;
     };
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- EventIo
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     class EventIo: public Event {
         public:
             EventIo();
