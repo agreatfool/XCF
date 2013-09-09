@@ -62,8 +62,6 @@ namespace XCF {
                 syslog(LOG_USER | this->priority, "%s", buff);
 
                 this->messages->pop_front();
-
-                this->logToConsole(msg);
             }
             closelog();
         }
