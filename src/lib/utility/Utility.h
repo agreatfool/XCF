@@ -4,6 +4,10 @@
 #include <cstring>
 #include <iostream>
 
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <unistd.h>
+
 namespace XCF {
 
     class Utility {
@@ -34,9 +38,9 @@ namespace XCF {
              */
             static bool isNullPtr(void *ptr);
             /**
-             * Get the CPU count of current machine.
+             * Get the CPU number of current machine.
              */
-            static uint16_t getCpuCount();
+            static uint16_t getCpuNum();
     };
 
 } /* namespace XCF */

@@ -52,8 +52,31 @@ namespace XCF {
         }
     }
 
-    uint16_t getCpuCount() {
-        // FIXME
+    uint16_t Utility::getCpuNum() {
+#if defined (__APPLE__)
+        uint16_t cpuNum;
+        int mib[4];
+        size_t len = 4;
+
+        /* set the mib for hw.ncpu */
+        mib[0] = CTL_HW;
+        mib[1] = HW_AVAILCPU;  // alternatively, try HW_NCPU;
+
+        /* get the number of CPUs from the system */
+        sysctl(mib, 2, &cpuNum, &len, NULL, 0);
+
+        if (cpuNum < 1) {
+             mib[1] = HW_NCPU;
+             sysctl( mib, 2, &cpuNum, &len, NULL, 0 );
+
+             if (cpuNum < 1) {
+                  cpuNum = 1;
+             }
+        }
+        return cpuNum;
+#elif defined (__linux)
+        return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
         return 1;
     }
 
