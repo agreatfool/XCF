@@ -5,6 +5,7 @@
 #include <ev.h>
 
 #include "../model/Map.h"
+#include "../../XCF.h"
 
 namespace XCF {
 

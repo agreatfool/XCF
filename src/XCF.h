@@ -3,7 +3,6 @@
 
 #include <ev.h>
 #include <pthread.h>
-#include "lib/model/Map.h"
 
 namespace XCF {
 

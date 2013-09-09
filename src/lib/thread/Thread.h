@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <errno.h>
 
-#include "../../Declare.h"
+#include "../../XCF.h"
 #include "../log/Log.h"
 #include "../utility/Utility.h"
 

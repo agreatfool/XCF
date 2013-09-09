@@ -1,7 +1,7 @@
 #ifndef XCF_BOOTSTRAP_H_
 #define XCF_BOOTSTRAP_H_
 
-#include "../../Declare.h"
+#include "../../XCF.h"
 #include "Socket.h"
 #include "../log/Log.h"
 #include "../event/Event.h"

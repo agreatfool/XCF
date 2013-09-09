@@ -9,7 +9,7 @@
 
 #include <ev.h>
 
-#include "../../Declare.h"
+#include "../../XCF.h"
 #include "../log/Log.h"
 #include "../event/Event.h"
 #include "../model/Map.h"

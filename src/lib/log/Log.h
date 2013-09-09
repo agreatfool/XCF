@@ -5,6 +5,7 @@
 #include <deque>
 #include <syslog.h>
 
+#include "../../XCF.h"
 #include "../utility/Time.h"
 
 namespace XCF {
