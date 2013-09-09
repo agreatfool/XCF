@@ -14,6 +14,8 @@ namespace XCF {
 
     void Log::registerTimer() {
         Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
+        Timer::get()->startLoop();
+        // FIXME the loop works, but it block the thread, so we have to use multi thread, go on...
     }
 
     void Log::debug(std::string msg) const {

@@ -12,7 +12,7 @@
 namespace XCF {
 
     #define XCF_LOG_MSG_MAX_LIMIT  25
-    #define XCF_LOG_TIMER_INTERVAL 1
+    #define XCF_LOG_TIMER_INTERVAL 5.
     #define XCF_LOG_TIMER_NAME     "XCF_LOG_TIMER"
 
     namespace LogType {
