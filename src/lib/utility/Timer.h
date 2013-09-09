@@ -14,7 +14,6 @@ namespace XCF {
         protected:
             Timer();
             static EventPeriodic *instance;
-            static ThreadLock    lock;
             // Stop the compiler generating methods of copy the object
             Timer(Timer const& copy);            // Not Implemented
             Timer& operator=(Timer const& copy); // Not Implemented
