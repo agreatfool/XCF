@@ -70,11 +70,11 @@ namespace XCF {
     class LogFactory {
         public:
             virtual ~LogFactory();
-            static Log* get(uint16_t logType);
-            static Log* get();
+            static Log *get(uint16_t logType);
+            static Log *get();
         private:
             LogFactory();
-            static Log* instance;
+            static Log        *instance;
             // Stop the compiler generating methods of copy the object
             LogFactory(LogFactory const& copy);            // Not Implemented
             LogFactory& operator=(LogFactory const& copy); // Not Implemented
