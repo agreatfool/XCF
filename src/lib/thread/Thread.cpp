@@ -49,13 +49,13 @@ namespace XCF {
     //-* ThreadUtil
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     ThreadId *ThreadUtil::createThread(ThreadStartFunc start, Thread *thread) {
-        ThreadId *threadId = (ThreadId *) malloc(sizeof(ThreadId));
+        ThreadId *threadId;
         pthread_create(threadId, NULL, start, (void *)thread);
         return threadId;
     };
 
     ThreadLock *ThreadUtil::createLock() {
-        ThreadLock *lock = (ThreadLock *) malloc(sizeof(ThreadLock));
+        ThreadLock *lock;
         if (pthread_mutex_init(lock, NULL) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_init: [%d] %s", errno, strerror(errno)));
             return NULL;
@@ -111,7 +111,7 @@ namespace XCF {
     };
 
     ThreadCond *ThreadUtil::createCond() {
-        ThreadCond *cond = (ThreadCond *) malloc(sizeof(ThreadCond));
+        ThreadCond *cond;
         if (pthread_cond_init(cond, NULL) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_inits: [%d] %s", errno, strerror(errno)));
             return NULL;

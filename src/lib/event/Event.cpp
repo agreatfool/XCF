@@ -53,7 +53,7 @@ namespace XCF {
     }
 
     void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags) {
-        EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
+        EventIoWatcher *watcher;
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->loop, watcher);
         this->ioWatcherPool->add(socketFd, watcher);
@@ -95,7 +95,7 @@ namespace XCF {
     }
 
     void EventPeriodic::addWatcher(std::string name, EventPeriodicCallback callback, double interval) {
-        EventPeriodicWatcher *watcher = (EventPeriodicWatcher *) malloc(sizeof(EventPeriodicWatcher));
+        EventPeriodicWatcher *watcher;
         ev_periodic_init(watcher, callback, 0., interval, 0);
         ev_periodic_start(this->loop, watcher);
         this->timerWatcherPool->add(name, watcher);
