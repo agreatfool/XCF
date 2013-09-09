@@ -7,12 +7,12 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Utility::~Utility() {}
 
-   std::string Utility::charToString(char *str) {
+   std::string Utility::charToString(const char *str) {
        std::string string = str;
        return string;
    }
 
-    char *Utility::stringToChar(std::string str) {
+    char *Utility::stringToChar(const std::string str) {
         char *buff = new char[str.length() + 1];
         strcpy(buff, str.c_str());
         return buff;
@@ -40,11 +40,11 @@ namespace XCF {
         return str;
     }
 
-    void Utility::appendCharArray(char *appendBase, char *appendPart, int32_t length) {
+    void Utility::appendCharArray(char *appendBase, const char *appendPart, int32_t length) {
         strncat(appendBase, appendPart, length);
     }
 
-    bool Utility::isNullPtr(void *ptr) {
+    bool Utility::isNullPtr(const void *ptr) {
         if (NULL == ptr) {
             return true;
         } else {
