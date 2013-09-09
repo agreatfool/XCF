@@ -80,4 +80,11 @@ namespace XCF {
         return 1;
     }
 
+    void Utility::stringTrimLineBreak(char *str) {
+        size_t len = strlen(str);
+        if (str[len - 1] == '\n') {
+            str[len - 1] = 0;
+        }
+    }
+
 } /* namespace XCF */

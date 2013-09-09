@@ -44,6 +44,11 @@ namespace XCF {
              * Get the CPU number of current machine.
              */
             static uint16_t getCpuNum();
+            /**
+             * Remove the tailing "\n" if exists.
+             * This function will change the original "char *".
+             */
+            static void stringTrimLineBreak(char *str);
     };
 
 } /* namespace XCF */
