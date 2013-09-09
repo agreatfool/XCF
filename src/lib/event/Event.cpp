@@ -1,4 +1,5 @@
 #include "Event.h"
+#include "../thread/Thread.h"
 
 namespace XCF {
 
