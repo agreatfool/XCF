@@ -4,8 +4,8 @@
 #include <iostream>
 #include <ev.h>
 
-#include "../model/Map.h"
 #include "../../XCF.h"
+#include "../model/Map.h"
 
 namespace XCF {
 
@@ -20,7 +20,7 @@ namespace XCF {
             /**
              * Start the event loop.
              */
-            int32_t startLoop();
+            void startLoop();
             /**
              * Stop all the event loop.
              * If any active watchers in the event loop,

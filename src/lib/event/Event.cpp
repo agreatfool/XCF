@@ -21,11 +21,10 @@ namespace XCF {
         ThreadUtil::destroyLock(this->lock);
     }
 
-    int32_t Event::startLoop() {
+    void Event::startLoop() {
         ThreadUtil::lock(this->lock);
-        int32_t result = ev_run(this->loop, 0);
+        ev_run(this->loop, 0);
         ThreadUtil::unlock(this->lock);
-        return result;
     }
 
     void Event::stopLoop() {
@@ -59,7 +58,7 @@ namespace XCF {
 
     void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags) {
         ThreadUtil::lock(this->lock);
-        EventIoWatcher *watcher;
+        EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->loop, watcher);
         this->ioWatcherPool->add(socketFd, watcher);
@@ -102,7 +101,7 @@ namespace XCF {
 
     void EventPeriodic::addWatcher(std::string name, EventPeriodicCallback callback, double interval) {
         ThreadUtil::lock(this->lock);
-        EventPeriodicWatcher *watcher;
+        EventPeriodicWatcher *watcher = (EventPeriodicWatcher *) malloc(sizeof(EventPeriodicWatcher));
         ev_periodic_init(watcher, callback, 0., interval, 0);
         ev_periodic_start(this->loop, watcher);
         this->timerWatcherPool->add(name, watcher);

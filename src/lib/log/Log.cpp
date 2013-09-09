@@ -16,23 +16,23 @@ namespace XCF {
     Log::~Log() {}
 
     void Log::debug(std::string msg) const {
-        this->cacheMessage(LogPriority::Debug, msg);
+        this->cacheMessage(LogPriority::Debug, msg);this->output();
     }
 
     void Log::info(std::string msg) const {
-        this->cacheMessage(LogPriority::Info, msg);
+        this->cacheMessage(LogPriority::Info, msg);this->output();
     }
 
     void Log::notice(std::string msg) const {
-        this->cacheMessage(LogPriority::Notice, msg);
+        this->cacheMessage(LogPriority::Notice, msg);this->output();
     }
 
     void Log::warn(std::string msg) const {
-        this->cacheMessage(LogPriority::Warning, msg);
+        this->cacheMessage(LogPriority::Warning, msg);this->output();
     }
 
     void Log::error(std::string msg) const {
-        this->cacheMessage(LogPriority::Error, msg);
+        this->cacheMessage(LogPriority::Error, msg);this->output();
     }
 
     void Log::setPriority(uint16_t priority) {
@@ -86,7 +86,6 @@ namespace XCF {
     //-* LogFactory
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Log *LogFactory::instance = NULL;
-    ThreadLock LogFactory::lock = PTHREAD_MUTEX_INITIALIZER;
 
     LogFactory::~LogFactory() {}
 
@@ -96,7 +95,6 @@ namespace XCF {
 
     Log *LogFactory::get(uint16_t logType) {
         if (LogFactory::instance == NULL) {
-            ThreadUtil::lock(LogFactory::lock);
             switch (logType) {
                 case LogType::SysLog:
                     instance = new SysLog();
@@ -108,7 +106,6 @@ namespace XCF {
                     instance = new SysLog();
                     break;
             }
-            ThreadUtil::unlock(LogFactory::lock);
         }
         return LogFactory::instance;
     };
