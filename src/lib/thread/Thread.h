@@ -29,9 +29,7 @@ namespace XCF {
             /**
              * Get thread id in "Thread".
              */
-            inline pthread_t *getThreadId() {
-                return this->threadId;
-            };
+            ThreadId *getThreadId();
             /**
              * Initialize the thread.
              */
@@ -120,6 +118,15 @@ namespace XCF {
     class ThreadPool {
 
     };
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- inline Implementations
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Thread
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline ThreadId *Thread::getThreadId() {
+        return this->threadId;
+    }
 
 } /* namespace XCF */
 

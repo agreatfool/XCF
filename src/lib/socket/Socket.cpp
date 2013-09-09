@@ -47,6 +47,19 @@ namespace XCF {
         this->socketRelease();
     }
 
+    Socket *Socket::socketAccept(int32_t acceptFromFd, uint16_t protocol) {
+        struct sockaddr_in socketAddr;
+        socklen_t socketLen = sizeof(socketAddr);
+        int32_t socketFd = accept(acceptFromFd, (struct sockaddr *) &socketAddr, &socketLen);
+
+        if (socketFd < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
+            return NULL;
+        }
+
+        return new Socket(socketFd, socketAddr, protocol);
+    }
+
     int32_t Socket::socketInit() {
         if (this->socketStatus <= SocketStatus::CLOSED) {
             // init socket fd

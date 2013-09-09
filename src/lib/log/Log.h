@@ -42,18 +42,8 @@ namespace XCF {
             uint16_t priority;
             uint16_t maxMsgCount;
             std::deque<std::string> *messages;
-            void inline cacheMessage(uint16_t priority, std::string msg) const {
-                if (priority <= this->priority) {
-                    std::string formatted = Utility::stringFormat("[%s]%s", Time::getTimeString().c_str(), msg.c_str());
-                    this->messages->push_back(formatted.c_str());
-                    if (this->messages->size() >= this->maxMsgCount) {
-                        this->output();
-                    }
-                }
-            };
-            void inline logToConsole(std::string msg) const {
-                std::cout << msg << std::endl;
-            };
+            void cacheMessage(uint16_t priority, std::string msg) const;
+            void logToConsole(std::string msg) const;
             virtual void output() const = 0;
     };
 
@@ -83,6 +73,24 @@ namespace XCF {
             LogFactory(LogFactory const& copy);            // Not Implemented
             LogFactory& operator=(LogFactory const& copy); // Not Implemented
     };
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- inline Implementations
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Log
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline void Log::cacheMessage(uint16_t priority, std::string msg) const {
+        if (priority <= this->priority) {
+            std::string formatted = Utility::stringFormat("[%s]%s", Time::getTimeString().c_str(), msg.c_str());
+            this->messages->push_back(formatted.c_str());
+            if (this->messages->size() >= this->maxMsgCount) {
+                this->output();
+            }
+        }
+    }
+    inline void Log::logToConsole(std::string msg) const {
+        std::cout << msg << std::endl;
+    }
 
 } /* namespace XCF */
 

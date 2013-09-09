@@ -16,15 +16,11 @@ namespace XCF {
         public:
             Event();
             virtual ~Event();
-            inline EventLoop *getEventLoop() {
-                return this->loop;
-            };
+            inline EventLoop *getEventLoop();
             /**
              * Start the event loop.
              */
-            inline int32_t startLoop() {
-                return ev_run(this->loop, 0);
-            };
+            int32_t startLoop();
             /**
              * Stop all the event loop.
              * If any active watchers in the event loop,
@@ -34,21 +30,17 @@ namespace XCF {
             /**
              * Suspend the event loop.
              */
-            inline void suspendLoop() {
-                ev_suspend(this->loop);
-            };
+            void suspendLoop();
             /**
              * Resume the event loop.
              */
-            inline void resumeLoop() {
-                ev_resume(this->loop);
-            };
+            void resumeLoop();
             /**
              * Remove all the EventWatcher in the EventWatcherMap.
              */
             virtual void clearWatchers() = 0;
         protected:
-            EventLoop *loop;
+            EventLoop  *loop;
     };
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -66,17 +58,13 @@ namespace XCF {
              * malloc & ev_io_init & ev_io_start a EventIoWatcher.
              * And add it into the EventIoWatcherMap.
              */
-            inline void addWatcher(int32_t socketFd, EventIoCallback callback) {
-                this->addWatcher(socketFd, callback, EV_READ);
-            };
+            void addWatcher(int32_t socketFd, EventIoCallback callback);
             void addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags);
             /**
              * Get EventWatcher from the EventIoWatcherMap.
              * If specified EventIoWatcher not found, NULL pointer returned.
              */
-            inline EventIoWatcher *getWatcher(int32_t socketFd) const {
-                return this->ioWatcherPool->get(socketFd);
-            };
+            EventIoWatcher *getWatcher(int32_t socketFd) const;
             /**
              * Remove the EventIoWatcher, if it exists in the EventIoWatcherMap.
              */
@@ -88,16 +76,12 @@ namespace XCF {
             /**
              * Get EventIoWatcherMap size.
              */
-            inline int32_t getWatchersCount() const {
-                return this->ioWatcherPool->count();
-            };
+            int32_t getWatchersCount() const;
             /**
              * Find the EventIoWatcher in the EventIoWatcherMap.
              * EventIoWatcherIterator returned.
              */
-            inline EventIoWatcherIterator findWatcher(int32_t socketFd) const {
-                return this->ioWatcherPool->find(socketFd);
-            };
+            EventIoWatcherIterator findWatcher(int32_t socketFd) const;
         protected:
             EventIoWatcherMap *ioWatcherPool;
     };
@@ -153,6 +137,44 @@ namespace XCF {
     protected:
         EventTimerWatcherMap *timerWatcherPool;
     };
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- inline Implementations
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Event
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline EventLoop *Event::getEventLoop() {
+        return this->loop;
+    }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- EventIo
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback) {
+        this->addWatcher(socketFd, callback, EV_READ);
+    }
+    inline EventIoWatcher *EventIo::getWatcher(int32_t socketFd) const {
+        return this->ioWatcherPool->get(socketFd);
+    }
+    inline int32_t EventIo::getWatchersCount() const {
+        return this->ioWatcherPool->count();
+    }
+    inline EventIoWatcherIterator EventIo::findWatcher(int32_t socketFd) const {
+        return this->ioWatcherPool->find(socketFd);
+    }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- EventPeriodic
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline EventPeriodicWatcher *EventPeriodic::getWatcher(std::string name) const {
+        return this->timerWatcherPool->get(name);
+    }
+    inline int32_t EventPeriodic::getWatchersCount() const {
+        return this->timerWatcherPool->count();
+    }
+    inline EventPeriodicWatcherIterator EventPeriodic::findWatcher(std::string name) const {
+        return this->timerWatcherPool->find(name);
+    }
 
 } /* namespace XCF */
 
