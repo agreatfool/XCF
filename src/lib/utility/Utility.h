@@ -35,11 +35,11 @@ namespace XCF {
             /**
              * Append "appendPart" to the end of "appendBase".
              */
-            static void appendCharArray(char *appendBase, char *appendPart, int32_t length);
+            static void appendCharArray(char *appendBase, const char *appendPart, int32_t length);
             /**
              * Check whether the "*ptr" is NULL pointer or not.
              */
-            static bool isNullPtr(void *ptr);
+            static bool isNullPtr(const void *ptr);
             /**
              * Get the CPU number of current machine.
              */
