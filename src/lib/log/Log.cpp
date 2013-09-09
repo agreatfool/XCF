@@ -8,7 +8,10 @@ namespace XCF {
     Log::Log():
         priority(LogPriority::Debug),
         maxMsgCount(XCF_LOG_MSG_MAX_LIMIT),
-        messages(new std::deque<std::string>()) {}
+        messages(new std::deque<std::string>())
+    {
+//        Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
+    }
 
     Log::~Log() {}
 
@@ -34,6 +37,10 @@ namespace XCF {
 
     void Log::setPriority(uint16_t priority) {
         this->priority = priority;
+    }
+
+    void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents) {
+        LogFactory::get()->output();
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -79,6 +86,8 @@ namespace XCF {
     //-* LogFactory
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     Log *LogFactory::instance = NULL;
+    ThreadLock LogFactory::lock = PTHREAD_MUTEX_INITIALIZER;
+
     LogFactory::~LogFactory() {}
 
     Log* LogFactory::get() {
@@ -87,6 +96,7 @@ namespace XCF {
 
     Log *LogFactory::get(uint16_t logType) {
         if (LogFactory::instance == NULL) {
+            ThreadUtil::lock(LogFactory::lock);
             switch (logType) {
                 case LogType::SysLog:
                     instance = new SysLog();
@@ -98,6 +108,7 @@ namespace XCF {
                     instance = new SysLog();
                     break;
             }
+            ThreadUtil::unlock(LogFactory::lock);
         }
         return LogFactory::instance;
     };

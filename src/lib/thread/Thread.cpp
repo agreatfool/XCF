@@ -83,8 +83,26 @@ namespace XCF {
         }
     };
 
+    int32_t ThreadUtil::lock(ThreadLock lock) {
+        if (pthread_mutex_lock(&lock) < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_lock: [%d] %s", errno, strerror(errno)));
+            return INVALID_RESULT;
+        } else {
+            return VALID_RESULT;
+        }
+    };
+
     int32_t ThreadUtil::unlock(ThreadLock *lock) {
         if (pthread_mutex_unlock(lock) < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_unlock: [%d] %s", errno, strerror(errno)));
+            return INVALID_RESULT;
+        } else {
+            return VALID_RESULT;
+        }
+    };
+
+    int32_t ThreadUtil::unlock(ThreadLock lock) {
+        if (pthread_mutex_unlock(&lock) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_unlock: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
         } else {

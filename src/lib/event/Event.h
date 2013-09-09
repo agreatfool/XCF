@@ -41,6 +41,7 @@ namespace XCF {
             virtual void clearWatchers() = 0;
         protected:
             EventLoop  *loop;
+            ThreadLock *lock;
     };
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-

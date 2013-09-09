@@ -7,10 +7,13 @@
 
 #include "../../XCF.h"
 #include "../utility/Time.h"
+#include "../utility/Timer.h"
 
 namespace XCF {
 
-    #define XCF_LOG_MSG_MAX_LIMIT 25
+    #define XCF_LOG_MSG_MAX_LIMIT  25
+    #define XCF_LOG_TIMER_INTERVAL 0.1
+    #define XCF_LOG_TIMER_NAME     "XCF_LOG_TIMER"
 
     namespace LogType {
         enum LogType {
@@ -41,6 +44,7 @@ namespace XCF {
             void warn(std::string msg)   const;
             void error(std::string msg)  const;
             void setPriority(uint16_t priority);
+            static void timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents);
         protected:
             uint16_t priority;
             uint16_t maxMsgCount;
@@ -75,6 +79,7 @@ namespace XCF {
         private:
             LogFactory();
             static Log        *instance;
+            static ThreadLock lock;
             // Stop the compiler generating methods of copy the object
             LogFactory(LogFactory const& copy);            // Not Implemented
             LogFactory& operator=(LogFactory const& copy); // Not Implemented

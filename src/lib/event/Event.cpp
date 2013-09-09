@@ -13,12 +13,14 @@ namespace XCF {
 #elif defined (__linux)
             ev_loop_new(EVBACKEND_EPOLL | EVFLAG_NOENV)
 #endif
-        ) {};
+        ), lock(ThreadUtil::createLock()) {}
 
     Event::~Event() {
         this->stopLoop();
         ev_loop_destroy(this->loop);
-    };
+        ThreadUtil::destroyLock(this->lock);
+    }
+
     int32_t Event::startLoop() {
         ThreadUtil::lock(this->lock);
         int32_t result = ev_run(this->loop, 0);
@@ -56,22 +58,27 @@ namespace XCF {
     }
 
     void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags) {
-        EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
+        ThreadUtil::lock(this->lock);
+        EventIoWatcher *watcher;
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->loop, watcher);
         this->ioWatcherPool->add(socketFd, watcher);
+        ThreadUtil::unlock(this->lock);
     }
 
     void EventIo::removeWatcher(int32_t socketFd) {
+        ThreadUtil::lock(this->lock);
         EventIoWatcherIterator it = this->findWatcher(socketFd);
         if (it != this->ioWatcherPool->getMap()->end()) {
             // found the watcher in the pool
             ev_io_stop(this->loop, it->second);
             this->ioWatcherPool->getMap()->erase(it);
         }
+        ThreadUtil::unlock(this->lock);
     }
 
     void EventIo::clearWatchers() {
+        ThreadUtil::lock(this->lock);
         if (this->ioWatcherPool->count() > 0) {
             EventIoWatcherIterator it;
             for (it = this->ioWatcherPool->getMap()->begin(); it != this->ioWatcherPool->getMap()->end(); /* no auto increment*/) {
@@ -81,6 +88,8 @@ namespace XCF {
             }
             this->ioWatcherPool->getMap()->clear();
         }
+        ThreadUtil::unlock(this->lock);
+    }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- EventPeriodic
