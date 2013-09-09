@@ -18,16 +18,19 @@ namespace XCF {
     Event::~Event() {
         this->stopLoop();
         ev_loop_destroy(this->loop);
+        LogFactory::get()->debug("[Event] ~Event ...");
     }
 
     void Event::startLoop() {
         ev_run(this->loop, 0);
+        LogFactory::get()->debug("[Event] Loop started ...");
     }
 
     void Event::stopLoop() {
         this->suspendLoop();
         this->clearWatchers();
         ev_break(this->loop, EVBREAK_ALL);
+        LogFactory::get()->debug("[Event] Loop stopped ...");
     }
 
     void Event::suspendLoop() {
@@ -41,7 +44,9 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- EventIo
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    EventIo::EventIo(): Event(), ioWatcherPool(new EventIoWatcherMap()) {}
+    EventIo::EventIo(): Event(), ioWatcherPool(new EventIoWatcherMap()) {
+        LogFactory::get()->debug("[EventIo] EventIo loop Initialized ...");
+    }
 
     EventIo::~EventIo() {
         delete this->ioWatcherPool;
@@ -52,6 +57,7 @@ namespace XCF {
         ev_io_init(watcher, callback, socketFd, flags);
         ev_io_start(this->loop, watcher);
         this->ioWatcherPool->add(socketFd, watcher);
+        LogFactory::get()->debug(Utility::stringFormat("[EventIo] Io event added with fd: %d", socketFd));
     }
 
     void EventIo::removeWatcher(int32_t socketFd) {
@@ -61,6 +67,7 @@ namespace XCF {
             ev_io_stop(this->loop, it->second);
             this->ioWatcherPool->getMap()->erase(it);
         }
+        LogFactory::get()->debug(Utility::stringFormat("[EventIo] Io event removed with fd: %d", socketFd));
     }
 
     void EventIo::clearWatchers() {
@@ -73,12 +80,15 @@ namespace XCF {
             }
             this->ioWatcherPool->getMap()->clear();
         }
+        LogFactory::get()->debug("[EventIo] Io events cleared ...");
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- EventPeriodic
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    EventPeriodic::EventPeriodic(): Event(), timerWatcherPool(new EventPeriodicWatcherMap()) {}
+    EventPeriodic::EventPeriodic(): Event(), timerWatcherPool(new EventPeriodicWatcherMap()) {
+        LogFactory::get()->debug("[EventPeriodic] EventPeriodic loop Initialized ...");
+    }
 
     EventPeriodic::~EventPeriodic() {
         delete this->timerWatcherPool;
@@ -89,6 +99,7 @@ namespace XCF {
         ev_periodic_init(watcher, callback, 0., interval, 0);
         ev_periodic_start(this->loop, watcher);
         this->timerWatcherPool->add(name, watcher);
+        LogFactory::get()->debug("[EventPeriodic] Periodic event added with name: " + name);
     }
 
     void EventPeriodic::removeWatcher(std::string name) {
@@ -98,6 +109,7 @@ namespace XCF {
             ev_periodic_stop(this->loop, it->second);
             this->timerWatcherPool->getMap()->erase(it);
         }
+        LogFactory::get()->debug("[EventPeriodic] Periodic event removed with name: %s" + name);
     }
 
     void EventPeriodic::clearWatchers() {
@@ -110,6 +122,7 @@ namespace XCF {
             }
             this->timerWatcherPool->getMap()->clear();
         }
+        LogFactory::get()->debug("[EventPeriodic] Periodic events cleared ...");
     }
 
 } /* namespace XCF */
