@@ -20,14 +20,14 @@ namespace XCF {
             /**
              * Convert char* to std::string.
              */
-            static std::string charToString(char *str);
+            static std::string charToString(const char *str);
             /**
              * Convert std::string to char*.
              * Since we cannot determine the length of the std::string at compiling time,
              * we have to use "new" to initialize a char* in HEAP with the length of given std::string.
              * DO NOT forget to using "delete []buff;" to free the memory.
              */
-            static char *stringToChar(std::string str);
+            static char *stringToChar(const std::string str);
             /**
              * Format a string according to the "format".
              */
