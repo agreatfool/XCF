@@ -33,14 +33,6 @@ namespace XCF {
 
     EventIo::~EventIo() {
         delete this->ioWatcherPool;
-//        delete this->loop;
-// FIXME should we delete the "this->loop" ?
-/*
-In compiling:
-../src/lib/event/Event.cpp:27: warning: possible problem detected in invocation of delete operator:
-../src/lib/event/Event.cpp:27: warning: invalid use of incomplete type 'struct ev_loop'
-/opt/local/include/ev.h:166: warning: forward declaration of 'struct ev_loop'
-*/
     }
 
     void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags) {
