@@ -21,6 +21,20 @@ namespace XCF {
     #define SOCK_LISTEN_BACKLOG 16
     #define SOCK_BUFFER_LENGTH  1024 * 16
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* libev
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    typedef struct ev_loop     EventLoop;
+    typedef struct ev_io       EventIoWatcher;
+    typedef struct ev_periodic EventPeriodicWatcher;
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* pthread
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    typedef pthread_t       ThreadId;
+    typedef pthread_mutex_t ThreadLock;
+    typedef pthread_cond_t  ThreadCond;
+
 } /* namespace XCF */
 
 #endif /* XCF_DECLARE_H_ */

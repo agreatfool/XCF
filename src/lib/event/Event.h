@@ -12,8 +12,6 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- Event
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    typedef struct ev_loop EventLoop;
-
     class Event {
         public:
             Event();
@@ -56,7 +54,6 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- EventIo
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    typedef struct ev_io EventIoWatcher;
     typedef Map<int32_t, EventIoWatcher>                  EventIoWatcherMap;
     typedef std::map<int32_t, EventIoWatcher *>::iterator EventIoWatcherIterator;
     typedef void (*EventIoCallback)(EventLoop *loop, EventIoWatcher *watcher, int32_t revents);
@@ -110,7 +107,6 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     // FIXME 完成 timer event loop & 使用timer来定期输出日志
     // 完成 Thread::wakeup 和 Thread::checkBlockedOrStopped, 弄清楚 Thread::canBeBlocked 到底应该怎么返回
-    typedef struct ev_timer EventTimerWatcher;
     typedef Map<std::string, EventTimerWatcher>                  EventTimerWatcherMap;
     typedef std::map<std::string, EventTimerWatcher *>::iterator EventTimerWatcherIterator;
     typedef void (*EventTimerCallback)(EventLoop *loop, EventTimerWatcher *watcher, int32_t revents);
