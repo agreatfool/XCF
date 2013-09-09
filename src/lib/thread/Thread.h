@@ -56,10 +56,10 @@ namespace XCF {
              */
             void checkBlockedOrStopped();
         protected:
-            pthread_t       *threadId;
-            pthread_mutex_t *lock;
-            pthread_cond_t  *cond;
-            uint16_t        status;
+            ThreadId   *threadId;
+            ThreadLock *lock;
+            ThreadCond *cond;
+            uint16_t   status;
     };
 
     class ThreadUtil {
@@ -70,49 +70,49 @@ namespace XCF {
              * Create a new thread, and return the thread id.
              * A new pointer of the threadId would be created.
              */
-            static pthread_t *createThread(ThreadStartFunc start, Thread *thread);
+            static ThreadId *createThread(ThreadStartFunc start, Thread *thread);
             /**
              * Create a thread mutex, and return the mutex id.
              */
-            static pthread_mutex_t *createLock();
+            static ThreadLock *createLock();
             /**
              * Destroy a thread mutex.
              */
-            static int32_t destroyLock(pthread_mutex_t *lock);
+            static int32_t destroyLock(ThreadLock *lock);
             /**
              * Lock a thread mutex.
              */
-            static int32_t lock(pthread_mutex_t *lock);
+            static int32_t lock(ThreadLock *lock);
             /**
              * Unlock a thread mutex.
              */
-            static int32_t unlock(pthread_mutex_t *lock);
+            static int32_t unlock(ThreadLock *lock);
             /**
              * Create thread condition.
              */
-            static pthread_cond_t *createCond();
+            static ThreadCond *createCond();
             /**
              * Destroy thread condition.
              */
-            static int32_t destroyCond(pthread_cond_t *cond);
+            static int32_t destroyCond(ThreadCond *cond);
             /**
              * Wait on a condition variable.
              */
-            static int32_t waitCond(pthread_cond_t *cond, pthread_mutex_t *lock);
+            static int32_t waitCond(ThreadCond *cond, ThreadLock *lock);
             /**
              * Unblock a thread waiting for a condition variable.
              */
-            static int32_t signalCond(pthread_cond_t *cond);
+            static int32_t signalCond(ThreadCond *cond);
             /**
              * Join a thread.
              * Suspends the calling thread to wait for successful termination of the thread specified.
              */
-            static int32_t joinThread(pthread_t *threadId);
+            static int32_t joinThread(ThreadId *threadId);
             /**
              * Get the thread id via "pthread_self()".
              * The return value is reference not a pointer!
              */
-            static pthread_t getThreadId();
+            static ThreadId getThreadId();
     };
 
     class ThreadPool {

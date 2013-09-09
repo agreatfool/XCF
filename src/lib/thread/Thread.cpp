@@ -48,14 +48,14 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* ThreadUtil
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    pthread_t *ThreadUtil::createThread(ThreadStartFunc start, Thread *thread) {
-        pthread_t *threadId;
+    ThreadId *ThreadUtil::createThread(ThreadStartFunc start, Thread *thread) {
+        ThreadId *threadId;
         pthread_create(threadId, NULL, start, (void *)thread);
         return threadId;
     };
 
-    pthread_mutex_t *ThreadUtil::createLock() {
-        pthread_mutex_t *lock;
+    ThreadLock *ThreadUtil::createLock() {
+        ThreadLock *lock;
         if (pthread_mutex_init(lock, NULL) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_init: [%d] %s", errno, strerror(errno)));
             return NULL;
@@ -64,7 +64,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::destroyLock(pthread_mutex_t *lock) {
+    int32_t ThreadUtil::destroyLock(ThreadLock *lock) {
         if (pthread_mutex_destroy(lock) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_destroy: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -74,7 +74,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::lock(pthread_mutex_t *lock) {
+    int32_t ThreadUtil::lock(ThreadLock *lock) {
         if (pthread_mutex_lock(lock) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_lock: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -83,7 +83,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::unlock(pthread_mutex_t *lock) {
+    int32_t ThreadUtil::unlock(ThreadLock *lock) {
         if (pthread_mutex_unlock(lock) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_unlock: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -92,8 +92,8 @@ namespace XCF {
         }
     };
 
-    pthread_cond_t *ThreadUtil::createCond() {
-        pthread_cond_t *cond;
+    ThreadCond *ThreadUtil::createCond() {
+        ThreadCond *cond;
         if (pthread_cond_init(cond, NULL) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_inits: [%d] %s", errno, strerror(errno)));
             return NULL;
@@ -102,7 +102,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::destroyCond(pthread_cond_t *cond) {
+    int32_t ThreadUtil::destroyCond(ThreadCond *cond) {
         if (pthread_cond_destroy(cond) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_destroy: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -112,7 +112,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::waitCond(pthread_cond_t *cond, pthread_mutex_t *lock) {
+    int32_t ThreadUtil::waitCond(ThreadCond *cond, ThreadLock *lock) {
         if (pthread_cond_wait(cond, lock) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_wait: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -121,7 +121,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::signalCond(pthread_cond_t *cond) {
+    int32_t ThreadUtil::signalCond(ThreadCond *cond) {
         if (pthread_cond_signal(cond) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_signal: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -130,7 +130,7 @@ namespace XCF {
         }
     };
 
-    int32_t ThreadUtil::joinThread(pthread_t *threadId) {
+    int32_t ThreadUtil::joinThread(ThreadId *threadId) {
         if (pthread_join(*threadId, NULL) < 0) {
             LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_join: [%d] %s", errno, strerror(errno)));
             return INVALID_RESULT;
@@ -139,7 +139,7 @@ namespace XCF {
         }
     };
 
-    pthread_t ThreadUtil::getThreadId() {
+    ThreadId ThreadUtil::getThreadId() {
         return pthread_self();
     };
 
