@@ -35,11 +35,11 @@ namespace XCF {
              */
             virtual int32_t init() = 0;
             /**
-             * Run the thread.
+             * Run the thread. Thread logic goes here.
              */
             virtual void run() = 0;
             /**
-             * Whether current can be blocked.
+             * Whether current can be blocked. Check whether the thread has no work to do, if true block it to sleep.
              */
             virtual bool canBeBlocked() = 0;
             /**
