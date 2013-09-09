@@ -1,6 +1,7 @@
 #ifndef XCF_DECLARE_H_
 #define XCF_DECLARE_H_
 
+#include <stdint.h>
 #include <ev.h>
 #include <pthread.h>
 

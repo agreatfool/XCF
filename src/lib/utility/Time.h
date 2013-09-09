@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <ctime>
 
+#include "../../XCF.h"
 #include "Utility.h"
 
 namespace XCF {

@@ -7,6 +7,9 @@
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #include <unistd.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdint.h>
 
 namespace XCF {
 
