@@ -61,6 +61,48 @@ namespace XCF {
             }
             this->ioWatcherPool->getMap()->clear();
         }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- EventPeriodic
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    EventPeriodic::EventPeriodic(): Event(), timerWatcherPool(new EventPeriodicWatcherMap()) {}
+
+    EventPeriodic::~EventPeriodic() {
+        delete this->timerWatcherPool;
+    }
+
+    void EventPeriodic::addWatcher(std::string name, EventPeriodicCallback callback, double interval) {
+        ThreadUtil::lock(this->lock);
+        EventPeriodicWatcher *watcher;
+        ev_periodic_init(watcher, callback, 0., interval, 0);
+        ev_periodic_start(this->loop, watcher);
+        this->timerWatcherPool->add(name, watcher);
+        ThreadUtil::unlock(this->lock);
+    }
+
+    void EventPeriodic::removeWatcher(std::string name) {
+        ThreadUtil::lock(this->lock);
+        EventPeriodicWatcherIterator it = this->findWatcher(name);
+        if (it != this->timerWatcherPool->getMap()->end()) {
+            // found the watcher in the pool
+            ev_periodic_stop(this->loop, it->second);
+            this->timerWatcherPool->getMap()->erase(it);
+        }
+        ThreadUtil::unlock(this->lock);
+    }
+
+    void EventPeriodic::clearWatchers() {
+        ThreadUtil::lock(this->lock);
+        if (this->timerWatcherPool->count() > 0) {
+            EventPeriodicWatcherIterator it;
+            for (it = this->timerWatcherPool->getMap()->begin(); it != this->timerWatcherPool->getMap()->end(); /* no auto increment*/) {
+                EventPeriodicWatcher *watcher = it->second;
+                ev_periodic_stop(this->loop, watcher);
+                this->timerWatcherPool->getMap()->erase(it++);
+            }
+            this->timerWatcherPool->getMap()->clear();
+        }
+        ThreadUtil::unlock(this->lock);
     }
 
 } /* namespace XCF */

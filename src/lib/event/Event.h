@@ -87,55 +87,48 @@ namespace XCF {
     };
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    //- EventTimer
+    //- EventPeriodic
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     // FIXME 完成 timer event loop & 使用timer来定期输出日志
     // 完成 Thread::wakeup 和 Thread::checkBlockedOrStopped, 弄清楚 Thread::canBeBlocked 到底应该怎么返回
-    typedef Map<std::string, EventTimerWatcher>                  EventTimerWatcherMap;
-    typedef std::map<std::string, EventTimerWatcher *>::iterator EventTimerWatcherIterator;
-    typedef void (*EventTimerCallback)(EventLoop *loop, EventTimerWatcher *watcher, int32_t revents);
+    // 将static inline改成纯static函数（done），并将其他的inline函数定义，转成普通定义，然后在h文件内，进行实现
+    typedef Map<std::string, EventPeriodicWatcher>                  EventPeriodicWatcherMap;
+    typedef std::map<std::string, EventPeriodicWatcher *>::iterator EventPeriodicWatcherIterator;
+    typedef void (*EventPeriodicCallback)(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents);
 
-    class EventTimer: public Event {
-        EventTimer();
-        virtual ~EventTimer();
-        /**
-         * malloc & ev_timer_init & ev_timer_start a EventTimerWatcher.
-         * And add it into the EventTimerWatcherMap.
-         */
-        inline void addWatcher(std::string name, EventIoCallback callback) {
-            this->addWatcher(name, callback, EV_READ);
-        };
-        void addWatcher(std::string name, EventIoCallback callback, int32_t flags);
-        /**
-         * Get EventWatcher from the EventTimerWatcherMap.
-         * If specified EventTimerWatcher not found, NULL pointer returned.
-         */
-        inline EventTimerWatcher *getWatcher(std::string name) const {
-            return this->timerWatcherPool->get(name);
-        };
-        /**
-         * Remove the EventTimerWatcher, if it exists in the EventTimerWatcherMap.
-         */
-        void removeWatcher(std::string name);
-        /**
-         * Remove all the EventTimerWatcher in the EventTimerWatcherMap.
-         */
-        void clearWatchers();
-        /**
-         * Get EventTimerWatcher size.
-         */
-        inline int32_t getWatchersCount() const {
-            return this->timerWatcherPool->count();
-        };
-        /**
-         * Find the EventTimerWatcher in the EventTimerWatcherMap.
-         * EventTimerWatcherIterator returned.
-         */
-        inline EventTimerWatcherIterator findWatcher(std::string name) const {
-            return this->timerWatcherPool->find(name);
-        };
-    protected:
-        EventTimerWatcherMap *timerWatcherPool;
+    class EventPeriodic: public Event {
+        public:
+            EventPeriodic();
+            virtual ~EventPeriodic();
+            /**
+             * malloc & ev_periodic_init & ev_periodic_start a EventPeriodicWatcher.
+             * And add it into the EventPeriodicWatcherMap.
+             */
+            void addWatcher(std::string name, EventPeriodicCallback callback, double interval);
+            /**
+             * Get EventWatcher from the EventPeriodicWatcherMap.
+             * If specified EventPeriodicWatcher not found, NULL pointer returned.
+             */
+            EventPeriodicWatcher *getWatcher(std::string name) const;
+            /**
+             * Remove the EventPeriodicWatcher, if it exists in the EventPeriodicWatcherMap.
+             */
+            void removeWatcher(std::string name);
+            /**
+             * Remove all the EventPeriodicWatcher in the EventPeriodicWatcherMap.
+             */
+            void clearWatchers();
+            /**
+             * Get EventPeriodicWatcher size.
+             */
+            int32_t getWatchersCount() const;
+            /**
+             * Find the EventPeriodicWatcher in the EventPeriodicWatcherMap.
+             * EventPeriodicWatcherIterator returned.
+             */
+            EventPeriodicWatcherIterator findWatcher(std::string name) const;
+        protected:
+            EventPeriodicWatcherMap *timerWatcherPool;
     };
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
