@@ -12,7 +12,7 @@
 namespace XCF {
 
     #define XCF_LOG_MSG_MAX_LIMIT  25
-    #define XCF_LOG_TIMER_INTERVAL 0.1
+    #define XCF_LOG_TIMER_INTERVAL 1
     #define XCF_LOG_TIMER_NAME     "XCF_LOG_TIMER"
 
     namespace LogType {
@@ -44,6 +44,7 @@ namespace XCF {
             void warn(std::string msg)   const;
             void error(std::string msg)  const;
             void setPriority(uint16_t priority);
+            void registerTimer();
             static void timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents);
         protected:
             uint16_t priority;

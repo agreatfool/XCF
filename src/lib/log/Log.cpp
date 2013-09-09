@@ -8,12 +8,13 @@ namespace XCF {
     Log::Log():
         priority(LogPriority::Debug),
         maxMsgCount(XCF_LOG_MSG_MAX_LIMIT),
-        messages(new std::deque<std::string>())
-    {
-//        Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
-    }
+        messages(new std::deque<std::string>()) {}
 
     Log::~Log() {}
+
+    void Log::registerTimer() {
+        Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
+    }
 
     void Log::debug(std::string msg) const {
         this->cacheMessage(LogPriority::Debug, msg);
