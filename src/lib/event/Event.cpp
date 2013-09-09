@@ -19,11 +19,31 @@ namespace XCF {
         this->stopLoop();
         ev_loop_destroy(this->loop);
     };
+    int32_t Event::startLoop() {
+        ThreadUtil::lock(this->lock);
+        int32_t result = ev_run(this->loop, 0);
+        ThreadUtil::unlock(this->lock);
+        return result;
+    }
 
     void Event::stopLoop() {
         this->suspendLoop();
         this->clearWatchers();
+        ThreadUtil::lock(this->lock);
         ev_break(this->loop, EVBREAK_ALL);
+        ThreadUtil::unlock(this->lock);
+    }
+
+    void Event::suspendLoop() {
+        ThreadUtil::lock(this->lock);
+        ev_suspend(this->loop);
+        ThreadUtil::unlock(this->lock);
+    }
+
+    void Event::resumeLoop() {
+        ThreadUtil::lock(this->lock);
+        ev_resume(this->loop);
+        ThreadUtil::unlock(this->lock);
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
