@@ -5,32 +5,45 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Log
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    Log::Log(): priority(LogPriority::Debug) {}
+    Log::Log():
+        priority(LogPriority::Debug),
+        maxMsgCount(XCF_LOG_MSG_MAX_LIMIT),
+        messages(new std::deque<std::string>()) {}
 
     Log::~Log() {}
 
+    void Log::registerTimer() {
+        Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
+        Timer::get()->startLoop();
+        // FIXME the loop works, but it block the thread, so we have to use multi thread, go on...
+    }
+
     void Log::debug(std::string msg) const {
-        this->output(LogPriority::Debug, msg);
+        this->cacheMessage(LogPriority::Debug, msg);
     }
 
     void Log::info(std::string msg) const {
-        this->output(LogPriority::Info, msg);
+        this->cacheMessage(LogPriority::Info, msg);
     }
 
     void Log::notice(std::string msg) const {
-        this->output(LogPriority::Notice, msg);
+        this->cacheMessage(LogPriority::Notice, msg);
     }
 
     void Log::warn(std::string msg) const {
-        this->output(LogPriority::Warning, msg);
+        this->cacheMessage(LogPriority::Warning, msg);
     }
 
     void Log::error(std::string msg) const {
-        this->output(LogPriority::Error, msg);
+        this->cacheMessage(LogPriority::Error, msg);
     }
 
     void Log::setPriority(uint16_t priority) {
         this->priority = priority;
+    }
+
+    void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents) {
+        LogFactory::get()->output();
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -38,17 +51,21 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     SysLog::SysLog(): Log() {}
 
-    SysLog::~SysLog() {}
+    SysLog::~SysLog() {
+        this->output();
+    }
 
-    void SysLog::output(uint16_t priority, std::string msg) const {
-        if (priority <= this->priority) {
+    void SysLog::output() const {
+        if (this->messages->size() > 0) {
             openlog("XCF", LOG_PID, LOG_USER);
+            while (!this->messages->empty()) {
+                std::string msg = this->messages->front();
+                const char *buff = msg.c_str();
 
-            std::string formatted = Utility::stringFormat("[%s] %s", Time::getTimeString().c_str(), msg.c_str());
-            const char* buff = formatted.c_str();
-            syslog(LOG_USER | this->priority, "%s", buff);
-            this->logToConsole(formatted);
+                syslog(LOG_USER | this->priority, "%s", buff);
 
+                this->messages->pop_front();
+            }
             closelog();
         }
     }
@@ -58,37 +75,40 @@ namespace XCF {
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     FileLog::FileLog(): Log() {}
 
-    FileLog::~FileLog() {}
+    FileLog::~FileLog() {
+        this->output();
+    }
 
-    void FileLog::output(uint16_t priority, std::string msg) const {
+    void FileLog::output() const {
         // TODO tobe implemented
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* LogFactory
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    Log *LogFactory::instance = NULL;
+
     LogFactory::~LogFactory() {}
 
     Log* LogFactory::get() {
         return LogFactory::get(LogType::SysLog);
-    }
+    };
 
-    Log* LogFactory::get(uint16_t logType) {
-        Log* instance = NULL;
-
-        switch (logType) {
-            case LogType::SysLog:
-                instance = new SysLog();
-                break;
-            case LogType::FileLog:
-                instance = new FileLog();
-                break;
-            default:
-                instance = new SysLog();
-                break;
+    Log *LogFactory::get(uint16_t logType) {
+        if (LogFactory::instance == NULL) {
+            switch (logType) {
+                case LogType::SysLog:
+                    instance = new SysLog();
+                    break;
+                case LogType::FileLog:
+                    instance = new FileLog();
+                    break;
+                default:
+                    instance = new SysLog();
+                    break;
+            }
         }
-
-        return instance;
-    }
+        return LogFactory::instance;
+    };
 
 } /* namespace XCF */

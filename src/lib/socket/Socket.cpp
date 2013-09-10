@@ -27,8 +27,7 @@ namespace XCF {
         ):
         socketHost(host), socketPort(port),
         socketProtocolType(protocol), socketEndType(endType),
-        socketStatus(SocketStatus::CLOSED),
-        logger(LogFactory::get()), socketFd(INIT_SOCKET_FD)
+        socketStatus(SocketStatus::CLOSED), socketFd(INIT_SOCKET_FD)
     {
         this->socketInit();
     }
@@ -38,8 +37,7 @@ namespace XCF {
         ):
         socketHost(""), socketPort(0),
         socketProtocolType(protocol), socketEndType(SocketEndType::CLIENT),
-        socketStatus(SocketStatus::CONNECTED),
-        logger(LogFactory::get()), socketFd(socketFd), socketAddr(socketAddr)
+        socketStatus(SocketStatus::CONNECTED), socketFd(socketFd), socketAddr(socketAddr)
     {
         this->socketHost = inet_ntoa(socketAddr.sin_addr);
         this->socketPort = ntohs(socketAddr.sin_port);
@@ -47,7 +45,19 @@ namespace XCF {
 
     Socket::~Socket() {
         this->socketRelease();
-        delete this->logger;
+    }
+
+    Socket *Socket::socketAccept(int32_t acceptFromFd, uint16_t protocol) {
+        struct sockaddr_in socketAddr;
+        socklen_t socketLen = sizeof(socketAddr);
+        int32_t socketFd = accept(acceptFromFd, (struct sockaddr *) &socketAddr, &socketLen);
+
+        if (socketFd < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
+            return NULL;
+        }
+
+        return new Socket(socketFd, socketAddr, protocol);
     }
 
     int32_t Socket::socketInit() {
@@ -57,7 +67,7 @@ namespace XCF {
 
             if (this->socketFd < 0) {
                 this->socketRelease();
-                this->logger->error(Utility::stringFormat("[Socket] socketFd initialization failed: [%d] %s", errno, strerror(errno)));
+                LogFactory::get()->error(Utility::stringFormat("[Socket] socketFd initialization failed: [%d] %s", errno, strerror(errno)));
                 return INVALID_RESULT;
             }
 
@@ -79,12 +89,12 @@ namespace XCF {
                 // server: bind & listen
                 if (bind(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
                     this->socketRelease();
-                    this->logger->error(Utility::stringFormat("[Socket] socket binding failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] socket binding failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
                 if (listen(this->socketFd, SOCK_LISTEN_BACKLOG) < 0) {
                     this->socketRelease();
-                    this->logger->error(Utility::stringFormat("[Socket] socket listen failed: [%d] %s", errno, strerror(errno)));
+                    LogFactory::get()->error(Utility::stringFormat("[Socket] socket listen failed: [%d] %s", errno, strerror(errno)));
                     return INVALID_RESULT;
                 }
             } else if (this->socketEndType == SocketEndType::CLIENT) {
@@ -92,7 +102,7 @@ namespace XCF {
                 if (connect(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
                     if (errno != EINPROGRESS) { // non-blocking socket connect, EINPROGRESS would be returned
                         this->socketRelease();
-                        this->logger->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
+                        LogFactory::get()->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
                         return INVALID_RESULT;
                     }
                 }
@@ -123,39 +133,6 @@ namespace XCF {
     SocketPool::~SocketPool() {
         this->clearSockets();
         delete this->socketPool;
-    }
-
-    void SocketPool::addSocket(Socket *socket) {
-        this->socketPool->insert(SocketPoolMap::value_type(socket->getSocketFd(), socket));
-    }
-
-    void SocketPool::removeSocket(int32_t socketFd) {
-        SocketPoolIterator it = this->findSocket(socketFd);
-        if (it != this->socketPool->end()) {
-            // found the socket in the pool
-            delete it->second;
-            this->socketPool->erase(it);
-        }
-    }
-
-    Socket *SocketPool::getSocket(int32_t socketFd) {
-        SocketPoolIterator it = this->findSocket(socketFd);
-        if (it != this->socketPool->end()) {
-            return it->second;
-        } else {
-            return NULL;
-        }
-    }
-
-    void SocketPool::clearSockets() {
-        if (this->socketPool->size() > 0) {
-            SocketPoolIterator it;
-            for (it = this->socketPool->begin(); it != this->socketPool->end(); /* no auto increment*/) {
-                delete it->second;
-                this->socketPool->erase(it++);
-            }
-            this->socketPool->clear();
-        }
     }
 
 } /* namespace XCF */

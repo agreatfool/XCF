@@ -9,9 +9,10 @@
 
 #include <ev.h>
 
-#include "../../Declare.h"
+#include "../../XCF.h"
 #include "../log/Log.h"
 #include "../event/Event.h"
+#include "../model/Map.h"
 
 namespace XCF {
 
@@ -49,21 +50,15 @@ namespace XCF {
             /**
              * Get "this->buffer".
              */
-            inline char *getBuffer() {
-                return this->buffer;
-            };
+            char *getBuffer();
             /**
              * Copy & append char array to the end of "this->buffer".
              */
-            inline void copyBuffer(char buff[]) {
-                Utility::appendCharArray(this->buffer, buff, SOCK_BUFFER_LENGTH - strlen(this->buffer) - 1);
-            };
+            void copyBuffer(char buff[]);
             /**
              * Clear "this->buffer".
              */
-            inline void clearBuffer() {
-                bzero(this->buffer, SOCK_BUFFER_LENGTH);
-            };
+            void clearBuffer();
         protected:
             char *buffer;
     };
@@ -87,33 +82,16 @@ namespace XCF {
             /**
              * Get this->socketFd.
              */
-            inline int32_t  getSocketFd() const {
-                return this->socketFd;
-            };
+            int32_t  getSocketFd() const;
             /**
              * Get this->socketStatus.
              */
-            inline uint16_t getSocketStatus() const {
-                return this->socketStatus;
-            };
+            uint16_t getSocketStatus() const;
             /**
              * Accept socket from "acceptFromFd".
              * If failed, NULL pointer returned.
              */
-            static inline Socket *socketAccept(int32_t acceptFromFd, uint16_t protocol) {
-                struct sockaddr_in socketAddr;
-                socklen_t socketLen = sizeof(socketAddr);
-                int32_t socketFd = accept(acceptFromFd, (struct sockaddr *) &socketAddr, &socketLen);
-
-                if (socketFd < 0) {
-                    Log* logger = LogFactory::get();
-                    logger->error(Utility::stringFormat("[Socket] accept socket failed: [%d] %s", errno, strerror(errno)));
-                    delete logger;
-                    return NULL;
-                }
-
-                return new Socket(socketFd, socketAddr, protocol);
-            };
+            static Socket *socketAccept(int32_t acceptFromFd, uint16_t protocol);
             /**
              * Release all the socket resources,
              * make it the same status as before "socketInit()" was called.
@@ -123,56 +101,26 @@ namespace XCF {
              * Read bytes from socket.
              * With "SocketBuffer *buffer".
              */
-            inline int32_t read(char *buffer, int32_t length) {
-                int32_t received = recv(this->socketFd, buffer, length, 0);
-                if (received < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
-                }
-                return received;
-            };
+            int32_t read(char *buffer, int32_t length);
             /**
              * Read bytes from socket.
              * With "SocketBuffer *buffer".
              */
-            inline int32_t read(SocketBuffer *buffer, int32_t length) {
-                int32_t received = recv(this->socketFd, buffer->getBuffer(), length, 0);
-                if (received < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
-                }
-                return received;
-            };
+            int32_t read(SocketBuffer *buffer, int32_t length);
             /**
              * Write bytes into socket.
              * With raw "char* buffer".
              */
-            inline int32_t write(char *buffer) {
-                int32_t transmitted = send(this->socketFd, buffer, strlen(buffer), 0);
-                if (transmitted < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
-                }
-                return transmitted;
-            };
+            int32_t write(char *buffer);
             /**
              * Write bytes into socket.
              * With "SocketBuffer *buffer".
              */
-            inline int32_t write(SocketBuffer *buffer) {
-                int32_t transmitted = send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
-                if (transmitted < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
-                }
-                return transmitted;
-            };
+            int32_t write(SocketBuffer *buffer);
             /**
              * Set socket write buffer size to "bufferSize".
              */
-            inline int32_t setWriteBuffSize(int32_t bufferSize) {
-                int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_SNDBUF, (const void *) &bufferSize, sizeof(socklen_t));
-                if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setWriteBuffSize failed: [%d] %s", errno, strerror(errno)));
-                }
-                return setResult;
-            }
+            int32_t setWriteBuffSize(int32_t bufferSize);
         protected:
             // Inputed
             std::string        socketHost;
@@ -182,7 +130,6 @@ namespace XCF {
             // Status
             int16_t            socketStatus;
             // Generated
-            Log                *logger;
             int32_t            socketFd;
             struct sockaddr_in socketAddr;
             /**
@@ -194,42 +141,21 @@ namespace XCF {
             /**
              * Set socket to non-block.
              */
-            inline int32_t setNonBlock() {
-                int32_t flags = fcntl(this->socketFd, F_GETFL);
-                int32_t setResult = fcntl(this->socketFd, F_SETFL, flags | O_NONBLOCK);
-                if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setNonBlock failed: [%d] %s", errno, strerror(errno)));
-                }
-                return setResult;
-            };
+            int32_t setNonBlock();
             /**
              * Set socket to keep-alive.
              */
-            inline int32_t setKeepAlive() {
-                int32_t flags = 1;
-                int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_KEEPALIVE, &flags, sizeof(int32_t));
-                if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setKeepAlive failed: [%d] %s", errno, strerror(errno)));
-                }
-                return setResult;
-            };
+            int32_t setKeepAlive();
             /**
              * Set socket to reuse address.
              */
-            inline int32_t setReuseAddr() {
-                int32_t flags = 1;
-                int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(int32_t));
-                if (setResult < 0) {
-                    this->logger->error(Utility::stringFormat("[Socket] setReuseAddr failed: [%d] %s", errno, strerror(errno)));
-                }
-                return setResult;
-            };
+            int32_t setReuseAddr();
     };
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* SocketPool
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    typedef std::map<int32_t, Socket *>           SocketPoolMap;
+    typedef Map<int32_t, Socket>                  SocketPoolMap;
     typedef std::map<int32_t, Socket *>::iterator SocketPoolIterator;
 
     class SocketPool {
@@ -239,16 +165,16 @@ namespace XCF {
             /**
              * Add socket into SocketPoolMap.
              */
-            void addSocket(Socket *socket);
+            bool addSocket(Socket *socket);
             /**
              * Remove socket from SocketPoolMap.
              */
-            void removeSocket(int32_t socketFd);
+            bool removeSocket(int32_t socketFd);
             /**
              * Find & get socket from SocketPoolMap.
              * If specified Socket not found, NULL pointer returned.
              */
-            Socket *getSocket(int32_t socketFd);
+            Socket *getSocket(int32_t socketFd) const;
             /**
              * Remove all the Socket in the SocketPoolMap.
              */
@@ -256,19 +182,121 @@ namespace XCF {
             /**
              * Get socket pool size.
              */
-            inline int32_t getPoolSize() {
-                return this->socketPool->size();
-            };
+            uint32_t getPoolSize() const;
             /**
              * Find the Socket in the SocketPoolMap.
              * SocketPoolIterator returned.
              */
-            inline SocketPoolIterator findSocket(int32_t socketFd) {
-                return this->socketPool->find(socketFd);
-            };
+            SocketPoolIterator findSocket(int32_t socketFd) const;
         protected:
             SocketPoolMap *socketPool;
     };
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* inline Implementations
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* SocketBuffer
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline char *SocketBuffer::getBuffer() {
+        return this->buffer;
+    }
+    inline void SocketBuffer::copyBuffer(char buff[]) {
+        Utility::appendCharArray(this->buffer, buff, SOCK_BUFFER_LENGTH - strlen(this->buffer) - 1);
+    }
+    inline void SocketBuffer::clearBuffer() {
+        bzero(this->buffer, SOCK_BUFFER_LENGTH);
+    };
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* Socket
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline int32_t Socket::getSocketFd() const {
+        return this->socketFd;
+    }
+    inline uint16_t Socket::getSocketStatus() const {
+        return this->socketStatus;
+    }
+    inline int32_t Socket::read(char *buffer, int32_t length) {
+        int32_t received = recv(this->socketFd, buffer, length, 0);
+        if (received < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+        }
+        return received;
+    }
+    inline int32_t Socket::read(SocketBuffer *buffer, int32_t length) {
+        int32_t received = recv(this->socketFd, buffer->getBuffer(), length, 0);
+        if (received < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+        }
+        return received;
+    }
+    inline int32_t Socket::write(char *buffer) {
+        int32_t transmitted = send(this->socketFd, buffer, strlen(buffer), 0);
+        if (transmitted < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+        }
+        return transmitted;
+    }
+    inline int32_t Socket::write(SocketBuffer *buffer) {
+        int32_t transmitted = send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
+        if (transmitted < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+        }
+        return transmitted;
+    }
+    inline int32_t Socket::setWriteBuffSize(int32_t bufferSize) {
+        int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_SNDBUF, (const void *) &bufferSize, sizeof(socklen_t));
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setWriteBuffSize failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+    inline int32_t Socket::setNonBlock() {
+        int32_t flags = fcntl(this->socketFd, F_GETFL);
+        int32_t setResult = fcntl(this->socketFd, F_SETFL, flags | O_NONBLOCK);
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setNonBlock failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+    inline int32_t Socket::setKeepAlive() {
+        int32_t flags = 1;
+        int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_KEEPALIVE, &flags, sizeof(int32_t));
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setKeepAlive failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+    inline int32_t Socket::setReuseAddr() {
+        int32_t flags = 1;
+        int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(int32_t));
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setReuseAddr failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //-* SocketPool
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline bool SocketPool::addSocket(Socket *socket) {
+        return this->socketPool->add(socket->getSocketFd(), socket);
+    }
+    inline bool SocketPool::removeSocket(int32_t socketFd) {
+        return this->socketPool->remove(socketFd);
+    }
+    inline Socket *SocketPool::getSocket(int32_t socketFd) const {
+        return this->socketPool->get(socketFd);
+    }
+    inline void SocketPool::clearSockets() {
+        this->socketPool->clear();
+    }
+    inline uint32_t SocketPool::getPoolSize() const {
+        return this->socketPool->count();
+    }
+    inline SocketPoolIterator SocketPool::findSocket(int32_t socketFd) const {
+        return this->socketPool->find(socketFd);
+    }
 
 } /* namespace XCF */
 

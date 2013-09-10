@@ -5,9 +5,15 @@
 #include <deque>
 #include <syslog.h>
 
+#include "../../XCF.h"
 #include "../utility/Time.h"
+#include "../utility/Timer.h"
 
 namespace XCF {
+
+    #define XCF_LOG_MSG_MAX_LIMIT  25
+    #define XCF_LOG_TIMER_INTERVAL 5.
+    #define XCF_LOG_TIMER_NAME     "XCF_LOG_TIMER"
 
     namespace LogType {
         enum LogType {
@@ -25,6 +31,9 @@ namespace XCF {
         };
     }
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Log
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     class Log {
         public:
             Log();
@@ -35,39 +44,65 @@ namespace XCF {
             void warn(std::string msg)   const;
             void error(std::string msg)  const;
             void setPriority(uint16_t priority);
+            void registerTimer();
+            static void timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents);
         protected:
             uint16_t priority;
-            virtual void output(uint16_t priority, std::string msg) const = 0;
-            void inline logToConsole(std::string msg) const {
-                std::cout << msg << std::endl;
-            };
+            uint16_t maxMsgCount;
+            std::deque<std::string> *messages;
+            void cacheMessage(uint16_t priority, std::string msg) const;
+            void logToConsole(std::string msg) const;
+            virtual void output() const = 0;
     };
 
     class SysLog: public Log {
         public:
             SysLog();
             virtual ~SysLog();
-            void output(uint16_t priority, std::string msg) const;
+            void output() const;
     };
 
     class FileLog: public Log {
         public:
             FileLog();
             virtual ~FileLog();
-            void output(uint16_t priority, std::string msg) const;
+            void output() const;
     };
 
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- LogFactory
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     class LogFactory {
         public:
             virtual ~LogFactory();
-            static Log* get();
-            static Log* get(uint16_t logType);
+            static Log *get(uint16_t logType);
+            static Log *get();
         private:
             LogFactory();
+            static Log        *instance;
             // Stop the compiler generating methods of copy the object
             LogFactory(LogFactory const& copy);            // Not Implemented
             LogFactory& operator=(LogFactory const& copy); // Not Implemented
     };
+
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- inline Implementations
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    //- Log
+    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    inline void Log::cacheMessage(uint16_t priority, std::string msg) const {
+        if (priority <= this->priority) {
+            std::string formatted = Utility::stringFormat("[%s] %s", Time::getTimeString().c_str(), msg.c_str());
+            this->messages->push_back(formatted.c_str());
+            this->logToConsole(formatted);
+            if (this->messages->size() >= this->maxMsgCount) {
+                this->output();
+            }
+        }
+    }
+    inline void Log::logToConsole(std::string msg) const {
+        std::cout << msg << std::endl;
+    }
 
 } /* namespace XCF */
 
