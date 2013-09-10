@@ -39,7 +39,8 @@ namespace XCF {
              */
             virtual void run() = 0;
             /**
-             * Whether current can be blocked. Check whether the thread has no work to do, if true block it to sleep.
+             * Whether current can be blocked.
+             * Check whether the thread has no work to do, if true block it to sleep.
              */
             virtual bool canBeBlocked() = 0;
             /**
@@ -51,15 +52,18 @@ namespace XCF {
              */
             void stop();
             /**
-             * Check whether thread status is marked as BLOCKED or STOPPED.
-             * If true, process according logics.
+             * Check thread status.
+             * If thread status marked STOPPED, pthread_exit it.
+             * If thread this->canBeBlocked(), set it to BLOCKED, and pthread_cond_wait.
+             * Otherwise mark status RUNNING.
              */
-            void checkBlockedOrStopped();
+            void checkThreadStatus();
         protected:
             ThreadId   *threadId;
             ThreadLock *lock;
             ThreadCond *cond;
             uint16_t   status;
+            char       retVal[64];
     };
 
     class ThreadUtil {

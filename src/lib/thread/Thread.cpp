@@ -20,7 +20,7 @@ namespace XCF {
     }
 
     Thread::Thread():
-        threadId(NULL), lock(NULL), cond(NULL), status(ThreadStatus::INITED)
+        threadId(NULL), lock(NULL), cond(NULL), status(ThreadStatus::INITED), retVal()
     {
         this->threadId = ThreadUtil::createThread(threadStartFunc, this);
         this->lock = ThreadUtil::createLock();
@@ -33,6 +33,16 @@ namespace XCF {
         ThreadUtil::destroyCond(this->cond);
     }
 
+    void Thread::wakeup() {
+        ThreadUtil::lock(this->lock);
+
+        if (this->status == ThreadStatus::BLOCKED && !this->canBeBlocked() ) {
+            ThreadUtil::signalCond(this->cond);
+        }
+
+        ThreadUtil::unlock(this->lock);
+    }
+
     void Thread::stop() {
         ThreadUtil::lock(this->lock);
 
@@ -43,7 +53,23 @@ namespace XCF {
         ThreadUtil::joinThread(this->threadId);
 
         LogFactory::get()->info("Thread stopped.");
-    };
+    }
+
+    void Thread::checkThreadStatus() {
+        ThreadUtil::lock(this->lock);
+
+        while (this->canBeBlocked() || this->status == ThreadStatus::STOPPED) {
+            if (this->status == ThreadStatus::STOPPED) {
+                pthread_exit((void *) this->retVal);
+            }
+            this->status = ThreadStatus::BLOCKED;
+            ThreadUtil::waitCond(this->cond, this->lock);
+        }
+
+        this->status = ThreadStatus::RUNNING;
+
+        ThreadUtil::unlock(this->lock);
+    }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* ThreadUtil
