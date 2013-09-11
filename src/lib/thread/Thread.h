@@ -1,7 +1,7 @@
 #ifndef XCF_THREAD_H_
 #define XCF_THREAD_H_
 
-#include "../../XCF.h"
+#include "../../Common.h"
 
 DEF_NS_XCF_BEGIN
 

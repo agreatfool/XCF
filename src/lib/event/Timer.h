@@ -1,7 +1,7 @@
 #ifndef XCF_TIMER_H_
 #define XCF_TIMER_H_
 
-#include "../../XCF.h"
+#include "../../Common.h"
 
 DEF_NS_XCF_BEGIN
 

@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 
-#include "../../XCF.h"
+#include "../../Common.h"
 #include "../model/Map.h"
 
 DEF_NS_XCF_BEGIN

@@ -1,10 +1,10 @@
 #ifndef XCF_LOG_H_
 #define XCF_LOG_H_
 
+#include "../../Common.h"
+
 #include <deque>
 #include <syslog.h>
-
-#include "../../XCF.h"
 
 DEF_NS_XCF_BEGIN
 

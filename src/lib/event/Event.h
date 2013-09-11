@@ -1,7 +1,7 @@
 #ifndef XCF_EVENT_H_
 #define XCF_EVENT_H_
 
-#include "../../XCF.h"
+#include "../../Common.h"
 #include "../model/Map.h"
 
 DEF_NS_XCF_BEGIN

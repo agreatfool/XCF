@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <ctime>
 
-#include "../../XCF.h"
+#include "../../Common.h"
 
 DEF_NS_XCF_BEGIN
 

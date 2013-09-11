@@ -1,9 +1,11 @@
 #ifndef XCF_MAP_H_
 #define XCF_MAP_H_
 
+#include "../../Common.h"
+
 #include <map>
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     template <typename KEY_TYPE, typename VALUE_TYPE>
     class Map {
@@ -109,6 +111,6 @@ namespace XCF {
             };
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_MAP_H_ */

@@ -1,7 +1,7 @@
 #ifndef XCF_UTILITY_H_
 #define XCF_UTILITY_H_
 
-#include "../../XCF.h"
+#include "../../Common.h"
 
 #include <cstring>
 
