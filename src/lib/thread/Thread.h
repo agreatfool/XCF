@@ -27,7 +27,7 @@ class Thread {
         /**
          * Initialize the thread.
          */
-        virtual int32_t init() = 0;
+        virtual int32_t init();
         /**
          * Run the thread. Thread logic goes here.
          */

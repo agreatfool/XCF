@@ -24,9 +24,13 @@ void *threadStartFunc(void *argv) {
 Thread::Thread():
     threadId(NULL), lock(NULL), cond(NULL), status(ThreadStatus::INITED), retVal()
 {
-    this->threadId = ThreadUtil::createThread(threadStartFunc, this);
-    this->lock = ThreadUtil::createLock();
-    this->cond = ThreadUtil::createCond();
+    /*
+     * Since "ThreadUtil::createThread(threadStartFunc, this);" would call function "threadStartFunc",
+     * and at this time, the child class has not been initialized, the instance of the object is "Thread",
+     * the param "void *argv" of "threadStartFunc" is given as the instance of "Thread".
+     * Logic of "thread->init()" will report error "pure virtual method called" (this function of Thread is still pure virtual function).
+     * So the initialization logics have to be moved into funtion "Thread::init()".
+     */
 }
 
 Thread::~Thread() {
@@ -35,6 +39,12 @@ Thread::~Thread() {
     ThreadUtil::destroyCond(this->cond);
 }
 
+int32_t Thread::init() {
+    this->threadId = ThreadUtil::createThread(threadStartFunc, this);
+    this->lock = ThreadUtil::createLock();
+    this->cond = ThreadUtil::createCond();
+    return XCF_VALID_RESULT;
+}
 void Thread::wakeup() {
     ThreadUtil::lock(this->lock);
 
