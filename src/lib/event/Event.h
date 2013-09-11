@@ -2,6 +2,7 @@
 #define XCF_EVENT_H_
 
 #include "../../XCF.h"
+#include "../model/Map.h"
 
 DEF_NS_XCF_BEGIN
 
