@@ -4,7 +4,7 @@
 #include "../event/Event.h"
 #include "../event/Timer.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Log
@@ -126,4 +126,4 @@ namespace XCF {
         return LogFactory::instance;
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END

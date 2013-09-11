@@ -2,7 +2,7 @@
 #include "../event/Event.h"
 #include "../thread/Thread.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     EventPeriodic *Timer::instance = NULL;
 
@@ -15,4 +15,4 @@ namespace XCF {
         return Timer::instance;
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END

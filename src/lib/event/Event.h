@@ -3,7 +3,7 @@
 
 #include "../../XCF.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- Event
@@ -166,6 +166,6 @@ namespace XCF {
         return this->timerWatcherPool->find(name);
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_EVENT_H_ */

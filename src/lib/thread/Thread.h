@@ -3,7 +3,7 @@
 
 #include "../../XCF.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     typedef void *(ThreadStartFunc)(void *); // argument (void *) actually is (Thread *)
 
@@ -128,6 +128,6 @@ namespace XCF {
         return this->threadId;
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_THREAD_H_ */

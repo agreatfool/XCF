@@ -1,17 +1,17 @@
 #ifndef XCF_UTILITY_H_
 #define XCF_UTILITY_H_
 
+#include "../../XCF.h"
+
 #include <cstring>
-#include <iostream>
 
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdint.h>
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     class Utility {
         public:
@@ -51,6 +51,6 @@ namespace XCF {
             static void stringTrimLineBreak(char *str);
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_UTILITY_H_ */

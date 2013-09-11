@@ -1,6 +1,6 @@
 #include "Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Utility
@@ -87,4 +87,4 @@ namespace XCF {
         }
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END

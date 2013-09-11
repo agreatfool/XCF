@@ -2,7 +2,7 @@
 #include "../log/Log.h"
 #include "../utility/Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Thread
@@ -189,4 +189,4 @@ namespace XCF {
         return pthread_self();
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END

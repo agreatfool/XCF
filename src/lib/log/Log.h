@@ -6,7 +6,7 @@
 
 #include "../../XCF.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     #define XCF_LOG_MSG_MAX_LIMIT  25
     #define XCF_LOG_TIMER_INTERVAL 5.
@@ -91,6 +91,6 @@ namespace XCF {
         std::cout << msg << std::endl;
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_LOG_H_ */

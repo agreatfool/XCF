@@ -3,7 +3,7 @@
 #include "../event/Event.h"
 #include "../utility/Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* SocketBuffer
@@ -209,4 +209,4 @@ namespace XCF {
         delete this->socketPool;
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END

@@ -1,6 +1,7 @@
 #include "Time.h"
+#include "Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Time
@@ -40,4 +41,4 @@ namespace XCF {
         return Utility::charToString(ctime(time));
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END

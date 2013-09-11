@@ -3,7 +3,7 @@
 
 #include "../../XCF.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     class EventPeriodic;
 
@@ -19,6 +19,6 @@ namespace XCF {
             Timer& operator=(Timer const& copy); // Not Implemented
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_TIMER_H_ */

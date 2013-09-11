@@ -5,9 +5,8 @@
 #include <ctime>
 
 #include "../../XCF.h"
-#include "Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     class Time {
         public:
@@ -36,6 +35,6 @@ namespace XCF {
             static std::string getDefaultTimeString(time_t* time);
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_TIME_H_ */

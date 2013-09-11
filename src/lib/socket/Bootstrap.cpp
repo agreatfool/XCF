@@ -4,7 +4,7 @@
 #include "../event/Event.h"
 #include "../utility/Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* Bootstrap
@@ -154,4 +154,4 @@ namespace XCF {
         return VALID_RESULT;
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END

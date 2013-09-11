@@ -7,7 +7,7 @@
 
 #include "../../XCF.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     namespace SocketProtocol {
         enum SocketProtocol {
@@ -229,6 +229,6 @@ namespace XCF {
         return this->socketPool->find(socketFd);
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_SOCKET_H_ */

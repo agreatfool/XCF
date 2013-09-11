@@ -3,7 +3,7 @@
 #include "../log/Log.h"
 #include "../utility/Utility.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //- Event
@@ -127,4 +127,4 @@ namespace XCF {
         LogFactory::get()->debug("[EventPeriodic] Periodic events cleared ...");
     }
 
-} /* namespace XCF */
+DEF_NS_XCF_END

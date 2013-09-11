@@ -1,9 +1,9 @@
 #include "SocketPipline.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     SocketPipline::SocketPipline() {}
 
     SocketPipline::~SocketPipline() {}
 
-} /* namespace XCF */
+DEF_NS_XCF_END

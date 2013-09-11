@@ -1,7 +1,9 @@
 #ifndef XCF_SOCKETPIPLINE_H_
 #define XCF_SOCKETPIPLINE_H_
 
-namespace XCF {
+#include "../../XCF.h"
+
+DEF_NS_XCF_BEGIN
 
     class SocketPipline {
         public:
@@ -16,6 +18,6 @@ namespace XCF {
             SocketPipline *getPipline();
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_SOCKETPIPLINE_H_ */

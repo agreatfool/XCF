@@ -3,7 +3,7 @@
 
 #include "../../XCF.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     class EventIo;
     class Socket;
@@ -60,6 +60,6 @@ namespace XCF {
             ClientBootstrap& operator=(ClientBootstrap const& copy); // Not Implemented
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_BOOTSTRAP_H_ */
