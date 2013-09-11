@@ -29,9 +29,11 @@ class Thread {
          */
         virtual int32_t init();
         /**
-         * Run the thread. Thread logic goes here.
+         * Start to run the thread.
+         * Basically, this function is an endless loop to check thread status & process logic.
+         * It can be overwrote by child class implementation.
          */
-        virtual void run() = 0;
+        virtual void run();
         /**
          * Wakeup the thread.
          */
@@ -58,6 +60,10 @@ class Thread {
          * Check whether the thread has no work to do, if true block it to sleep.
          */
         virtual bool canBeBlocked() = 0;
+        /**
+         * Real thread logic goes here.
+         */
+        virtual void process() = 0;
 };
 
 class ThreadUtil {

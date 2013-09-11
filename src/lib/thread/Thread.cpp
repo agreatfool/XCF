@@ -45,6 +45,14 @@ int32_t Thread::init() {
     this->cond = ThreadUtil::createCond();
     return XCF_VALID_RESULT;
 }
+
+void Thread::run() {
+    while (1) {
+        this->checkThreadStatus();
+        this->process();
+    }
+}
+
 void Thread::wakeup() {
     ThreadUtil::lock(this->lock);
 
