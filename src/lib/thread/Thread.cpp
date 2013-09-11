@@ -91,6 +91,14 @@ void Thread::checkThreadStatus() {
     ThreadUtil::unlock(this->lock);
 }
 
+bool Thread::isSleeping() {
+    if (this->status == ThreadStatus::BLOCKED) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* ThreadUtil
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-

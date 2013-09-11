@@ -49,6 +49,14 @@ class Thread {
          * Otherwise mark status RUNNING.
          */
         void checkThreadStatus();
+        /**
+         * Get thread status.
+         */
+        uint16_t getStatus();
+        /**
+         * Check whether thread is sleeping.
+         */
+        bool isSleeping();
     protected:
         ThreadId   *threadId;
         ThreadLock *lock;
@@ -132,6 +140,9 @@ class ThreadPool {
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 inline ThreadId *Thread::getThreadId() {
     return this->threadId;
+}
+inline uint16_t Thread::getStatus() {
+    return this->status;
 }
 
 DEF_NS_XCF_END
