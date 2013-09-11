@@ -11,6 +11,7 @@ class TimerThread: public Thread, public EventPeriodic {
     public:
         TimerThread();
         virtual ~TimerThread();
+        virtual int32_t prepareToRun();
         virtual void run();
     protected:
        virtual bool canBeBlocked();

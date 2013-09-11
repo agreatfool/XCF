@@ -16,6 +16,19 @@ namespace ThreadStatus {
     };
 }
 
+/**
+ * Thread work flow:
+ * 1. DerivedThread *derived = new DerivedThread();
+ *     at this time, the thread class is an empty class, has no functionality, it's not ready.
+ * 2. derived->init();
+ *     initialize the Thread class, create pthread lock & pthread condition & pthread thread.
+ * 3. threadStartFunc();
+ *     when creating pthread thread, threadStartFunc will be called.
+ * 4. derived->prepareToRun();
+ *     let derived class to do some self init logics.
+ * 5. derived->run();
+ *     thread start to run, basically it's an endless loop to check thread status & process logics.
+ */
 class Thread {
     public:
         Thread();
@@ -26,12 +39,17 @@ class Thread {
         ThreadId *getThreadId();
         /**
          * Initialize the thread.
+         * Create pthread lock & pthread condition & create pthread thread.
          */
-        virtual int32_t init();
+        void init();
+        /**
+         * Preparation before the thread start to run.
+         */
+        virtual int32_t prepareToRun() = 0;
         /**
          * Start to run the thread.
          * Basically, this function is an endless loop to check thread status & process logic.
-         * It can be overwrote by child class implementation.
+         * It can be overwrote by derived class implementation.
          */
         virtual void run();
         /**
@@ -42,13 +60,6 @@ class Thread {
          * Stop the thread.
          */
         void stop();
-        /**
-         * Check thread status.
-         * If thread status marked STOPPED, pthread_exit it.
-         * If thread this->canBeBlocked(), set it to BLOCKED, and pthread_cond_wait.
-         * Otherwise mark status RUNNING.
-         */
-        void checkThreadStatus();
         /**
          * Get thread status.
          */
@@ -64,10 +75,17 @@ class Thread {
         uint16_t   status;
         char       retVal[64];
         /**
-         * Whether current can be blocked.
+         * Whether the thread can be blocked at present.
          * Check whether the thread has no work to do, if true block it to sleep.
          */
         virtual bool canBeBlocked() = 0;
+        /**
+         * Check thread status.
+         * If thread status marked STOPPED, pthread_exit it.
+         * If thread this->canBeBlocked(), set it to BLOCKED, and pthread_cond_wait.
+         * Otherwise mark status RUNNING.
+         */
+        void checkThreadStatus();
         /**
          * Real thread logic goes here.
          */
