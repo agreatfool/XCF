@@ -2,10 +2,8 @@
 #define XCF_TIMER_H_
 
 #include "../../XCF.h"
-#include "../event/Event.h"
-#include "../thread/Thread.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN;
 
     class Timer {
         public:
@@ -19,6 +17,6 @@ namespace XCF {
             Timer& operator=(Timer const& copy); // Not Implemented
     };
 
-} /* namespace XCF */
+DEF_NS_XCF_END;
 
 #endif /* XCF_TIMER_H_ */

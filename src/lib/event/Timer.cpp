@@ -1,6 +1,8 @@
 #include "Timer.h"
+#include "../event/Event.h"
+#include "../thread/Thread.h"
 
-namespace XCF {
+USING_NS_XCF_BEGIN;
 
     EventPeriodic *Timer::instance = NULL;
 
@@ -13,4 +15,4 @@ namespace XCF {
         return Timer::instance;
     }
 
-} /* namespace XCF */
+USING_NS_XCF_END;
