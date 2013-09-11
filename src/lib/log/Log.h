@@ -79,7 +79,7 @@ class Log {
          */
         void logToConsole(std::string msg) const;
         /**
-         * Output functionality to be implemented by child classes.
+         * Output functionality to be implemented by derived classes.
          */
         virtual void output() const = 0;
 };
