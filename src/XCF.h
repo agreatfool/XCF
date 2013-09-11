@@ -1,57 +1,23 @@
 #ifndef XCF_H_
 #define XCF_H_
 
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-//-* SYSTEM
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-#include <iostream>
-#include <stdint.h>
-#include <errno.h>
+#include "Common.h"
 
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-//-* THIRD PARTY
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-#include <ev.h>
-#include <pthread.h>
-
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-//-* MACROS
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-#define DEF_NS_XCF_BEGIN   namespace XCF {
-#define DEF_NS_XCF_END     } /* namespace XCF */
-#define USING_NS_XCF       using namespace XCF
-
-DEF_NS_XCF_BEGIN
-
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    //-* constants
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    #define INIT_SOCKET_FD            0
-    #define INVALID_SOCKET_FD        -1
-
-    #define VALID_RESULT              0
-    #define INVALID_RESULT           -1
-
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    //-* socket
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    #define SOCK_LISTEN_BACKLOG 16
-    #define SOCK_BUFFER_LENGTH  1024 * 16
-
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    //-* libev
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    typedef struct ev_loop     EventLoop;
-    typedef struct ev_io       EventIoWatcher;
-    typedef struct ev_periodic EventPeriodicWatcher;
-
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    //-* pthread
-    //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    typedef pthread_t       ThreadId;
-    typedef pthread_mutex_t ThreadLock;
-    typedef pthread_cond_t  ThreadCond;
-
-DEF_NS_XCF_END
+// event
+#include "lib/event/Event.h"
+#include "lib/event/Timer.h"
+// log
+#include "lib/log/Log.h"
+// model
+#include "lib/model/Map.h"
+// socket
+#include "lib/socket/Bootstrap.h"
+#include "lib/socket/Socket.h"
+#include "lib/socket/SocketPipline.h"
+// thread
+#include "lib/thread/Thread.h"
+// utility
+#include "lib/utility/Time.h"
+#include "lib/utility/Utility.h"
 
 #endif /* XCF_H_ */
