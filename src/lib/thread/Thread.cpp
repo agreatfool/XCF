@@ -40,9 +40,9 @@ Thread::~Thread() {
 }
 
 int32_t Thread::init() {
-    this->threadId = ThreadUtil::createThread(threadStartFunc, this);
     this->lock = ThreadUtil::createLock();
     this->cond = ThreadUtil::createCond();
+    this->threadId = ThreadUtil::createThread(threadStartFunc, this);
     return XCF_VALID_RESULT;
 }
 
