@@ -18,21 +18,21 @@ Event::Event():
     ), lock(ThreadUtil::createLock()) {}
 
 Event::~Event() {
+    LogFactory::get()->debug("[Event] ~Event ...");
     this->stopLoop();
     ev_loop_destroy(this->loop);
-    LogFactory::get()->debug("[Event] ~Event ...");
 }
 
 void Event::startLoop() {
-    ev_run(this->loop, 0);
     LogFactory::get()->debug("[Event] Loop started ...");
+    ev_run(this->loop, 0);
 }
 
 void Event::stopLoop() {
+    LogFactory::get()->debug("[Event] Loop stopped ...");
     this->suspendLoop();
     this->clearWatchers();
     ev_break(this->loop, EVBREAK_ALL);
-    LogFactory::get()->debug("[Event] Loop stopped ...");
 }
 
 void Event::suspendLoop() {

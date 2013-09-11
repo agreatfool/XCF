@@ -87,9 +87,6 @@ class EventIo: public Event {
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //- EventPeriodic
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-// FIXME 完成 timer event loop & 使用timer来定期输出日志
-// 完成 Thread::wakeup 和 Thread::checkBlockedOrStopped, 弄清楚 Thread::canBeBlocked 到底应该怎么返回
-// 将static inline改成纯static函数（done），并将其他的inline函数定义，转成普通定义，然后在h文件内，进行实现
 typedef Map<std::string, EventPeriodicWatcher>                  EventPeriodicWatcherMap;
 typedef std::map<std::string, EventPeriodicWatcher *>::iterator EventPeriodicWatcherIterator;
 typedef void (*EventPeriodicCallback)(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents);
