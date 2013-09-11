@@ -1,5 +1,5 @@
-#ifndef XCF_DECLARE_H_
-#define XCF_DECLARE_H_
+#ifndef XCF_H_
+#define XCF_H_
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* SYSTEM
@@ -59,4 +59,4 @@ namespace XCF {
 
 } /* namespace XCF */
 
-#endif /* XCF_DECLARE_H_ */
+#endif /* XCF_H_ */
