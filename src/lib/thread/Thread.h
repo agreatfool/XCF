@@ -95,12 +95,10 @@ class ThreadUtil {
          * Lock a thread mutex.
          */
         static int32_t lock(ThreadLock *lock);
-        static int32_t lock(ThreadLock lock);
         /**
          * Unlock a thread mutex.
          */
         static int32_t unlock(ThreadLock *lock);
-        static int32_t unlock(ThreadLock lock);
         /**
          * Create thread condition.
          */
