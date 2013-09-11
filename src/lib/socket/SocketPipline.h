@@ -5,18 +5,18 @@
 
 DEF_NS_XCF_BEGIN
 
-    class SocketPipline {
-        public:
-            SocketPipline();
-            virtual ~SocketPipline();
-    };
+class SocketPipline {
+    public:
+        SocketPipline();
+        virtual ~SocketPipline();
+};
 
-    class SocketPiplineFactory {
-        public:
-            SocketPiplineFactory();
-            virtual ~SocketPiplineFactory();
-            SocketPipline *getPipline();
-    };
+class SocketPiplineFactory {
+    public:
+        SocketPiplineFactory();
+        virtual ~SocketPiplineFactory();
+        SocketPipline *getPipline();
+};
 
 DEF_NS_XCF_END
 

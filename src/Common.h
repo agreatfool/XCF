@@ -24,17 +24,24 @@
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* constants
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-#define INIT_SOCKET_FD            0
-#define INVALID_SOCKET_FD        -1
+#define XCF_INIT_SOCKET_FD            0
+#define XCF_INVALID_SOCKET_FD        -1
 
-#define VALID_RESULT              0
-#define INVALID_RESULT           -1
+#define XCF_VALID_RESULT              0
+#define XCF_INVALID_RESULT           -1
+
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* log
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#define XCF_LOG_MSG_MAX_LIMIT  25
+#define XCF_LOG_TIMER_INTERVAL 5.
+#define XCF_LOG_TIMER_NAME     "XCF_LOG_TIMER"
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* socket
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-#define SOCK_LISTEN_BACKLOG 16
-#define SOCK_BUFFER_LENGTH  1024 * 16
+#define XCF_SOCK_LISTEN_BACKLOG 16
+#define XCF_SOCK_BUFFER_LENGTH  1024 * 16
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* libev
