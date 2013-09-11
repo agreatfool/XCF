@@ -26,7 +26,7 @@
 #define DEF_NS_XCF_END     } /* namespace XCF */
 #define USING_NS_XCF       using namespace XCF
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //-* constants
@@ -57,6 +57,6 @@ namespace XCF {
     typedef pthread_mutex_t ThreadLock;
     typedef pthread_cond_t  ThreadCond;
 
-} /* namespace XCF */
+DEF_NS_XCF_END
 
 #endif /* XCF_H_ */
