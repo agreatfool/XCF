@@ -1,11 +1,7 @@
 #ifndef XCF_EVENT_H_
 #define XCF_EVENT_H_
 
-#include <iostream>
-#include <ev.h>
-
 #include "../../XCF.h"
-#include "../model/Map.h"
 
 namespace XCF {
 

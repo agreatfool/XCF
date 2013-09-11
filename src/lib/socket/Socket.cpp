@@ -1,4 +1,7 @@
 #include "Socket.h"
+#include "../log/Log.h"
+#include "../event/Event.h"
+#include "../utility/Utility.h"
 
 namespace XCF {
 
@@ -16,6 +19,10 @@ namespace XCF {
 
     SocketBuffer::~SocketBuffer() {
         delete []this->buffer;
+    }
+
+    void SocketBuffer::copyBuffer(char buff[]) {
+        Utility::appendCharArray(this->buffer, buff, SOCK_BUFFER_LENGTH - strlen(this->buffer) - 1);
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -123,6 +130,73 @@ namespace XCF {
         bzero(&this->socketAddr, sizeof(this->socketAddr));
 
         return VALID_RESULT;
+    }
+
+    int32_t Socket::read(char *buffer, int32_t length) {
+        int32_t received = recv(this->socketFd, buffer, length, 0);
+        if (received < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+        }
+        return received;
+    }
+
+    int32_t Socket::read(SocketBuffer *buffer, int32_t length) {
+        int32_t received = recv(this->socketFd, buffer->getBuffer(), length, 0);
+        if (received < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in recv: [%d] %s", errno, strerror(errno)));
+        }
+        return received;
+    }
+
+    int32_t Socket::write(char *buffer) {
+        int32_t transmitted = send(this->socketFd, buffer, strlen(buffer), 0);
+        if (transmitted < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+        }
+        return transmitted;
+    }
+
+    int32_t Socket::write(SocketBuffer *buffer) {
+        int32_t transmitted = send(this->socketFd, buffer->getBuffer(), strlen(buffer->getBuffer()), 0);
+        if (transmitted < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] error in send: [%d] %s", errno, strerror(errno)));
+        }
+        return transmitted;
+    }
+
+    int32_t Socket::setWriteBuffSize(int32_t bufferSize) {
+        int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_SNDBUF, (const void *) &bufferSize, sizeof(socklen_t));
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setWriteBuffSize failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+
+    int32_t Socket::setNonBlock() {
+        int32_t flags = fcntl(this->socketFd, F_GETFL);
+        int32_t setResult = fcntl(this->socketFd, F_SETFL, flags | O_NONBLOCK);
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setNonBlock failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+
+    int32_t Socket::setKeepAlive() {
+        int32_t flags = 1;
+        int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_KEEPALIVE, &flags, sizeof(int32_t));
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setKeepAlive failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
+    }
+
+    int32_t Socket::setReuseAddr() {
+        int32_t flags = 1;
+        int32_t setResult = setsockopt(this->socketFd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(int32_t));
+        if (setResult < 0) {
+            LogFactory::get()->error(Utility::stringFormat("[Socket] setReuseAddr failed: [%d] %s", errno, strerror(errno)));
+        }
+        return setResult;
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-

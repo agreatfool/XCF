@@ -2,11 +2,12 @@
 #define XCF_BOOTSTRAP_H_
 
 #include "../../XCF.h"
-#include "Socket.h"
-#include "../log/Log.h"
-#include "../event/Event.h"
 
 namespace XCF {
+
+    class EventIo;
+    class Socket;
+    class SocketPool;
 
     class Bootstrap {
         public:

@@ -1,4 +1,8 @@
 #include "Log.h"
+#include "../utility/Time.h"
+#include "../utility/Utility.h"
+#include "../event/Event.h"
+#include "../event/Timer.h"
 
 namespace XCF {
 
@@ -44,6 +48,17 @@ namespace XCF {
 
     void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents) {
         LogFactory::get()->output();
+    }
+
+    void Log::cacheMessage(uint16_t priority, std::string msg) const {
+        if (priority <= this->priority) {
+            std::string formatted = Utility::stringFormat("[%s] %s", Time::getTimeString().c_str(), msg.c_str());
+            this->messages->push_back(formatted.c_str());
+            this->logToConsole(formatted);
+            if (this->messages->size() >= this->maxMsgCount) {
+                this->output();
+            }
+        }
     }
 
     //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-

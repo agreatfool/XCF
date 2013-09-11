@@ -1,4 +1,6 @@
 #include "Thread.h"
+#include "../log/Log.h"
+#include "../utility/Utility.h"
 
 namespace XCF {
 
@@ -78,7 +80,7 @@ namespace XCF {
         ThreadId *threadId = (ThreadId *) malloc(sizeof(ThreadId));
         pthread_create(threadId, NULL, start, (void *)thread);
         return threadId;
-    };
+    }
 
     ThreadLock *ThreadUtil::createLock() {
         ThreadLock *lock = (ThreadLock *) malloc(sizeof(ThreadLock));
@@ -88,7 +90,7 @@ namespace XCF {
         } else {
             return lock;
         }
-    };
+    }
 
     int32_t ThreadUtil::destroyLock(ThreadLock *lock) {
         if (pthread_mutex_destroy(lock) < 0) {
@@ -98,7 +100,7 @@ namespace XCF {
             delete lock;
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::lock(ThreadLock *lock) {
         if (pthread_mutex_lock(lock) < 0) {
@@ -107,7 +109,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::lock(ThreadLock lock) {
         if (pthread_mutex_lock(&lock) < 0) {
@@ -116,7 +118,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::unlock(ThreadLock *lock) {
         if (pthread_mutex_unlock(lock) < 0) {
@@ -125,7 +127,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::unlock(ThreadLock lock) {
         if (pthread_mutex_unlock(&lock) < 0) {
@@ -134,7 +136,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     ThreadCond *ThreadUtil::createCond() {
         ThreadCond *cond = (ThreadCond *) malloc(sizeof(ThreadCond));
@@ -144,7 +146,7 @@ namespace XCF {
         } else {
             return cond;
         }
-    };
+    }
 
     int32_t ThreadUtil::destroyCond(ThreadCond *cond) {
         if (pthread_cond_destroy(cond) < 0) {
@@ -154,7 +156,7 @@ namespace XCF {
             delete cond;
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::waitCond(ThreadCond *cond, ThreadLock *lock) {
         if (pthread_cond_wait(cond, lock) < 0) {
@@ -163,7 +165,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::signalCond(ThreadCond *cond) {
         if (pthread_cond_signal(cond) < 0) {
@@ -172,7 +174,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     int32_t ThreadUtil::joinThread(ThreadId *threadId) {
         if (pthread_join(*threadId, NULL) < 0) {
@@ -181,7 +183,7 @@ namespace XCF {
         } else {
             return VALID_RESULT;
         }
-    };
+    }
 
     ThreadId ThreadUtil::getThreadId() {
         return pthread_self();

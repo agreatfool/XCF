@@ -1,4 +1,8 @@
 #include "Bootstrap.h"
+#include "Socket.h"
+#include "../log/Log.h"
+#include "../event/Event.h"
+#include "../utility/Utility.h"
 
 namespace XCF {
 

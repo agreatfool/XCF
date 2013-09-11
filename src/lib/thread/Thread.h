@@ -1,13 +1,7 @@
 #ifndef XCF_THREAD_H_
 #define XCF_THREAD_H_
 
-#include <unistd.h>
-#include <pthread.h>
-#include <errno.h>
-
 #include "../../XCF.h"
-#include "../log/Log.h"
-#include "../utility/Utility.h"
 
 namespace XCF {
 
