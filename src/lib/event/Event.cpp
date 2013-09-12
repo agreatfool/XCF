@@ -18,18 +18,17 @@ Event::Event():
     ), lock(ThreadUtil::createLock()) {}
 
 Event::~Event() {
-    LogFactory::get()->debug("[Event] ~Event ...");
     this->stopLoop();
     ev_loop_destroy(this->loop);
 }
 
 void Event::startLoop() {
-    LogFactory::get()->debug("[Event] Loop started ...");
+    LogFactory::get()->info("[Event] Loop started ...");
     ev_run(this->loop, 0);
 }
 
 void Event::stopLoop() {
-    LogFactory::get()->debug("[Event] Loop stopped ...");
+    LogFactory::get()->info("[Event] Loop stopped ...");
     this->suspendLoop();
     this->clearWatchers();
     ev_break(this->loop, EVBREAK_ALL);
@@ -47,7 +46,7 @@ void Event::resumeLoop() {
 //- EventIo
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 EventIo::EventIo(): Event(), ioWatcherPool(new EventIoWatcherMap()) {
-    LogFactory::get()->debug("[EventIo] EventIo loop Initialized ...");
+    LogFactory::get()->info("[EventIo] EventIo loop Initialized ...");
 }
 
 EventIo::~EventIo() {
@@ -59,7 +58,7 @@ void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t fla
     ev_io_init(watcher, callback, socketFd, flags);
     ev_io_start(this->loop, watcher);
     this->ioWatcherPool->add(socketFd, watcher);
-    LogFactory::get()->debug(Utility::stringFormat("[EventIo] Io event added with fd: %d", socketFd));
+    LogFactory::get()->info(Utility::stringFormat("[EventIo] Io event added with fd: %d", socketFd));
 }
 
 void EventIo::removeWatcher(int32_t socketFd) {
@@ -69,7 +68,7 @@ void EventIo::removeWatcher(int32_t socketFd) {
         ev_io_stop(this->loop, it->second);
         this->ioWatcherPool->getMap()->erase(it);
     }
-    LogFactory::get()->debug(Utility::stringFormat("[EventIo] Io event removed with fd: %d", socketFd));
+    LogFactory::get()->info(Utility::stringFormat("[EventIo] Io event removed with fd: %d", socketFd));
 }
 
 void EventIo::clearWatchers() {
@@ -82,14 +81,14 @@ void EventIo::clearWatchers() {
         }
         this->ioWatcherPool->getMap()->clear();
     }
-    LogFactory::get()->debug("[EventIo] Io events cleared ...");
+    LogFactory::get()->info("[EventIo] Io events cleared ...");
 }
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //- EventPeriodic
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 EventPeriodic::EventPeriodic(): Event(), timerWatcherPool(new EventPeriodicWatcherMap()) {
-    LogFactory::get()->debug("[EventPeriodic] EventPeriodic loop Initialized ...");
+    LogFactory::get()->info("[EventPeriodic] EventPeriodic loop Initialized ...");
 }
 
 EventPeriodic::~EventPeriodic() {
@@ -101,7 +100,7 @@ void EventPeriodic::addWatcher(std::string name, EventPeriodicCallback callback,
     ev_periodic_init(watcher, callback, 0., interval, 0);
     ev_periodic_start(this->loop, watcher);
     this->timerWatcherPool->add(name, watcher);
-    LogFactory::get()->debug("[EventPeriodic] Periodic event added with name: " + name);
+    LogFactory::get()->info("[EventPeriodic] Periodic event added with name: " + name);
 }
 
 void EventPeriodic::removeWatcher(std::string name) {
@@ -111,7 +110,7 @@ void EventPeriodic::removeWatcher(std::string name) {
         ev_periodic_stop(this->loop, it->second);
         this->timerWatcherPool->getMap()->erase(it);
     }
-    LogFactory::get()->debug("[EventPeriodic] Periodic event removed with name: %s" + name);
+    LogFactory::get()->info("[EventPeriodic] Periodic event removed with name: %s" + name);
 }
 
 void EventPeriodic::clearWatchers() {
@@ -124,7 +123,7 @@ void EventPeriodic::clearWatchers() {
         }
         this->timerWatcherPool->getMap()->clear();
     }
-    LogFactory::get()->debug("[EventPeriodic] Periodic events cleared ...");
+    LogFactory::get()->info("[EventPeriodic] Periodic events cleared ...");
 }
 
 DEF_NS_XCF_END
