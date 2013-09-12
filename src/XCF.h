@@ -8,8 +8,6 @@
 #include "lib/event/app/Timer.h"
 // log
 #include "lib/log/Log.h"
-// model
-#include "lib/model/Map.h"
 // socket
 #include "lib/socket/Bootstrap.h"
 #include "lib/socket/Socket.h"

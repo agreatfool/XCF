@@ -63,4 +63,10 @@ typedef pthread_t       ThreadId;
 typedef pthread_mutex_t ThreadLock;
 typedef pthread_cond_t  ThreadCond;
 
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* models
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#include "lib/model/Map.h"
+#include "lib/model/Vector.h"
+
 #endif /* XCF_COMMON_H_ */
