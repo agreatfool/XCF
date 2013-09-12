@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdint.h>
 #include <errno.h>
+#include <sys/types.h>
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* THIRD PARTY
