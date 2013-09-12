@@ -22,7 +22,7 @@ void *threadStartFunc(void *argv) {
 }
 
 Thread::Thread():
-    threadId(NULL), lock(NULL), cond(NULL), status(ThreadStatus::INITED), retVal()
+    threadId(NULL), numericThreadId(0), lock(NULL), cond(NULL), status(ThreadStatus::INITED), retVal()
 {
     /*
      * Since "ThreadUtil::createThread(threadStartFunc, this);" would call function "threadStartFunc",
@@ -47,6 +47,7 @@ void Thread::init() {
 }
 
 void Thread::run() {
+    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
     while (1) {
         this->checkThreadStatus();
         this->process();
@@ -72,7 +73,7 @@ void Thread::stop() {
     ThreadUtil::unlock(this->lock);
     ThreadUtil::joinThread(this->threadId);
 
-    LogFactory::get()->info("Thread stopped.");
+    LogFactory::get()->info(Utility::stringFormat("Thread %d stopped ...", this->getNumericThreadId()));
 }
 
 void Thread::checkThreadStatus() {

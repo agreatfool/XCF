@@ -74,6 +74,7 @@ class Thread {
         bool isSleeping();
     protected:
         ThreadId   *threadId;
+        uint64_t   numericThreadId;
         ThreadLock *lock;
         ThreadCond *cond;
         uint16_t   status;
@@ -162,13 +163,14 @@ inline ThreadId *Thread::getThreadId() {
     return this->threadId;
 }
 inline uint64_t Thread::getNumericThreadId() {
+    if (this->numericThreadId == 0) {
 #if defined (__APPLE__)
-    uint64_t tid;
-    pthread_threadid_np(NULL, &tid);
-    return tid;
+        pthread_threadid_np(NULL, &this->numericThreadId);
 #elif defined (__linux)
-    return gettid();
+        this->numericThreadId = gettid();
 #endif
+    }
+    return this->numericThreadId;
 }
 inline uint16_t Thread::getStatus() {
     return this->status;

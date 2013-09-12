@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "../log/Log.h"
 #include "../utility/Utility.h"
 
 DEF_NS_XCF_BEGIN
@@ -11,6 +12,7 @@ TimerThread::TimerThread(): Thread(), EventPeriodic() {}
 TimerThread::~TimerThread() {}
 
 void TimerThread::run() {
+    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
     /*
      * Since this thread is used by libev event loop,
      * the event loop would block the thread and check event,
