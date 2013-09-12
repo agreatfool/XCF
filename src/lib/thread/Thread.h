@@ -5,8 +5,6 @@
 
 DEF_NS_XCF_BEGIN
 
-typedef void *(ThreadStartFunc)(void *); // argument (void *) actually is (Thread *)
-
 namespace ThreadStatus {
     enum ThreadStatus {
         INITED,
