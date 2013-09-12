@@ -109,7 +109,7 @@ class Map {
         /**
          * Get the element count in the map.
          */
-        inline uint32_t count() const {
+        inline uint64_t count() const {
             return this->map->size();
         };
 };

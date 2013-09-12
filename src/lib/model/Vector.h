@@ -97,7 +97,7 @@ class Vector {
         /**
          * Get the element count in the vector.
          */
-        inline uint32_t count() const {
+        inline uint64_t count() const {
             return this->vector->size();
         };
 };
