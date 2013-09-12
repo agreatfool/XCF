@@ -100,6 +100,7 @@ void FileLog::output() const {
 //-* LogFactory
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 Log *LogFactory::instance = NULL;
+ThreadLock LogFactory::lock = PTHREAD_MUTEX_INITIALIZER;
 
 LogFactory::~LogFactory() {}
 
@@ -109,6 +110,7 @@ Log* LogFactory::get() {
 
 Log *LogFactory::get(uint16_t logType) {
     if (LogFactory::instance == NULL) {
+        ThreadUtil::lock(&LogFactory::lock);
         switch (logType) {
             case LogType::SysLog:
                 instance = new SysLog();
@@ -120,6 +122,7 @@ Log *LogFactory::get(uint16_t logType) {
                 instance = new SysLog();
                 break;
         }
+        ThreadUtil::unlock(&LogFactory::lock);
     }
     return LogFactory::instance;
 };

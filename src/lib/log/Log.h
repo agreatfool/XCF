@@ -115,6 +115,7 @@ class LogFactory {
     private:
         LogFactory();
         static Log        *instance;
+        static ThreadLock lock;
         // Stop the compiler generating methods of copy the object
         LogFactory(LogFactory const& copy);            // Not Implemented
         LogFactory& operator=(LogFactory const& copy); // Not Implemented
