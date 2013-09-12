@@ -6,7 +6,6 @@
 #include <fcntl.h>
 
 #include "../../Common.h"
-#include "../model/Map.h"
 
 DEF_NS_XCF_BEGIN
 
