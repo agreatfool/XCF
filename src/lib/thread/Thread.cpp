@@ -43,6 +43,7 @@ void Thread::init() {
     this->lock = ThreadUtil::createLock();
     this->cond = ThreadUtil::createCond();
     this->threadId = ThreadUtil::createThread(threadStartFunc, this);
+    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread initialized, thread id: %d", this->getNumericThreadId()));
 }
 
 void Thread::run() {

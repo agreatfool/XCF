@@ -38,6 +38,10 @@ class Thread {
          */
         ThreadId *getThreadId();
         /**
+         * Get numeric thread id.
+         */
+        uint64_t getNumericThreadId();
+        /**
          * Initialize the thread.
          * Create pthread lock & pthread condition & create pthread thread.
          */
@@ -156,6 +160,15 @@ class ThreadPool {
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 inline ThreadId *Thread::getThreadId() {
     return this->threadId;
+}
+inline uint64_t Thread::getNumericThreadId() {
+#if defined (__APPLE__)
+    uint64_t tid;
+    pthread_threadid_np(NULL, &tid);
+    return tid;
+#elif defined (__linux)
+    return gettid();
+#endif
 }
 inline uint16_t Thread::getStatus() {
     return this->status;
