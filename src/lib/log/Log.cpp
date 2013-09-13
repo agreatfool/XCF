@@ -20,30 +20,6 @@ void Log::registerTimer() {
     Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
 }
 
-void Log::debug(std::string msg) const {
-    this->cacheMessage(LogPriority::Debug, msg);
-}
-
-void Log::info(std::string msg) const {
-    this->cacheMessage(LogPriority::Info, msg);
-}
-
-void Log::notice(std::string msg) const {
-    this->cacheMessage(LogPriority::Notice, msg);
-}
-
-void Log::warn(std::string msg) const {
-    this->cacheMessage(LogPriority::Warning, msg);
-}
-
-void Log::error(std::string msg) const {
-    this->cacheMessage(LogPriority::Error, msg);
-}
-
-void Log::setPriority(uint16_t priority) {
-    this->priority = priority;
-}
-
 void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents) {
     LogFactory::get()->output();
 }

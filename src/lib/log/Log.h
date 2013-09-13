@@ -126,6 +126,24 @@ class LogFactory {
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //- Log
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+inline void Log::debug(std::string msg) const {
+    this->cacheMessage(LogPriority::Debug, msg);
+}
+inline void Log::info(std::string msg) const {
+    this->cacheMessage(LogPriority::Info, msg);
+}
+inline void Log::notice(std::string msg) const {
+    this->cacheMessage(LogPriority::Notice, msg);
+}
+inline void Log::warn(std::string msg) const {
+    this->cacheMessage(LogPriority::Warning, msg);
+}
+inline void Log::error(std::string msg) const {
+    this->cacheMessage(LogPriority::Error, msg);
+}
+inline void Log::setPriority(uint16_t priority) {
+    this->priority = priority;
+}
 inline void Log::logToConsole(std::string msg) const {
     std::cout << msg << std::endl;
 }
