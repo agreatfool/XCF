@@ -3,7 +3,6 @@
 
 #include "../../Common.h"
 
-#include <deque>
 #include <syslog.h>
 
 DEF_NS_XCF_BEGIN
@@ -69,7 +68,7 @@ class Log {
          * How many logs would be cached before output.
          */
         uint16_t maxMsgCount;
-        std::deque<std::string> *messages;
+        Deque<std::string> *messages;
         /**
          * Cache message into the queue, wait for the output.
          */
