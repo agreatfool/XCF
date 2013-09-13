@@ -72,12 +72,21 @@ class Map {
         inline SpecificMapIterator find(KEY_TYPE key) const {
             return this->map->find(key);
         };
+        inline SpecificMapIterator find(VALUE_TYPE *value) const {
+            return std::find(this->map->begin(), this->map->end(), value);
+        };
         /**
          * Find element and return bool to identify found it or not.
          */
         inline bool found(KEY_TYPE key) const {
-            SpecificMapIterator it = this->find(key);
-            if (it != this->map->end()) { // found the element
+            if (this->find(key) != this->map->end()) { // found the element
+                return true;
+            } else { // not found
+                return false;
+            }
+        };
+        inline bool found(VALUE_TYPE *value) const {
+            if (this->find(value) != this->map->end()) { // found the element
                 return true;
             } else { // not found
                 return false;

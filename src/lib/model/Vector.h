@@ -48,6 +48,23 @@ class Vector {
             return value;
         };
         /**
+         * Find element with the same value in vector.
+         * And return the iterator pointing to it
+         */
+        inline SpecificVectorIterator find(VALUE_TYPE *value) const {
+            return std::find(this->vector->begin(), this->vector->end(), value);
+        };
+        /**
+         * Find element and return bool to identify found it or not.
+         */
+        inline bool found(VALUE_TYPE *value) {
+            if (this->find(value) != this->vector->end()) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        /**
          * Remove the element by pos. And free memory.
          */
         inline bool remove(uint64_t pos) {
