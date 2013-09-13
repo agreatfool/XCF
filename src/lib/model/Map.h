@@ -103,7 +103,7 @@ class Map {
          */
         inline void clear(bool freeMemory) {
             ThreadUtil::lock(this->lock);
-            if (this->map->size() > 0) {
+            if (!this->map->empty()) {
                 SpecificMapIterator it;
                 for (it = this->map->begin(); it != this->map->end(); /* no auto increment*/) {
                     if (freeMemory) {

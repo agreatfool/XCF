@@ -66,6 +66,7 @@ typedef pthread_cond_t  ThreadCond;
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* models
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#include "lib/model/Deque.h"
 #include "lib/model/Map.h"
 #include "lib/model/Queue.h"
 #include "lib/model/Vector.h"

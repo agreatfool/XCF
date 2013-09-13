@@ -100,7 +100,7 @@ class Vector {
          */
         inline void clear(bool freeMemory) {
             ThreadUtil::lock(this->lock);
-            if (this->vector->size() > 0) {
+            if (!this->vector->empty()) {
                 SpecificVectorIterator it;
                 if (freeMemory) {
                     for (it = this->vector->begin(); it != this->vector->end(); ++it) {
