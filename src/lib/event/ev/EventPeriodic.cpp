@@ -31,7 +31,7 @@ void EventPeriodic::removeWatcher(std::string name) {
 }
 
 void EventPeriodic::clearWatchers() {
-    if (this->timerWatcherPool->count() > 0) {
+    if (!this->timerWatcherPool->empty()) {
         EventPeriodicWatcherIterator it;
         for (it = this->timerWatcherPool->getMap()->begin(); it != this->timerWatcherPool->getMap()->end(); /* no auto increment*/) {
             EventPeriodicWatcher *watcher = it->second;

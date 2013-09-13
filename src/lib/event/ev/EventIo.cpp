@@ -31,7 +31,7 @@ void EventIo::removeWatcher(int32_t socketFd) {
 }
 
 void EventIo::clearWatchers() {
-    if (this->ioWatcherPool->count() > 0) {
+    if (this->ioWatcherPool->empty()) {
         EventIoWatcherIterator it;
         for (it = this->ioWatcherPool->getMap()->begin(); it != this->ioWatcherPool->getMap()->end(); /* no auto increment*/) {
             EventIoWatcher *watcher = it->second;

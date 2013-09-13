@@ -100,6 +100,12 @@ class Vector {
         inline uint64_t count() const {
             return this->vector->size();
         };
+        /**
+         * Check the vector is empty or not.
+         */
+        inline bool empty() const {
+            return this->vector->empty();
+        };
 };
 
 DEF_NS_XCF_END

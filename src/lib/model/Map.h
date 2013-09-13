@@ -112,6 +112,12 @@ class Map {
         inline uint64_t count() const {
             return this->map->size();
         };
+        /**
+         * Check the map is empty or not.
+         */
+        inline bool empty() const {
+            return this->map->empty();
+        };
 };
 
 DEF_NS_XCF_END
