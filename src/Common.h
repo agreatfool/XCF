@@ -67,6 +67,7 @@ typedef pthread_cond_t  ThreadCond;
 //-* models
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 #include "lib/model/Map.h"
+#include "lib/model/Queue.h"
 #include "lib/model/Vector.h"
 
 #endif /* XCF_COMMON_H_ */
