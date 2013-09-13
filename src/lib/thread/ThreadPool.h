@@ -10,11 +10,20 @@ class ThreadPool {
         ThreadPool();
         virtual ~ThreadPool();
         void addThread(Thread *thread);
-        void removeThread(uint64_t threadId); // threadId: pos in the vector
-        Thread *next(); // walk to next worker thread, return it
+        void markIdleThread(Thread *thread);
+        /**
+         * Walk to next worker thread, according to "this->prevPos", and return it.
+         */
+        Thread *next();
+        /**
+         * Check idle thread queue, provide idle first.
+         * If queue empty, use "this->next()" to get worker by pos.
+         */
+        Thread *idle();
     protected:
         int64_t prevPos; // init value is -1, so cannot use uint64_t
-        Vector<Thread> *pool;
+        Vector<Thread> *threadPool;
+        Queue<Thread> *idleQueue;
         ThreadLock *lock;
 };
 
