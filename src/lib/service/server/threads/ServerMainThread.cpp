@@ -52,9 +52,8 @@ void ServerMainThread::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acc
     ServerBootstrap *server = ServerBootstrap::get();
 
     server->getSocketPool()->addSocket(client);
-    // FIXME put watcher into reader threads, not main thread
-    // design the thread pool
-    server->getMainThread()->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
+    ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->next();
+    thread->addWatcher(client->getSocketFd(), ServerBootstrap::readCallback);
 
     LogFactory::get()->info(
         Utility::stringFormat(
