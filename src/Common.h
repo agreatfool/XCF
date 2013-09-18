@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdint.h>
 #include <errno.h>
+#include <sys/types.h>
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* THIRD PARTY
@@ -44,6 +45,17 @@
 #define XCF_SOCK_BUFFER_LENGTH  1024 * 16
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* service
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#define XCF_READER_THREAD_FACTOR 2
+#define XCF_WORKER_THREAD_FACTOR 8
+
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* thread
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+typedef void *(ThreadStartFunc)(void *); // argument (void *) actually is (Thread *)
+
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* libev
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 typedef struct ev_loop     EventLoop;
@@ -56,5 +68,13 @@ typedef struct ev_periodic EventPeriodicWatcher;
 typedef pthread_t       ThreadId;
 typedef pthread_mutex_t ThreadLock;
 typedef pthread_cond_t  ThreadCond;
+
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* models
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#include "lib/model/Deque.h"
+#include "lib/model/Map.h"
+#include "lib/model/Queue.h"
+#include "lib/model/Vector.h"
 
 #endif /* XCF_COMMON_H_ */

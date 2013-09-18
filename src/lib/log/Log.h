@@ -3,7 +3,6 @@
 
 #include "../../Common.h"
 
-#include <deque>
 #include <syslog.h>
 
 DEF_NS_XCF_BEGIN
@@ -69,7 +68,7 @@ class Log {
          * How many logs would be cached before output.
          */
         uint16_t maxMsgCount;
-        std::deque<std::string> *messages;
+        Deque<std::string> *messages;
         /**
          * Cache message into the queue, wait for the output.
          */
@@ -115,6 +114,7 @@ class LogFactory {
     private:
         LogFactory();
         static Log        *instance;
+        static ThreadLock lock;
         // Stop the compiler generating methods of copy the object
         LogFactory(LogFactory const& copy);            // Not Implemented
         LogFactory& operator=(LogFactory const& copy); // Not Implemented
@@ -125,6 +125,24 @@ class LogFactory {
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //- Log
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+inline void Log::debug(std::string msg) const {
+    this->cacheMessage(LogPriority::Debug, msg);
+}
+inline void Log::info(std::string msg) const {
+    this->cacheMessage(LogPriority::Info, msg);
+}
+inline void Log::notice(std::string msg) const {
+    this->cacheMessage(LogPriority::Notice, msg);
+}
+inline void Log::warn(std::string msg) const {
+    this->cacheMessage(LogPriority::Warning, msg);
+}
+inline void Log::error(std::string msg) const {
+    this->cacheMessage(LogPriority::Error, msg);
+}
+inline void Log::setPriority(uint16_t priority) {
+    this->priority = priority;
+}
 inline void Log::logToConsole(std::string msg) const {
     std::cout << msg << std::endl;
 }

@@ -2,7 +2,7 @@
 #define XCF_TIMER_H_
 
 #include "../../Common.h"
-#include "../event/Event.h"
+#include "../Event.h"
 #include "../thread/Thread.h"
 
 DEF_NS_XCF_BEGIN

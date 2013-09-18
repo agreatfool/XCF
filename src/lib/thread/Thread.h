@@ -5,8 +5,6 @@
 
 DEF_NS_XCF_BEGIN
 
-typedef void *(ThreadStartFunc)(void *); // argument (void *) actually is (Thread *)
-
 namespace ThreadStatus {
     enum ThreadStatus {
         INITED,
@@ -37,6 +35,10 @@ class Thread {
          * Get thread id in "Thread".
          */
         ThreadId *getThreadId();
+        /**
+         * Get numeric thread id.
+         */
+        uint64_t getNumericThreadId();
         /**
          * Initialize the thread.
          * Create pthread lock & pthread condition & create pthread thread.
@@ -70,6 +72,7 @@ class Thread {
         bool isSleeping();
     protected:
         ThreadId   *threadId;
+        uint64_t   numericThreadId;
         ThreadLock *lock;
         ThreadCond *cond;
         uint16_t   status;
@@ -92,70 +95,21 @@ class Thread {
         virtual void process() = 0;
 };
 
-class ThreadUtil {
-    public:
-        ThreadUtil();
-        virtual ~ThreadUtil();
-        /**
-         * Create a new thread, and return the thread id.
-         * A new pointer of the threadId would be created.
-         */
-        static ThreadId *createThread(ThreadStartFunc start, Thread *thread);
-        /**
-         * Create a thread mutex, and return the mutex id.
-         */
-        static ThreadLock *createLock();
-        /**
-         * Destroy a thread mutex.
-         */
-        static int32_t destroyLock(ThreadLock *lock);
-        /**
-         * Lock a thread mutex.
-         */
-        static int32_t lock(ThreadLock *lock);
-        /**
-         * Unlock a thread mutex.
-         */
-        static int32_t unlock(ThreadLock *lock);
-        /**
-         * Create thread condition.
-         */
-        static ThreadCond *createCond();
-        /**
-         * Destroy thread condition.
-         */
-        static int32_t destroyCond(ThreadCond *cond);
-        /**
-         * Wait on a condition variable.
-         */
-        static int32_t waitCond(ThreadCond *cond, ThreadLock *lock);
-        /**
-         * Unblock a thread waiting for a condition variable.
-         */
-        static int32_t signalCond(ThreadCond *cond);
-        /**
-         * Join a thread.
-         * Suspends the calling thread to wait for successful termination of the thread specified.
-         */
-        static int32_t joinThread(ThreadId *threadId);
-        /**
-         * Get the thread id via "pthread_self()".
-         * The return value is reference not a pointer!
-         */
-        static ThreadId getThreadId();
-};
-
-class ThreadPool {
-
-};
-
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //- inline Implementations
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-//- Thread
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 inline ThreadId *Thread::getThreadId() {
     return this->threadId;
+}
+inline uint64_t Thread::getNumericThreadId() {
+    if (this->numericThreadId == 0) {
+#if defined (__APPLE__)
+        pthread_threadid_np(NULL, &this->numericThreadId);
+#elif defined (__linux)
+        this->numericThreadId = gettid();
+#endif
+    }
+    return this->numericThreadId;
 }
 inline uint16_t Thread::getStatus() {
     return this->status;

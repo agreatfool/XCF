@@ -2,7 +2,7 @@
 #include "../utility/Time.h"
 #include "../utility/Utility.h"
 #include "../event/Event.h"
-#include "../event/Timer.h"
+#include "../event/app/Timer.h"
 
 DEF_NS_XCF_BEGIN
 
@@ -12,36 +12,12 @@ DEF_NS_XCF_BEGIN
 Log::Log():
     priority(LogPriority::Debug),
     maxMsgCount(XCF_LOG_MSG_MAX_LIMIT),
-    messages(new std::deque<std::string>()) {}
+    messages(new Deque<std::string>()) {}
 
 Log::~Log() {}
 
 void Log::registerTimer() {
     Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
-}
-
-void Log::debug(std::string msg) const {
-    this->cacheMessage(LogPriority::Debug, msg);
-}
-
-void Log::info(std::string msg) const {
-    this->cacheMessage(LogPriority::Info, msg);
-}
-
-void Log::notice(std::string msg) const {
-    this->cacheMessage(LogPriority::Notice, msg);
-}
-
-void Log::warn(std::string msg) const {
-    this->cacheMessage(LogPriority::Warning, msg);
-}
-
-void Log::error(std::string msg) const {
-    this->cacheMessage(LogPriority::Error, msg);
-}
-
-void Log::setPriority(uint16_t priority) {
-    this->priority = priority;
 }
 
 void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents) {
@@ -50,10 +26,10 @@ void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t 
 
 void Log::cacheMessage(uint16_t priority, std::string msg) const {
     if (priority <= this->priority) {
-        std::string formatted = Utility::stringFormat("[%s] %s", Time::getTimeString().c_str(), msg.c_str());
-        this->messages->push_back(formatted.c_str());
-        this->logToConsole(formatted);
-        if (this->messages->size() >= this->maxMsgCount) {
+        std::string *formatted = new std::string(Utility::stringFormat("[%s] %s", Time::getTimeString().c_str(), msg.c_str()));
+        this->messages->pushBack(formatted); // self made Deque requres a pointer
+        this->logToConsole(*formatted);
+        if (this->messages->count() >= this->maxMsgCount) {
             this->output();
         }
     }
@@ -69,15 +45,12 @@ SysLog::~SysLog() {
 }
 
 void SysLog::output() const {
-    if (this->messages->size() > 0) {
+    if (!this->messages->empty()) {
         openlog("XCF", LOG_PID, LOG_USER);
         while (!this->messages->empty()) {
-            std::string msg = this->messages->front();
-            const char *buff = msg.c_str();
-
-            syslog(LOG_USER | this->priority, "%s", buff);
-
-            this->messages->pop_front();
+            std::string *msg = this->messages->popFront();
+            syslog(LOG_USER | this->priority, "%s", msg->c_str());
+            delete msg;
         }
         closelog();
     }
@@ -100,6 +73,7 @@ void FileLog::output() const {
 //-* LogFactory
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 Log *LogFactory::instance = NULL;
+ThreadLock LogFactory::lock = PTHREAD_MUTEX_INITIALIZER;
 
 LogFactory::~LogFactory() {}
 
@@ -109,6 +83,7 @@ Log* LogFactory::get() {
 
 Log *LogFactory::get(uint16_t logType) {
     if (LogFactory::instance == NULL) {
+        ThreadUtil::lock(&LogFactory::lock);
         switch (logType) {
             case LogType::SysLog:
                 instance = new SysLog();
@@ -120,6 +95,7 @@ Log *LogFactory::get(uint16_t logType) {
                 instance = new SysLog();
                 break;
         }
+        ThreadUtil::unlock(&LogFactory::lock);
     }
     return LogFactory::instance;
 };

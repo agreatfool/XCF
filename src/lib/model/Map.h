@@ -15,8 +15,9 @@ class Map {
         typedef typename std::map<KEY_TYPE, VALUE_TYPE *>::value_type SpecificValueType;
         typedef typename std::pair<SpecificMapIterator, bool>         SpecificPair;
         SpecificMap *map;
+        ThreadLock  *lock;
     public:
-        Map(): map(new SpecificMap()) {};
+        Map(): map(new SpecificMap()), lock(ThreadUtil::createLock()) {};
         virtual ~Map() {};
         /**
          * Get the std::map itself.
@@ -27,7 +28,7 @@ class Map {
         /**
          * Get element from map.
          */
-        VALUE_TYPE *get(KEY_TYPE key) const {
+        inline VALUE_TYPE *get(KEY_TYPE key) const {
             SpecificMapIterator it = this->find(key);
             if (it != this->map->end()) {
                 return it->second;
@@ -53,7 +54,7 @@ class Map {
          * Remove the element with "key" and delete the pointer of the element if "freeMemory" is true.
          * False returned if element corresponding to the "key" not found.
          */
-        bool remove(KEY_TYPE key, bool freeMemory) {
+        inline bool remove(KEY_TYPE key, bool freeMemory) {
             SpecificMapIterator it = this->find(key);
             if (it != this->map->end()) { // found the element in the map & erase it
                 if (freeMemory) {
@@ -71,12 +72,21 @@ class Map {
         inline SpecificMapIterator find(KEY_TYPE key) const {
             return this->map->find(key);
         };
+        inline SpecificMapIterator find(VALUE_TYPE *value) const {
+            return std::find(this->map->begin(), this->map->end(), value);
+        };
         /**
          * Find element and return bool to identify found it or not.
          */
-        bool found(KEY_TYPE key) const {
-            SpecificMapIterator it = this->find(key);
-            if (it != this->map->end()) { // found the element
+        inline bool found(KEY_TYPE key) const {
+            if (this->find(key) != this->map->end()) { // found the element
+                return true;
+            } else { // not found
+                return false;
+            }
+        };
+        inline bool found(VALUE_TYPE *value) const {
+            if (this->find(value) != this->map->end()) { // found the element
                 return true;
             } else { // not found
                 return false;
@@ -91,8 +101,9 @@ class Map {
         /**
          * Clear elements and free memory if "freeMemory" is true.
          */
-        void clear(bool freeMemory) {
-            if (this->map->size() > 0) {
+        inline void clear(bool freeMemory) {
+            ThreadUtil::lock(this->lock);
+            if (!this->map->empty()) {
                 SpecificMapIterator it;
                 for (it = this->map->begin(); it != this->map->end(); /* no auto increment*/) {
                     if (freeMemory) {
@@ -102,12 +113,19 @@ class Map {
                 }
                 this->map->clear();
             }
+            ThreadUtil::unlock(this->lock);
         };
         /**
          * Get the element count in the map.
          */
-        inline uint32_t count() const {
+        inline uint64_t count() const {
             return this->map->size();
+        };
+        /**
+         * Check the map is empty or not.
+         */
+        inline bool empty() const {
+            return this->map->empty();
         };
 };
 
