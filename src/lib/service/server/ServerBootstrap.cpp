@@ -68,42 +68,4 @@ int32_t ServerBootstrap::stop() {
     return XCF_VALID_RESULT;
 }
 
-void ServerBootstrap::readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents) {
-    if (EV_ERROR & revents) {
-        LogFactory::get()->error("[ServerBootstrap] readCallback: got invalid event!");
-        return;
-    }
-
-    int32_t socketFd = readWatcher->fd;
-    Socket *socket = ServerBootstrap::get()->getSocketPool()->getSocket(socketFd);
-    if (Utility::isNullPtr(socket)) {
-        LogFactory::get()->error("[ServerBootstrap] readCallback: socket not found!");
-        return;
-    }
-
-    SocketBuffer *buffer = new SocketBuffer();
-    int32_t received = socket->read(buffer, XCF_SOCK_BUFFER_LENGTH);
-
-    if (received < 0) {
-        // error
-        return;
-    }
-
-    if (received == 0) {
-        // stop and free socket | watcher if client socket closed
-        ServerBootstrap::get()->getEventIo()->removeWatcher(socketFd);
-        ServerBootstrap::get()->getSocketPool()->removeSocket(socketFd);
-        LogFactory::get()->info("[ServerBootstrap] readCallback: client closed!");
-        return;
-    } else {
-        LogFactory::get()->info(
-            Utility::stringFormat("[ServerBootstrap] readCallback: message: %s", buffer->getBuffer())
-        );
-    }
-
-    // send message back to the client
-    socket->write(buffer);
-    delete buffer;
-}
-
 DEF_NS_XCF_END
