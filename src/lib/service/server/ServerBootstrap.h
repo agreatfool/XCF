@@ -19,11 +19,10 @@ class ServerBootstrap: public Bootstrap {
         ServerMainThread *getMainThread();
         ThreadPool *getReaderThreadPool();
         ThreadPool *getWorkerThreadPool();
-        static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
     protected:
-        ServerMainThread *mainThread;
-        ThreadPool *readerThreadPool;
-        ThreadPool *workerThreadPool;
+        ServerMainThread  *mainThread;
+        FixedThreadPool<ServerReaderThread> *readerThreadPool;
+        IdleThreadPool *workerThreadPool;
         static ServerBootstrap *instance;
         ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
         // Stop the compiler generating methods of copy the object
