@@ -1,15 +1,37 @@
 #include "ThreadPool.h"
+#include "Thread.h"
 #include "../log/Log.h"
 
 DEF_NS_XCF_BEGIN
 
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* ThreadPool
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 ThreadPool::ThreadPool():
-    prevPos(-1),
-    threadPool(new Vector<Thread>()),
-    idleQueue(new Queue<Thread>()),
-    lock(ThreadUtil::createLock()) {}
+    threadPool(new Vector<Thread>()), lock(ThreadUtil::createLock()) {}
 
 ThreadPool::~ThreadPool() {
+    this->threadPool->clear();
+    delete this->threadPool;
+    delete this->lock;
+}
+
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* DynamicThreadPool
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+DynamicThreadPool::DynamicThreadPool(): ThreadPool() {};
+
+DynamicThreadPool::~DynamicThreadPool() {};
+
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+//-* IdleThreadPool
+//-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+IdleThreadPool::IdleThreadPool():
+    DynamicThreadPool(),
+    prevPos(-1),
+    idleQueue(new Queue<Thread>()) {}
+
+IdleThreadPool::~IdleThreadPool() {
     this->idleQueue->clear(false); // do not delete "Thread *", since they are not maintained in this queue
     delete this->idleQueue;
     this->threadPool->clear();
@@ -17,18 +39,7 @@ ThreadPool::~ThreadPool() {
     delete this->lock;
 }
 
-void ThreadPool::addThread(Thread *thread) {
-    this->threadPool->push(thread);
-    this->idleQueue->push(thread);
-}
-
-void ThreadPool::markIdleThread(Thread *thread) {
-    if (this->threadPool->found(thread)) { // target thread is exactly managed by this pool
-        this->idleQueue->push(thread);
-    }
-}
-
-Thread *ThreadPool::next() {
+Thread *IdleThreadPool::next() {
     Thread *targetThread;
 
     ThreadUtil::lock(this->lock);
@@ -50,7 +61,7 @@ Thread *ThreadPool::next() {
     return targetThread;
 }
 
-Thread *ThreadPool::idle() {
+Thread *IdleThreadPool::idle() {
     Thread *targetThread;
     if (!this->idleQueue->empty()) {
         targetThread = this->idleQueue->pop();
