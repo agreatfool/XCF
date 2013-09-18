@@ -95,20 +95,12 @@ class Socket {
          * With "SocketBuffer *buffer".
          */
         int32_t read(char *buffer, int32_t length);
-        /**
-         * Read bytes from socket.
-         * With "SocketBuffer *buffer".
-         */
         int32_t read(SocketBuffer *buffer, int32_t length);
         /**
          * Write bytes into socket.
          * With raw "char* buffer".
          */
         int32_t write(char *buffer);
-        /**
-         * Write bytes into socket.
-         * With "SocketBuffer *buffer".
-         */
         int32_t write(SocketBuffer *buffer);
         /**
          * Set socket write buffer size to "bufferSize".
