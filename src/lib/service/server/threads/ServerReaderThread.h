@@ -1,20 +1,24 @@
-/*
- * ServerReaderThread.h
- *
- *  Created on: 2013年9月12日
- *      Author: jonathan
- */
+#ifndef XCF_SERVERREADERTHREAD_H_
+#define XCF_SERVERREADERTHREAD_H_
 
-#ifndef SERVERREADERTHREAD_H_
-#define SERVERREADERTHREAD_H_
+#include "../../../../Common.h"
+#include "../../../thread/Thread.h"
+#include "../../../event/ev/EventIo.h"
 
-namespace XCF {
+DEF_NS_XCF_BEGIN
 
-class ServerReaderThread {
-public:
-    ServerReaderThread();
-    virtual ~ServerReaderThread();
+class ServerReaderThread: public Thread, public EventIo {
+    public:
+        ServerReaderThread();
+        virtual ~ServerReaderThread();
+        virtual int32_t prepareToRun();
+        virtual void run();
+        static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
+    protected:
+        virtual bool canBeBlocked();
+        virtual void process();
 };
 
-} /* namespace XCF */
-#endif /* SERVERREADERTHREAD_H_ */
+DEF_NS_XCF_END
+
+#endif /* XCF_SERVERREADERTHREAD_H_ */
