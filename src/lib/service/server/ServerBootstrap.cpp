@@ -35,16 +35,11 @@ int32_t ServerBootstrap::start() {
     this->mainThread = new ServerMainThread();
 
     // new reader threads
-    this->readerThreadPool = new ThreadPool();
-    for (int i = 0; i < cpuNum * XCF_READER_THREAD_FACTOR; ++i) {
-        Thread *readerThread = new ServerReaderThread();
-        readerThread->init();
-        readerThread->run();
-        readerThreadPool->addThread(readerThread);
-    }
+    uint16_t readerThreadPoolSize = cpuNum * XCF_READER_THREAD_FACTOR;
+    this->readerThreadPool = new FixedThreadPool<ServerReaderThread>(readerThreadPoolSize);
 
     // new worker threads
-    this->workerThreadPool = new ThreadPool();
+    this->workerThreadPool = new IdleThreadPool();
     for (int i = 0; i < cpuNum * XCF_WORKER_THREAD_FACTOR; ++i) {
         Thread *workerThread = new ServerWorkerThread();
         workerThread->init();
