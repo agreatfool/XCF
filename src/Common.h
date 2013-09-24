@@ -47,8 +47,8 @@
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* service
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-#define XCF_READER_THREAD_FACTOR 2
-#define XCF_WORKER_THREAD_FACTOR 8
+#define XCF_READER_THREAD_FACTOR 2 // THREAD_NUM = CPU_NUM * FACTOR
+#define XCF_WORKER_THREAD_FACTOR 8 // THREAD_NUM = CPU_NUM * FACTOR
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* thread
