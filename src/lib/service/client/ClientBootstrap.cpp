@@ -1,5 +1,6 @@
 #include "ClientBootstrap.h"
-#include "../../event/Event.h"
+#include "../../event/ev/EventIo.h"
+#include "../../socket/Socket.h"
 #include "../../utility/Utility.h"
 
 DEF_NS_XCF_BEGIN
@@ -7,7 +8,7 @@ DEF_NS_XCF_BEGIN
 ClientBootstrap *ClientBootstrap::instance = NULL;
 
 ClientBootstrap::ClientBootstrap(uint16_t protocolType):
-    Bootstrap(protocolType) {}
+    Bootstrap(protocolType, "", 0), eventIo(new EventIo()) {}
 
 ClientBootstrap::~ClientBootstrap() {
     this->stop();
