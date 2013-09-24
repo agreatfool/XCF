@@ -2,13 +2,21 @@
 #define XCF_SERVERWORKERTHREAD_H_
 
 #include "../../../../Common.h"
+#include "../../../thread/Thread.h"
 
 DEF_NS_XCF_BEGIN
 
-class ServerWorkerThread {
+class Socket;
+
+class ServerWorkerThread: public Thread {
     public:
         ServerWorkerThread();
         virtual ~ServerWorkerThread();
+        virtual int32_t prepareToRun();
+    protected:
+        Queue<Socket> *works;
+        virtual bool canBeBlocked();
+        virtual void process();
 };
 
 DEF_NS_XCF_END

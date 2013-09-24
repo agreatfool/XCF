@@ -3,11 +3,12 @@
 
 #include "../../../Common.h"
 #include "../Bootstrap.h"
+#include "../../thread/ThreadPool.h"
 
 DEF_NS_XCF_BEGIN
 
 class ServerMainThread;
-class ThreadPool;
+class ServerReaderThread;
 
 class ServerBootstrap: public Bootstrap {
     public:
@@ -17,8 +18,8 @@ class ServerBootstrap: public Bootstrap {
         int32_t start();
         int32_t stop();
         ServerMainThread *getMainThread();
-        ThreadPool *getReaderThreadPool();
-        ThreadPool *getWorkerThreadPool();
+        FixedThreadPool<ServerReaderThread> *getReaderThreadPool();
+        IdleThreadPool *getWorkerThreadPool();
     protected:
         ServerMainThread  *mainThread;
         FixedThreadPool<ServerReaderThread> *readerThreadPool;
@@ -36,10 +37,10 @@ class ServerBootstrap: public Bootstrap {
 inline ServerMainThread *ServerBootstrap::getMainThread() {
     return this->mainThread;
 }
-inline ThreadPool *ServerBootstrap::getReaderThreadPool() {
+inline FixedThreadPool<ServerReaderThread> *ServerBootstrap::getReaderThreadPool() {
     return this->readerThreadPool;
 }
-inline ThreadPool *ServerBootstrap::getWorkerThreadPool() {
+inline IdleThreadPool *ServerBootstrap::getWorkerThreadPool() {
     return this->workerThreadPool;
 }
 

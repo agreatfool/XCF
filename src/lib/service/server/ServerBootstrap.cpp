@@ -2,7 +2,6 @@
 #include "threads/ServerMainThread.h"
 #include "threads/ServerReaderThread.h"
 #include "threads/ServerWorkerThread.h"
-#include "../../thread/ThreadPool.h"
 #include "../../utility/Utility.h"
 
 DEF_NS_XCF_BEGIN

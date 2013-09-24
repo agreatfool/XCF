@@ -14,7 +14,10 @@ class Queue {
         SpecificQueue *queue;
         ThreadLock    *lock;
     public:
-        Queue(): queue(new SpecificQueue()), lock(ThreadUtil::createLock()) {};
+        Queue(): queue(new SpecificQueue()), lock(NULL) {
+            this->lock = (ThreadLock *) malloc(sizeof(ThreadLock));
+            pthread_mutex_init(this->lock, NULL);
+        };
         virtual ~Queue() {};
         /**
          * Get the std::queue itself.
@@ -46,7 +49,7 @@ class Queue {
          * Clear elements and free memory if "freeMemory" is true.
          */
         inline void clear(bool freeMemory) {
-            ThreadUtil::lock(this->lock);
+            pthread_mutex_lock(this->lock);
             while (!this->queue->empty()) {
                 if (freeMemory) {
                     VALUE_TYPE *first = this->queue->front();
@@ -54,7 +57,7 @@ class Queue {
                 }
                 this->queue->pop();
             }
-            ThreadUtil::unlock(this->lock);
+            pthread_mutex_unlock(this->lock);
         };
         /**
          * Get the element count in the queue.

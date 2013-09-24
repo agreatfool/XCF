@@ -15,7 +15,10 @@ class Deque {
         SpecificDeque *deque;
         ThreadLock    *lock;
     public:
-        Deque(): deque(new SpecificDeque()), lock(ThreadUtil::createLock()) {};
+        Deque(): deque(new SpecificDeque()), lock(NULL) {
+            this->lock = (ThreadLock *) malloc(sizeof(ThreadLock));
+            pthread_mutex_init(this->lock, NULL);
+        };
         virtual ~Deque() {};
         /**
          * Get the std::deque itself.
@@ -88,9 +91,9 @@ class Deque {
          * Remove the element by pos. And delete the pointer of the element if "freeMemory" is true.
          */
         inline bool remove(uint64_t pos, bool freeMemory) {
-            ThreadUtil::lock(this->lock);
+            pthread_mutex_lock(this->lock);
             if (this->deque->size() <= pos) {
-                ThreadUtil::unlock(this->lock);
+                pthread_mutex_unlock(this->lock);
                 return false;
             } else {
                 if (freeMemory) {
@@ -99,7 +102,7 @@ class Deque {
                 this->deque->erase(
                     this->deque->begin() + pos
                 );
-                ThreadUtil::unlock(this->lock);
+                pthread_mutex_unlock(this->lock);
                 return true;
             }
         };
@@ -113,7 +116,7 @@ class Deque {
          * Clear elements and free memory if "freeMemory" is true.
          */
         inline void clear(bool freeMemory) {
-            ThreadUtil::lock(this->lock);
+            pthread_mutex_lock(this->lock);
             if (!this->deque->empty()) {
                 SpecificDequeIterator it;
                 if (freeMemory) {
@@ -123,7 +126,7 @@ class Deque {
                 }
                 this->deque->clear();
             }
-            ThreadUtil::unlock(this->lock);
+            pthread_mutex_unlock(this->lock);
         };
         /**
          * Get the element count in the deque.

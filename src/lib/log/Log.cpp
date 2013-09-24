@@ -3,6 +3,7 @@
 #include "../utility/Utility.h"
 #include "../event/Event.h"
 #include "../event/app/Timer.h"
+#include "../thread/ThreadUtil.h"
 
 DEF_NS_XCF_BEGIN
 

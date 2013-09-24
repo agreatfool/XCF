@@ -15,7 +15,10 @@ class Vector {
         SpecificVector *vector;
         ThreadLock     *lock;
     public:
-        Vector(): vector(new SpecificVector()), lock(ThreadUtil::createLock()) {};
+        Vector(): vector(new SpecificVector()), lock(NULL) {
+            this->lock = (ThreadLock *) malloc(sizeof(ThreadLock));
+            pthread_mutex_init(this->lock, NULL);
+        };
         virtual ~Vector() {};
         /**
          * Get the std::vector itself.
@@ -74,9 +77,9 @@ class Vector {
          * Remove the element by pos. And delete the pointer of the element if "freeMemory" is true.
          */
         inline bool remove(uint64_t pos, bool freeMemory) {
-            ThreadUtil::lock(this->lock);
+            pthread_mutex_lock(this->lock);
             if (this->vector->size() <= pos) {
-                ThreadUtil::unlock(this->lock);
+                pthread_mutex_unlock(this->lock);
                 return false;
             } else {
                 if (freeMemory) {
@@ -85,7 +88,7 @@ class Vector {
                 this->vector->erase(
                     this->vector->begin() + pos
                 );
-                ThreadUtil::unlock(this->lock);
+                pthread_mutex_unlock(this->lock);
                 return true;
             }
         };
@@ -99,7 +102,7 @@ class Vector {
          * Clear elements and free memory if "freeMemory" is true.
          */
         inline void clear(bool freeMemory) {
-            ThreadUtil::lock(this->lock);
+            pthread_mutex_lock(this->lock);
             if (!this->vector->empty()) {
                 SpecificVectorIterator it;
                 if (freeMemory) {
@@ -109,7 +112,7 @@ class Vector {
                 }
                 this->vector->clear();
             }
-            ThreadUtil::unlock(this->lock);
+            pthread_mutex_unlock(this->lock);
         };
         /**
          * Get the element count in the vector.
