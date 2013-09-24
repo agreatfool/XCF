@@ -17,8 +17,8 @@ class ServerBootstrap: public Bootstrap {
         int32_t start();
         int32_t stop();
         ServerMainThread *getMainThread();
-        ThreadPool *getReaderThreadPool();
-        ThreadPool *getWorkerThreadPool();
+        FixedThreadPool<ServerReaderThread> *getReaderThreadPool();
+        IdleThreadPool *getWorkerThreadPool();
     protected:
         ServerMainThread  *mainThread;
         FixedThreadPool<ServerReaderThread> *readerThreadPool;
@@ -36,10 +36,10 @@ class ServerBootstrap: public Bootstrap {
 inline ServerMainThread *ServerBootstrap::getMainThread() {
     return this->mainThread;
 }
-inline ThreadPool *ServerBootstrap::getReaderThreadPool() {
+inline FixedThreadPool<ServerReaderThread> *ServerBootstrap::getReaderThreadPool() {
     return this->readerThreadPool;
 }
-inline ThreadPool *ServerBootstrap::getWorkerThreadPool() {
+inline IdleThreadPool *ServerBootstrap::getWorkerThreadPool() {
     return this->workerThreadPool;
 }
 

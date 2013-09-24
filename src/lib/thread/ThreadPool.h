@@ -37,6 +37,11 @@ class FixedThreadPool: public ThreadPool {
         inline THREAD_TYPE *getThread(uint16_t id) {
             return this->threadPool->get(id);
         };
+        inline THREAD_TYPE *getThreadViaShard(uint16_t shardId) {
+            return this->threadPool->get(shardId % this->threadPool->count());
+        };
+    protected:
+        Vector<THREAD_TYPE> *threadPool;
 };
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
