@@ -17,7 +17,10 @@ class Map {
         SpecificMap *map;
         ThreadLock  *lock;
     public:
-        Map(): map(new SpecificMap()), lock(ThreadUtil::createLock()) {};
+        Map(): map(new SpecificMap()), lock(NULL) {
+            this->lock = (ThreadLock *) malloc(sizeof(ThreadLock));
+            pthread_mutex_init(this->lock, NULL);
+        };
         virtual ~Map() {};
         /**
          * Get the std::map itself.
@@ -102,7 +105,7 @@ class Map {
          * Clear elements and free memory if "freeMemory" is true.
          */
         inline void clear(bool freeMemory) {
-            ThreadUtil::lock(this->lock);
+            pthread_mutex_lock(this->lock);
             if (!this->map->empty()) {
                 SpecificMapIterator it;
                 for (it = this->map->begin(); it != this->map->end(); /* no auto increment*/) {
@@ -113,7 +116,7 @@ class Map {
                 }
                 this->map->clear();
             }
-            ThreadUtil::unlock(this->lock);
+            pthread_mutex_unlock(this->lock);
         };
         /**
          * Get the element count in the map.
