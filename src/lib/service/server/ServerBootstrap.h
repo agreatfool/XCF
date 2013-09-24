@@ -3,11 +3,12 @@
 
 #include "../../../Common.h"
 #include "../Bootstrap.h"
+#include "../../thread/ThreadPool.h"
 
 DEF_NS_XCF_BEGIN
 
 class ServerMainThread;
-class ThreadPool;
+class ServerReaderThread;
 
 class ServerBootstrap: public Bootstrap {
     public:

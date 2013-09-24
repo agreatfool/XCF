@@ -1,5 +1,6 @@
 #include "Event.h"
 #include "../thread/Thread.h"
+#include "../thread/ThreadUtil.h"
 #include "../log/Log.h"
 #include "../utility/Utility.h"
 

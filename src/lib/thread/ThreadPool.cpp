@@ -1,5 +1,6 @@
 #include "ThreadPool.h"
 #include "Thread.h"
+#include "ThreadUtil.h"
 #include "../log/Log.h"
 
 DEF_NS_XCF_BEGIN

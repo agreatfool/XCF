@@ -1,6 +1,7 @@
 #include "Timer.h"
-#include "../log/Log.h"
-#include "../utility/Utility.h"
+#include "../../thread/ThreadUtil.h"
+#include "../../log/Log.h"
+#include "../../utility/Utility.h"
 
 DEF_NS_XCF_BEGIN
 

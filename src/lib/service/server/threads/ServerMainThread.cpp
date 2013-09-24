@@ -1,4 +1,6 @@
 #include "ServerMainThread.h"
+#include "../ServerBootstrap.h"
+#include "ServerReaderThread.h"
 #include "../../../socket/Socket.h"
 #include "../../../log/Log.h"
 #include "../../../utility/Utility.h"

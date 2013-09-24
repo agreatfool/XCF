@@ -1,9 +1,9 @@
 #ifndef XCF_TIMER_H_
 #define XCF_TIMER_H_
 
-#include "../../Common.h"
-#include "../Event.h"
-#include "../thread/Thread.h"
+#include "../../../Common.h"
+#include "../ev/EventPeriodic.h"
+#include "../../thread/Thread.h"
 
 DEF_NS_XCF_BEGIN
 

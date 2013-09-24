@@ -5,6 +5,8 @@
 
 DEF_NS_XCF_BEGIN
 
+class Thread;
+
 class ThreadUtil {
     public:
         ThreadUtil();
