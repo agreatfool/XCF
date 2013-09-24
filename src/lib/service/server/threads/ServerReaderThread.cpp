@@ -44,15 +44,20 @@ void ServerReaderThread::readCallback(EventLoop *readLoop, EventIoWatcher *readW
         return;
     }
 
+    ServerBootstrap *server = ServerBootstrap::get();
+
     if (received == 0) {
-        // FIXME 因为需要在根据socketFd编号从ThreadPool内获得到Thread，所以ThreadPool的尺寸必须是固定的
-        // 根据这个尺寸进行shard，获得对应的Thread，感觉ThreadPool应该更名为FixedThreadPool
-        // stop and free socket | watcher if client socket closed
-        ServerBootstrap::get()->getEventIo()->removeWatcher(socketFd);
-        ServerBootstrap::get()->getSocketPool()->removeSocket(socketFd);
+        // stop and free socket & watcher if client socket closed
+        ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->getThreadViaShard(socketFd);
+        thread->removeWatcher(socketFd);
+        server->getSocketPool()->removeSocket(socketFd);
         LogFactory::get()->info("[ServerReaderThread] readCallback: client closed!");
         return;
     } else {
+        // TODO
+        // 1. 需要添加一个socket状态，假如socket在前一个worker线程中处理，并暂时未处理完成的话，这里读取就应该直接返回错误信息，表示前一个请求未完成
+        // 2. socket要有手段确定已经把消息读完了
+        // 3. 读完的消息将会被设成“处理中”的状态，并塞给worker线程
         LogFactory::get()->info(
             Utility::stringFormat("[ServerReaderThread] readCallback: message: %s", buffer->getBuffer())
         );
