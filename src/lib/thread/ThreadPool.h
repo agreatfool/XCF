@@ -25,7 +25,9 @@ class ThreadPool {
 template <typename THREAD_TYPE>
 class FixedThreadPool: public ThreadPool {
     public:
-        FixedThreadPool(uint16_t size): ThreadPool() {
+        FixedThreadPool(uint16_t size):
+            ThreadPool(), threadPool(new Vector<THREAD_TYPE>())
+        {
             for (uint16_t i = 0; i < size; ++i) {
                 THREAD_TYPE *thread = new THREAD_TYPE();
                 thread->init();
