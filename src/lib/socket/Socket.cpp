@@ -113,6 +113,8 @@ int32_t Socket::socketInit() {
                     return XCF_INVALID_RESULT;
                 }
             }
+        } else {
+            LogFactory::get()->warn("[Socket] \"init\" called when socket already inited ...");
         }
 
         this->socketStatus = SocketStatus::CONNECTED;
