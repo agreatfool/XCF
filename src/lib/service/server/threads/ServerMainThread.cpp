@@ -28,10 +28,11 @@ void ServerMainThread::run() {
 }
 
 int32_t ServerMainThread::prepareToRun() {
+    ServerBootstrap *bootstrap = ServerBootstrap::get();
     this->serverSocket = new Socket(
-        ServerBootstrap::get()->getHost(),
-        ServerBootstrap::get()->getPort(),
-        ServerBootstrap::get()->getSocketProtocolType(),
+        bootstrap->getHost(),
+        bootstrap->getPort(),
+        bootstrap->getSocketProtocolType(),
         SocketEndType::SERVER
     );
     if (this->serverSocket->getSocketStatus() < SocketStatus::CONNECTED) {
