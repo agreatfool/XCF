@@ -32,6 +32,10 @@ class Event {
          * Remove all the EventWatcher in the EventWatcherMap.
          */
         virtual void clearWatchers() = 0;
+        /**
+         * Get the name of the event loop.
+         */
+        virtual std::string getEventName() = 0;
     protected:
         EventLoop  *loop;
         ThreadLock *lock;

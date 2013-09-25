@@ -18,8 +18,12 @@ bool ServerMainThread::canBeBlocked() { return false; }
 
 void ServerMainThread::process() { /* no logic to process here */ }
 
+std::string ServerMainThread::getThreadName() { return "ServerMainThread"; }
+
+std::string ServerMainThread::getEventName() { return "ServerMainThreadEvent"; }
+
 void ServerMainThread::run() {
-    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[ServerMainThread] Thread %d start to run ...", this->getNumericThreadId()));
     this->startLoop();
 }
 
@@ -31,7 +35,7 @@ int32_t ServerMainThread::prepareToRun() {
         SocketEndType::SERVER
     );
     if (this->serverSocket->getSocketStatus() < SocketStatus::CONNECTED) {
-        LogFactory::get()->error("[ServerBootstrap] server socket init failed!");
+        LogFactory::get()->error("[ServerMainThread] server socket init failed!");
         return XCF_INVALID_RESULT;
     } else {
         this->addWatcher(this->serverSocket->getSocketFd(), ServerMainThread::acceptCallback);
@@ -41,13 +45,13 @@ int32_t ServerMainThread::prepareToRun() {
 
 void ServerMainThread::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents) {
     if (EV_ERROR & revents) {
-        LogFactory::get()->error("[ServerBootstrap] acceptCallback: got invalid event!");
+        LogFactory::get()->error("[ServerMainThread] acceptCallback: got invalid event!");
         return;
     }
 
     Socket *client = Socket::socketAccept(acceptWatcher->fd, SocketProtocol::TCP);
     if (Utility::isNullPtr(client)) {
-        LogFactory::get()->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
+        LogFactory::get()->error("[ServerMainThread] acceptCallback: socket cannot be accepted!");
         return;
     }
 
@@ -59,7 +63,7 @@ void ServerMainThread::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acc
 
     LogFactory::get()->info(
         Utility::stringFormat(
-            "[ServerBootstrap] Successfully connected with client. %d connections established!",
+            "[ServerMainThread] Successfully connected with client. %d connections established!",
             server->getSocketPool()->getPoolSize()
         )
     );

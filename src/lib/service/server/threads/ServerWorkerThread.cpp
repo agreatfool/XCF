@@ -10,6 +10,10 @@ ServerWorkerThread::~ServerWorkerThread() {}
 
 int32_t ServerWorkerThread::prepareToRun() { return XCF_VALID_RESULT; }
 
+std::string ServerWorkerThread::getThreadName() { return "ServerWorkerThread"; }
+
+std::string ServerWorkerThread::getEventName() { return "ServerWorkerThreadEvent"; }
+
 bool ServerWorkerThread::canBeBlocked() {
     if (this->works->empty()) {
         return true;

@@ -13,6 +13,8 @@ class ServerWorkerThread: public Thread {
         ServerWorkerThread();
         virtual ~ServerWorkerThread();
         virtual int32_t prepareToRun();
+        virtual std::string getThreadName();
+        virtual std::string getEventName();
     protected:
         Queue<Socket> *works;
         virtual bool canBeBlocked();

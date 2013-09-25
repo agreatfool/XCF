@@ -24,12 +24,12 @@ Event::~Event() {
 }
 
 void Event::startLoop() {
-    LogFactory::get()->info("[Event] Loop started ...");
+    LogFactory::get()->info(Utility::stringFormat("[%s] Loop started ...", this->getEventName().c_str()));
     ev_run(this->loop, 0);
 }
 
 void Event::stopLoop() {
-    LogFactory::get()->info("[Event] Loop stopped ...");
+    LogFactory::get()->info(Utility::stringFormat("[%s] Loop stopped ...", this->getEventName().c_str()));
     this->suspendLoop();
     this->clearWatchers();
     ev_break(this->loop, EVBREAK_ALL);

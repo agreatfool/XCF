@@ -41,6 +41,10 @@ class EventPeriodic: public Event {
          * EventPeriodicWatcherIterator returned.
          */
         EventPeriodicWatcherIterator findWatcher(std::string name) const;
+        /**
+         * Get the name of the event loop.
+         */
+        std::string getEventName();
     protected:
         EventPeriodicWatcherMap *timerWatcherPool;
 };

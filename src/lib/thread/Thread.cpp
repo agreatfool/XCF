@@ -44,11 +44,11 @@ void Thread::init() {
     this->lock = ThreadUtil::createLock();
     this->cond = ThreadUtil::createCond();
     this->threadId = ThreadUtil::createThread(threadStartFunc, this);
-    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread initialized, thread id: %d", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[%s] Thread initialized, thread id: %d", this->getThreadName().c_str(), this->getNumericThreadId()));
 }
 
 void Thread::run() {
-    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[%d] Thread %d start to run ...", this->getThreadName().c_str(), this->getNumericThreadId()));
     while (1) {
         this->checkThreadStatus();
         this->process();
@@ -74,7 +74,7 @@ void Thread::stop() {
     ThreadUtil::unlock(this->lock);
     ThreadUtil::joinThread(this->threadId);
 
-    LogFactory::get()->info(Utility::stringFormat("Thread %d stopped ...", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[%s] Thread %d stopped ...", this->getThreadName().c_str(), this->getNumericThreadId()));
 }
 
 void Thread::checkThreadStatus() {

@@ -15,8 +15,12 @@ bool ServerReaderThread::canBeBlocked() { return false; }
 
 void ServerReaderThread::process() { /* no logic to process here */ }
 
+std::string ServerReaderThread::getThreadName() { return "ServerReaderThread"; }
+
+std::string ServerReaderThread::getEventName() { return "ServerReaderThreadEvent"; }
+
 void ServerReaderThread::run() {
-    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[ServerReaderThread] Thread %d start to run ...", this->getNumericThreadId()));
     this->startLoop();
 }
 

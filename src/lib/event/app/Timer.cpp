@@ -13,7 +13,7 @@ TimerThread::TimerThread(): Thread(), EventPeriodic() {}
 TimerThread::~TimerThread() {}
 
 void TimerThread::run() {
-    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[TimerThread] Thread %d start to run ...", this->getNumericThreadId()));
     /*
      * Since this thread is used by libev event loop,
      * the event loop would block the thread and check event,
@@ -29,6 +29,10 @@ bool TimerThread::canBeBlocked() { return false; }
 int32_t TimerThread::prepareToRun() { return XCF_VALID_RESULT; }
 
 void TimerThread::process() { /* no logic to process here */ }
+
+std::string TimerThread::getThreadName() { return "TimerThread"; }
+
+std::string TimerThread::getEventName() { return "TimerThreadEvent"; }
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* Timer

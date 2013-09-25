@@ -15,6 +15,8 @@ class ServerMainThread: public Thread, public EventIo {
         virtual ~ServerMainThread();
         virtual int32_t prepareToRun();
         virtual void run();
+        virtual std::string getThreadName();
+        virtual std::string getEventName();
         static void acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents);
     protected:
         virtual bool canBeBlocked();

@@ -70,6 +70,10 @@ class Thread {
          * Check whether thread is sleeping.
          */
         bool isSleeping();
+        /**
+         * Get the name of the derived thread class to do debugging.
+         */
+        virtual std::string getThreadName() = 0;
     protected:
         ThreadId   *threadId;
         uint64_t   numericThreadId;
