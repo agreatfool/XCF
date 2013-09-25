@@ -31,7 +31,6 @@ class FixedThreadPool: public ThreadPool {
             for (uint16_t i = 0; i < size; ++i) {
                 THREAD_TYPE *thread = new THREAD_TYPE();
                 thread->init();
-                thread->run();
                 this->threadPool->push(thread);
             }
         };

@@ -42,13 +42,11 @@ int32_t ServerBootstrap::start() {
     for (int i = 0; i < cpuNum * XCF_WORKER_THREAD_FACTOR; ++i) {
         Thread *workerThread = new ServerWorkerThread();
         workerThread->init();
-        workerThread->run();
         workerThreadPool->addThread(workerThread);
     }
 
     // start to run main thread
     this->mainThread->init();
-    this->mainThread->run();
 
     return XCF_VALID_RESULT;
 }
