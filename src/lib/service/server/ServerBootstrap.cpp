@@ -48,6 +48,8 @@ int32_t ServerBootstrap::start() {
     // start to run main thread
     this->mainThread->init();
 
+    ThreadUtil::joinThread(this->mainThread->getThreadId());
+
     return XCF_VALID_RESULT;
 }
 
