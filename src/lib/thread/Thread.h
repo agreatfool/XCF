@@ -108,7 +108,7 @@ inline ThreadId *Thread::getThreadId() {
 inline uint64_t Thread::getNumericThreadId() {
     if (this->numericThreadId == 0) {
 #if defined (__APPLE__)
-        pthread_threadid_np(NULL, &this->numericThreadId);
+        pthread_threadid_np(*this->threadId, &this->numericThreadId);
 #elif defined (__linux)
         this->numericThreadId = gettid();
 #endif
