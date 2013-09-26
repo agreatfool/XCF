@@ -7,8 +7,12 @@ DEF_NS_XCF_BEGIN
 
 ThreadId *ThreadUtil::createThread(ThreadStartFunc start, Thread *thread) {
     ThreadId *threadId = (ThreadId *) malloc(sizeof(ThreadId));
-    pthread_create(threadId, NULL, start, (void *)thread);
-    return threadId;
+    if (pthread_create(threadId, NULL, start, (void *)thread) < 0) {
+        LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_create: [%d] %s", errno, strerror(errno)));
+        return NULL;
+    } else {
+        return threadId;
+    }
 }
 
 ThreadLock *ThreadUtil::createLock() {
