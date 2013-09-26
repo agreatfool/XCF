@@ -44,7 +44,7 @@ void Thread::init() {
     this->lock = ThreadUtil::createLock();
     this->cond = ThreadUtil::createCond();
     this->threadId = ThreadUtil::createThread(threadStartFunc, this);
-    LogFactory::get()->info(Utility::stringFormat("[%s] Thread initialized, thread id: %d", this->getThreadName().c_str(), this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[%s] Thread initialized ...", this->getThreadName().c_str()));
 }
 
 void Thread::run() {
@@ -59,6 +59,7 @@ void Thread::wakeup() {
     ThreadUtil::lock(this->lock);
 
     if (this->status == ThreadStatus::BLOCKED && !this->canBeBlocked() ) {
+        LogFactory::get()->info(Utility::stringFormat("[%s] Thread %d wakeup ...", this->getThreadName().c_str(), this->getNumericThreadId()));
         ThreadUtil::signalCond(this->cond);
     }
 
@@ -82,9 +83,11 @@ void Thread::checkThreadStatus() {
 
     while (this->canBeBlocked() || this->status == ThreadStatus::STOPPED) {
         if (this->status == ThreadStatus::STOPPED) {
+            LogFactory::get()->info(Utility::stringFormat("[%s] Thread %d marked as stopped, exit ...", this->getThreadName().c_str(), this->getNumericThreadId()));
             pthread_exit((void *) this->retVal);
         }
         this->status = ThreadStatus::BLOCKED;
+        LogFactory::get()->info(Utility::stringFormat("[%s] Thread %d can be blocked, sleeping ...", this->getThreadName().c_str(), this->getNumericThreadId()));
         ThreadUtil::waitCond(this->cond, this->lock);
     }
 
