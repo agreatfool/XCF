@@ -20,10 +20,13 @@ class ServerBootstrap: public Bootstrap {
         ServerMainThread *getMainThread();
         FixedThreadPool<ServerReaderThread> *getReaderThreadPool();
         IdleThreadPool *getWorkerThreadPool();
+        ServerReaderThread *getReaderThread();
+        ThreadId getThreadId();
     protected:
         ServerMainThread  *mainThread;
         FixedThreadPool<ServerReaderThread> *readerThreadPool;
         IdleThreadPool *workerThreadPool;
+        ServerReaderThread *readerThread;
         static ServerBootstrap *instance;
         ServerBootstrap(uint16_t protocolType, std::string host, uint16_t port);
         // Stop the compiler generating methods of copy the object
@@ -42,6 +45,12 @@ inline FixedThreadPool<ServerReaderThread> *ServerBootstrap::getReaderThreadPool
 }
 inline IdleThreadPool *ServerBootstrap::getWorkerThreadPool() {
     return this->workerThreadPool;
+}
+inline ServerReaderThread *ServerBootstrap::getReaderThread() {
+    return this->readerThread;
+}
+inline ThreadId ServerBootstrap::getThreadId() {
+    return pthread_self();
 }
 
 DEF_NS_XCF_END

@@ -3,6 +3,7 @@
 #include "../../../socket/Socket.h"
 #include "../../../log/Log.h"
 #include "../../../utility/Utility.h"
+#include "../../../thread/ThreadUtil.h"
 
 DEF_NS_XCF_BEGIN
 
@@ -19,12 +20,20 @@ std::string ServerReaderThread::getThreadName() { return "ServerReaderThread"; }
 
 std::string ServerReaderThread::getEventName() { return "ServerReaderThreadEvent"; }
 
+//void ServerReaderThread::run() {
+//    LogFactory::get()->info(Utility::stringFormat("[ServerReaderThread] Thread %d start to run ...", this->getNumericThreadId()));
+//    this->addWatcher(XCF_STDIN_FD, EventIo::dummyCallback);
+//    this->startLoop();
+//}
 void ServerReaderThread::run() {
     LogFactory::get()->info(Utility::stringFormat("[ServerReaderThread] Thread %d start to run ...", this->getNumericThreadId()));
-    this->startLoop();
+//    this->startLoop();
+//    ThreadUtil::joinThread(ServerBootstrap::get()->getMainThread()->getThreadId()); // wait, and do not exit the thread
+    ThreadId bootstrapId = ServerBootstrap::get()->getThreadId();
+    ThreadUtil::joinThread(&bootstrapId);
 }
 
-int32_t ServerReaderThread::prepareToRun() { return XCF_VALID_RESULT; }
+int32_t ServerReaderThread::prepareToRun() { return XCF_OK; }
 
 void ServerReaderThread::readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents) {
     if (EV_ERROR & revents) {

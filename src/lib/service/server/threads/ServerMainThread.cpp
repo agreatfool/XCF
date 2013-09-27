@@ -59,8 +59,10 @@ void ServerMainThread::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acc
     ServerBootstrap *server = ServerBootstrap::get();
 
     server->getSocketPool()->addSocket(client);
-    ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->getThreadViaShard(client->getSocketFd());
-    thread->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+//    ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->getThreadViaShard(client->getSocketFd());
+//    thread->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+    server->getReaderThread()->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+    server->getReaderThread()->startLoop();
 
     LogFactory::get()->info(
         Utility::stringFormat(
