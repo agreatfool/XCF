@@ -75,13 +75,13 @@ int32_t Socket::socketInit() {
         if (this->socketFd < 0) {
             this->socketRelease();
             LogFactory::get()->error(Utility::stringFormat("[Socket] socketFd initialization failed: [%d] %s", errno, strerror(errno)));
-            return XCF_INVALID_RESULT;
+            return XCF_ERR;
         }
 
         // set socket options
         if (this->setNonBlock() < 0 || this->setKeepAlive() < 0 || this->setReuseAddr() < 0) {
             this->socketRelease();
-            return XCF_INVALID_RESULT;
+            return XCF_ERR;
         }
 
         // build address
@@ -97,12 +97,12 @@ int32_t Socket::socketInit() {
             if (bind(this->socketFd, (struct sockaddr *) &this->socketAddr, sizeof(this->socketAddr)) < 0) {
                 this->socketRelease();
                 LogFactory::get()->error(Utility::stringFormat("[Socket] socket binding failed: [%d] %s", errno, strerror(errno)));
-                return XCF_INVALID_RESULT;
+                return XCF_ERR;
             }
             if (listen(this->socketFd, XCF_SOCK_LISTEN_BACKLOG) < 0) {
                 this->socketRelease();
                 LogFactory::get()->error(Utility::stringFormat("[Socket] socket listen failed: [%d] %s", errno, strerror(errno)));
-                return XCF_INVALID_RESULT;
+                return XCF_ERR;
             }
         } else if (this->socketEndType == SocketEndType::CLIENT) {
             // client: connect
@@ -110,7 +110,7 @@ int32_t Socket::socketInit() {
                 if (errno != EINPROGRESS) { // non-blocking socket connect, EINPROGRESS would be returned
                     this->socketRelease();
                     LogFactory::get()->error(Utility::stringFormat("[Socket] socket connect failed: [%d] %s", errno, strerror(errno)));
-                    return XCF_INVALID_RESULT;
+                    return XCF_ERR;
                 }
             }
         } else {
@@ -120,7 +120,7 @@ int32_t Socket::socketInit() {
         this->socketStatus = SocketStatus::CONNECTED;
     }
 
-    return XCF_VALID_RESULT;
+    return XCF_OK;
 }
 
 int32_t Socket::socketRelease() {
@@ -131,7 +131,7 @@ int32_t Socket::socketRelease() {
     this->socketFd = XCF_INVALID_SOCKET_FD;
     bzero(&this->socketAddr, sizeof(this->socketAddr));
 
-    return XCF_VALID_RESULT;
+    return XCF_OK;
 }
 
 int32_t Socket::read(char *buffer, int32_t length) {

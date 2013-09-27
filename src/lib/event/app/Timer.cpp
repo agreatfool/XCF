@@ -26,7 +26,7 @@ void TimerThread::run() {
 
 bool TimerThread::canBeBlocked() { return false; }
 
-int32_t TimerThread::prepareToRun() { return XCF_VALID_RESULT; }
+int32_t TimerThread::prepareToRun() { return XCF_OK; }
 
 void TimerThread::process() { /* no logic to process here */ }
 

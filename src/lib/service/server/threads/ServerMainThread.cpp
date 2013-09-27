@@ -37,10 +37,10 @@ int32_t ServerMainThread::prepareToRun() {
     );
     if (this->serverSocket->getSocketStatus() < SocketStatus::CONNECTED) {
         LogFactory::get()->error("[ServerMainThread] server socket init failed!");
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
         this->addWatcher(this->serverSocket->getSocketFd(), ServerMainThread::acceptCallback);
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 

@@ -28,28 +28,28 @@ ThreadLock *ThreadUtil::createLock() {
 int32_t ThreadUtil::destroyLock(ThreadLock *lock) {
     if (pthread_mutex_destroy(lock) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_destroy: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
         delete lock;
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
 int32_t ThreadUtil::lock(ThreadLock *lock) {
     if (pthread_mutex_lock(lock) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_lock: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
 int32_t ThreadUtil::unlock(ThreadLock *lock) {
     if (pthread_mutex_unlock(lock) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_mutex_unlock: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
@@ -66,37 +66,37 @@ ThreadCond *ThreadUtil::createCond() {
 int32_t ThreadUtil::destroyCond(ThreadCond *cond) {
     if (pthread_cond_destroy(cond) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_destroy: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
         delete cond;
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
 int32_t ThreadUtil::waitCond(ThreadCond *cond, ThreadLock *lock) {
     if (pthread_cond_wait(cond, lock) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_wait: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
 int32_t ThreadUtil::signalCond(ThreadCond *cond) {
     if (pthread_cond_signal(cond) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_cond_signal: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
 int32_t ThreadUtil::joinThread(ThreadId *threadId) {
     if (pthread_join(*threadId, NULL) < 0) {
         LogFactory::get()->error(Utility::stringFormat("[Thread] error in pthread_join: [%d] %s", errno, strerror(errno)));
-        return XCF_INVALID_RESULT;
+        return XCF_ERR;
     } else {
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 

@@ -28,8 +28,8 @@
 #define XCF_INIT_SOCKET_FD            0
 #define XCF_INVALID_SOCKET_FD        -1
 
-#define XCF_VALID_RESULT              0
-#define XCF_INVALID_RESULT           -1
+#define XCF_OK                        0
+#define XCF_ERR                      -1
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 //-* log

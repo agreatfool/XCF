@@ -8,7 +8,7 @@ ServerWorkerThread::ServerWorkerThread(): Thread(), works(new Queue<Socket>()) {
 
 ServerWorkerThread::~ServerWorkerThread() {}
 
-int32_t ServerWorkerThread::prepareToRun() { return XCF_VALID_RESULT; }
+int32_t ServerWorkerThread::prepareToRun() { return XCF_OK; }
 
 std::string ServerWorkerThread::getThreadName() { return "ServerWorkerThread"; }
 

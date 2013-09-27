@@ -51,7 +51,7 @@ int32_t ServerBootstrap::start() {
     // wait main thread processing here
     ThreadUtil::joinThread(this->mainThread->getThreadId());
 
-    return XCF_VALID_RESULT;
+    return XCF_OK;
 }
 
 int32_t ServerBootstrap::stop() {
@@ -65,7 +65,7 @@ int32_t ServerBootstrap::stop() {
 
 //    this->socketPool->clearSockets();
 
-    return XCF_VALID_RESULT;
+    return XCF_OK;
 }
 
 DEF_NS_XCF_END
