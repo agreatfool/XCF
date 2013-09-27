@@ -42,6 +42,10 @@ class EventIo: public Event {
          * EventIoWatcherIterator returned.
          */
         EventIoWatcherIterator findWatcher(int32_t socketFd) const;
+        /**
+         * Get the name of the event loop.
+         */
+        std::string getEventName();
     protected:
         EventIoWatcherMap *ioWatcherPool;
 };

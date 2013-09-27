@@ -12,12 +12,14 @@ EventIo::~EventIo() {
     delete this->ioWatcherPool;
 }
 
+std::string EventIo::getEventName() { return "EventIo"; }
+
 void EventIo::addWatcher(int32_t socketFd, EventIoCallback callback, int32_t flags) {
     EventIoWatcher *watcher = (EventIoWatcher *) malloc(sizeof(EventIoWatcher));
     ev_io_init(watcher, callback, socketFd, flags);
     ev_io_start(this->loop, watcher);
     this->ioWatcherPool->add(socketFd, watcher);
-    LogFactory::get()->info(Utility::stringFormat("[EventIo] Io event added with fd: %d", socketFd));
+    LogFactory::get()->info(Utility::stringFormat("[%s] Io event added with fd: %d", this->getEventName().c_str(), socketFd));
 }
 
 void EventIo::removeWatcher(int32_t socketFd) {
@@ -27,7 +29,7 @@ void EventIo::removeWatcher(int32_t socketFd) {
         ev_io_stop(this->loop, it->second);
         this->ioWatcherPool->getMap()->erase(it);
     }
-    LogFactory::get()->info(Utility::stringFormat("[EventIo] Io event removed with fd: %d", socketFd));
+    LogFactory::get()->info(Utility::stringFormat("[%s] Io event removed with fd: %d", this->getEventName().c_str(), socketFd));
 }
 
 void EventIo::clearWatchers() {
@@ -40,7 +42,7 @@ void EventIo::clearWatchers() {
         }
         this->ioWatcherPool->getMap()->clear();
     }
-    LogFactory::get()->info("[EventIo] Io events cleared ...");
+    LogFactory::get()->info(Utility::stringFormat("[%s] Io events cleared ...", this->getEventName().c_str()));
 }
 
 DEF_NS_XCF_END

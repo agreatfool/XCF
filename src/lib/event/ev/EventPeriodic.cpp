@@ -12,12 +12,14 @@ EventPeriodic::~EventPeriodic() {
     delete this->timerWatcherPool;
 }
 
+std::string EventPeriodic::getEventName() { return "EventPeriodic"; }
+
 void EventPeriodic::addWatcher(std::string name, EventPeriodicCallback callback, double interval) {
     EventPeriodicWatcher *watcher = (EventPeriodicWatcher *) malloc(sizeof(EventPeriodicWatcher));
     ev_periodic_init(watcher, callback, 0., interval, 0);
     ev_periodic_start(this->loop, watcher);
     this->timerWatcherPool->add(name, watcher);
-    LogFactory::get()->info("[EventPeriodic] Periodic event added with name: " + name);
+    LogFactory::get()->info(Utility::stringFormat("[%s] Periodic event added with name: %s", this->getEventName().c_str(), name.c_str()));
 }
 
 void EventPeriodic::removeWatcher(std::string name) {
@@ -27,7 +29,7 @@ void EventPeriodic::removeWatcher(std::string name) {
         ev_periodic_stop(this->loop, it->second);
         this->timerWatcherPool->getMap()->erase(it);
     }
-    LogFactory::get()->info("[EventPeriodic] Periodic event removed with name: %s" + name);
+    LogFactory::get()->info(Utility::stringFormat("[%s] Periodic event removed with name: %s", this->getEventName().c_str(), name.c_str()));
 }
 
 void EventPeriodic::clearWatchers() {
@@ -40,7 +42,7 @@ void EventPeriodic::clearWatchers() {
         }
         this->timerWatcherPool->getMap()->clear();
     }
-    LogFactory::get()->info("[EventPeriodic] Periodic events cleared ...");
+    LogFactory::get()->info(Utility::stringFormat("[%s] Periodic events cleared ...", this->getEventName().c_str()));
 }
 
 DEF_NS_XCF_END

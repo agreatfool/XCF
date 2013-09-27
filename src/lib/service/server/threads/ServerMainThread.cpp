@@ -18,48 +18,55 @@ bool ServerMainThread::canBeBlocked() { return false; }
 
 void ServerMainThread::process() { /* no logic to process here */ }
 
+std::string ServerMainThread::getThreadName() { return "ServerMainThread"; }
+
+std::string ServerMainThread::getEventName() { return "ServerMainThreadEvent"; }
+
 void ServerMainThread::run() {
-    LogFactory::get()->info(Utility::stringFormat("[Thread] Thread %d start to run ...", this->getNumericThreadId()));
+    LogFactory::get()->info(Utility::stringFormat("[ServerMainThread] Thread %d start to run ...", this->getNumericThreadId()));
     this->startLoop();
 }
 
 int32_t ServerMainThread::prepareToRun() {
+    ServerBootstrap *bootstrap = ServerBootstrap::get();
     this->serverSocket = new Socket(
-        ServerBootstrap::get()->getHost(),
-        ServerBootstrap::get()->getPort(),
-        ServerBootstrap::get()->getSocketProtocolType(),
+        bootstrap->getHost(),
+        bootstrap->getPort(),
+        bootstrap->getSocketProtocolType(),
         SocketEndType::SERVER
     );
     if (this->serverSocket->getSocketStatus() < SocketStatus::CONNECTED) {
-        LogFactory::get()->error("[ServerBootstrap] server socket init failed!");
-        return XCF_INVALID_RESULT;
+        LogFactory::get()->error("[ServerMainThread] server socket init failed!");
+        return XCF_ERR;
     } else {
         this->addWatcher(this->serverSocket->getSocketFd(), ServerMainThread::acceptCallback);
-        return XCF_VALID_RESULT;
+        return XCF_OK;
     }
 }
 
 void ServerMainThread::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acceptWatcher, int revents) {
     if (EV_ERROR & revents) {
-        LogFactory::get()->error("[ServerBootstrap] acceptCallback: got invalid event!");
+        LogFactory::get()->error("[ServerMainThread] acceptCallback: got invalid event!");
         return;
     }
 
     Socket *client = Socket::socketAccept(acceptWatcher->fd, SocketProtocol::TCP);
     if (Utility::isNullPtr(client)) {
-        LogFactory::get()->error("[ServerBootstrap] acceptCallback: socket cannot be accepted!");
+        LogFactory::get()->error("[ServerMainThread] acceptCallback: socket cannot be accepted!");
         return;
     }
 
     ServerBootstrap *server = ServerBootstrap::get();
 
     server->getSocketPool()->addSocket(client);
-    ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->getThreadViaShard(client->getSocketFd());
-    thread->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+//    ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->getThreadViaShard(client->getSocketFd());
+//    thread->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+    server->getReaderThread()->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+    server->getReaderThread()->startLoop();
 
     LogFactory::get()->info(
         Utility::stringFormat(
-            "[ServerBootstrap] Successfully connected with client. %d connections established!",
+            "[ServerMainThread] Successfully connected with client. %d connections established!",
             server->getSocketPool()->getPoolSize()
         )
     );

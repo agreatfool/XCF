@@ -13,6 +13,8 @@ class TimerThread: public Thread, public EventPeriodic {
         virtual ~TimerThread();
         virtual int32_t prepareToRun();
         virtual void run();
+        virtual std::string getThreadName();
+        virtual std::string getEventName();
     protected:
        virtual bool canBeBlocked();
        virtual void process();

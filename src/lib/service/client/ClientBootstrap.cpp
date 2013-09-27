@@ -27,13 +27,13 @@ ClientBootstrap *ClientBootstrap::get() {
 
 int32_t ClientBootstrap::start() {
     this->eventIo->startLoop();
-    return XCF_VALID_RESULT;
+    return XCF_OK;
 }
 
 int32_t ClientBootstrap::stop() {
     this->eventIo->stopLoop();
     this->socketPool->clearSockets();
-    return XCF_VALID_RESULT;
+    return XCF_OK;
 }
 
 DEF_NS_XCF_END

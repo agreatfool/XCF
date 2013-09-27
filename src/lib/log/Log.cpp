@@ -18,7 +18,7 @@ Log::Log():
 Log::~Log() {}
 
 void Log::registerTimer() {
-    Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
+//    Timer::get()->addWatcher(XCF_LOG_TIMER_NAME, Log::timerCallback, XCF_LOG_TIMER_INTERVAL);
 }
 
 void Log::timerCallback(EventLoop *loop, EventPeriodicWatcher *watcher, int32_t revents) {

@@ -70,6 +70,10 @@ class Thread {
          * Check whether thread is sleeping.
          */
         bool isSleeping();
+        /**
+         * Get the name of the derived thread class to do debugging.
+         */
+        virtual std::string getThreadName() = 0;
     protected:
         ThreadId   *threadId;
         uint64_t   numericThreadId;
@@ -104,7 +108,11 @@ inline ThreadId *Thread::getThreadId() {
 inline uint64_t Thread::getNumericThreadId() {
     if (this->numericThreadId == 0) {
 #if defined (__APPLE__)
-        pthread_threadid_np(NULL, &this->numericThreadId);
+        if (this->threadId) {
+            pthread_threadid_np(*this->threadId, &this->numericThreadId);
+        } else {
+            pthread_threadid_np(NULL, &this->numericThreadId);
+        }
 #elif defined (__linux)
         this->numericThreadId = gettid();
 #endif

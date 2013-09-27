@@ -13,6 +13,8 @@ class ServerReaderThread: public Thread, public EventIo {
         virtual ~ServerReaderThread();
         virtual int32_t prepareToRun();
         virtual void run();
+        virtual std::string getThreadName();
+        virtual std::string getEventName();
         static void readCallback(EventLoop *readLoop, EventIoWatcher *readWatcher, int revents);
     protected:
         virtual bool canBeBlocked();
