@@ -51,7 +51,7 @@ int32_t ServerBootstrap::start() {
     this->mainThread = new ServerMainThread();
     this->mainThread->init();
 
-    // wait main thread processing here
+    // wait main thread here
     ThreadUtil::joinThread(this->mainThread->getThreadId());
 
     return XCF_OK;
