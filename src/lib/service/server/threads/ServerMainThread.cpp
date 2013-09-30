@@ -62,6 +62,7 @@ void ServerMainThread::acceptCallback(EventLoop *acceptLoop, EventIoWatcher *acc
 //    ServerReaderThread *thread = (ServerReaderThread *) server->getReaderThreadPool()->getThreadViaShard(client->getSocketFd());
 //    thread->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
     server->getReaderThread()->addWatcher(client->getSocketFd(), ServerReaderThread::readCallback);
+    // FIXME is there any way to start the loop? in ServerReaderThread::run? in Event::addWatcher?
     server->getReaderThread()->startLoop();
 
     LogFactory::get()->info(
