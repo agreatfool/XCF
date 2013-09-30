@@ -1,0 +1,2 @@
+### Issues
+* If there is only one client, the accept loop works fine, it accepts & reads as wished. And if there is another client connect to the server, the accept loop would not work and not read. Shall be fixed.
